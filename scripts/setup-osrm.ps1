@@ -1,10 +1,15 @@
-# Yerel OSRM sunucusu için Türkiye verisini indirir ve araba + yürüme
-# profillerini işler. Bir kez çalıştırılır; sonra sunucular
+﻿# Yerel OSRM sunucusu için Türkiye verisini indirir ve profilleri işler.
+# Bir kez çalıştırılır; sonra sunucu
 #   docker compose -f docker-compose.osrm.yml up -d
 # ile başlatılır.
 #
-# Gereksinimler: Docker Desktop (en az ~6 GB bellek), ~5 GB boş disk.
-# Süre: indirme hariç profil başına yaklaşık 5-15 dakika.
+# Varsayılan yalnızca araba profilidir (otobüs eşleştirmesi + araba rotaları;
+# ~7 GB bellek, ~4 GB disk, ~10 dk). Türkiye'nin tamamı için yürüme profili
+# 8 GB Docker belleğine sığmıyor; daha fazla bellek varsa:
+#   ./scripts/setup-osrm.ps1 -Profiles car,foot
+# ve sunucuyu "--profile foot" ile başlat. Yürüme yoksa açık sunucu kullanılır.
+
+param([string[]]$Profiles = @("car"))
 
 $ErrorActionPreference = "Stop"
 $Image = "ghcr.io/project-osrm/osrm-backend:v5.27.1"
@@ -36,7 +41,7 @@ if (-not (Test-Path $Pbf)) {
     if ($LASTEXITCODE -ne 0) { throw "İndirme başarısız" }
 }
 
-foreach ($profile in @("car", "foot")) {
+foreach ($profile in $Profiles) {
     $dir = Join-Path $Root $profile
     New-Item -ItemType Directory -Force $dir | Out-Null
     $link = Join-Path $dir "turkey-latest.osm.pbf"
@@ -59,5 +64,8 @@ foreach ($profile in @("car", "foot")) {
     Write-Host "[$profile] tamamlandı"
 }
 
-Write-Host "Tamam. Sunucuları başlat: docker compose -f docker-compose.osrm.yml up -d"
-Write-Host ".env.local içine ekle: OSRM_CAR_URL=http://localhost:5000 ve OSRM_FOOT_URL=http://localhost:5001"
+Write-Host "Tamam. Sunucuyu başlat: docker compose -f docker-compose.osrm.yml up -d"
+Write-Host ".env.local içine ekle: OSRM_CAR_URL=http://localhost:5000"
+if ($Profiles -contains "foot") {
+    Write-Host "Yürüme için: docker compose -f docker-compose.osrm.yml --profile foot up -d ve OSRM_FOOT_URL=http://localhost:5001"
+}

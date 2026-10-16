@@ -1,6 +1,7 @@
 # Yerel OSRM sunucuları (önce scripts/setup-osrm.ps1 ile veriyi işle).
-#   docker compose -f docker-compose.osrm.yml up -d     # başlat
-#   docker compose -f docker-compose.osrm.yml down      # durdur
+#   docker compose -f docker-compose.osrm.yml up -d                  # araba
+#   docker compose -f docker-compose.osrm.yml --profile foot up -d   # + yürüme
+#   docker compose -f docker-compose.osrm.yml --profile foot down    # durdur
 services:
   osrm-car:
     image: ghcr.io/project-osrm/osrm-backend:v5.27.1
@@ -10,7 +11,10 @@ services:
     ports:
       - "5000:5000"
 
+  # Türkiye'nin tamamı için işlemek 8 GB'tan fazla Docker belleği istiyor;
+  # bu yüzden varsayılan olarak başlatılmaz
   osrm-foot:
+    profiles: ["foot"]
     image: ghcr.io/project-osrm/osrm-backend:v5.27.1
     command: osrm-routed --algorithm mld --max-matching-size 200 /data/turkey-latest.osrm
     volumes:
