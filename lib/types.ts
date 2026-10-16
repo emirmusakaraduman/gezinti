@@ -115,6 +115,10 @@ export interface TransitStep {
   line?: string;
   lineName?: string;
   vehicle?: Vehicle;
+  /** Adımın çizgisi ([lng, lat]) */
+  geometry: [number, number][];
+  /** Çizgi gerçek yol/hat geometrisi mi, yoksa duraklar arası düz çizgi mi */
+  geometryExact: boolean;
 }
 
 export interface Leg {

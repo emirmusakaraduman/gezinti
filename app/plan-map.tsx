@@ -24,25 +24,34 @@ const OSM_STYLE: StyleSpecification = {
 
 const ROUTE_SOURCE = "route";
 
-/** Her ayak ayrı çizgi: gerçek geometri varsa o, yoksa iki durak arası düz çizgi */
+/** Çizgi stili: araçla gerçek yol, yürüme, ya da yaklaşık güzergah */
+type LineStyle = "ride" | "walk" | "approx";
+
+function feature(coordinates: [number, number][], color: string, style: LineStyle): GeoJSON.Feature<GeoJSON.LineString> {
+  return { type: "Feature", properties: { color, style }, geometry: { type: "LineString", coordinates } };
+}
+
+/**
+ * Her ayak ayrı çizgi; toplu taşıma ayaklarında her adım (yürüme, biniş)
+ * ayrı çizilir. Gerçek geometri yoksa iki nokta arası düz çizgi.
+ */
 function routeGeoJSON(days: DayPlan[]): GeoJSON.FeatureCollection<GeoJSON.LineString> {
   return {
     type: "FeatureCollection",
     features: days.flatMap((d) =>
-      d.legs.map((leg, i): GeoJSON.Feature<GeoJSON.LineString> => {
+      d.legs.flatMap((leg, i) => {
+        const color = dayColor(d.day);
+        if (leg.transit) {
+          return leg.transit.map((step) =>
+            feature(step.geometry, color, step.kind === "yurume" ? "walk" : step.geometryExact ? "ride" : "approx"),
+          );
+        }
         const from = d.stops[i].place;
         const to = d.stops[i + 1].place;
-        return {
-          type: "Feature",
-          properties: { color: dayColor(d.day), estimated: leg.geometry === null },
-          geometry: {
-            type: "LineString",
-            coordinates: leg.geometry ?? [
-              [from.lng, from.lat],
-              [to.lng, to.lat],
-            ],
-          },
-        };
+        if (!leg.geometry) {
+          return [feature([[from.lng, from.lat], [to.lng, to.lat]], color, "approx")];
+        }
+        return [feature(leg.geometry, color, leg.mode === "yurume" ? "walk" : "ride")];
       }),
     ),
   };
@@ -98,25 +107,39 @@ export default function PlanMap({ days, center }: { days: DayPlan[]; center: { l
       map.on("load", () => {
         map!.addSource(ROUTE_SOURCE, { type: "geojson", data: routeGeoJSON([]) });
         map!.addLayer({
-          id: "route-real",
+          id: "route-ride",
           type: "line",
           source: ROUTE_SOURCE,
-          filter: ["==", ["get", "estimated"], false],
+          filter: ["==", ["get", "style"], "ride"],
           layout: { "line-join": "round", "line-cap": "round" },
-          paint: { "line-color": ["get", "color"], "line-width": 4, "line-opacity": 0.85 },
+          paint: { "line-color": ["get", "color"], "line-width": 4.5, "line-opacity": 0.9 },
         });
         map!.addLayer({
-          id: "route-estimated",
+          id: "route-approx",
           type: "line",
           source: ROUTE_SOURCE,
-          filter: ["==", ["get", "estimated"], true],
+          filter: ["==", ["get", "style"], "approx"],
+          layout: { "line-join": "round" },
+          paint: {
+            "line-color": ["get", "color"],
+            "line-width": 4.5,
+            "line-opacity": 0.85,
+            // Kesikli: gerçek yol/hat geometrisi yok, duraklar arası çizgi
+            "line-dasharray": [2, 1.5],
+          },
+        });
+        map!.addLayer({
+          id: "route-walk",
+          type: "line",
+          source: ROUTE_SOURCE,
+          filter: ["==", ["get", "style"], "walk"],
           layout: { "line-join": "round", "line-cap": "round" },
           paint: {
             "line-color": ["get", "color"],
-            "line-width": 4,
-            "line-opacity": 0.85,
-            // Kesikli: gerçek yol geometrisi yok, iki durak arası düz çizgi
-            "line-dasharray": [2, 1.5],
+            "line-width": 3,
+            "line-opacity": 0.9,
+            // Yuvarlak uçlu sıfır uzunluklu tireler nokta olarak çizilir
+            "line-dasharray": [0, 2],
           },
         });
         mapRef.current = map!;
@@ -192,7 +215,7 @@ export default function PlanMap({ days, center }: { days: DayPlan[]; center: { l
             {d.day}. gün
           </button>
         ))}
-        <span className="ml-auto text-xs text-zinc-500">Düz: gerçek yol · Kesikli: tahmini güzergah</span>
+        <span className="ml-auto text-xs text-zinc-500">Düz: araç · Noktalı: yürüme · Kesikli: yaklaşık güzergah</span>
       </div>
       <div ref={containerRef} className="h-[420px] w-full" />
     </div>

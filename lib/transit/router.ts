@@ -13,7 +13,7 @@ import path from "node:path";
 import { haversineKm, toHHMM } from "@/lib/geo";
 import type { TransitStep, Vehicle } from "@/lib/types";
 
-const FORMAT_VERSION = 1;
+const FORMAT_VERSION = 2;
 const WALK_M_PER_MIN = (4.5 * 1000) / 60;
 const ROAD_FACTOR = 1.3;
 /** Başlangıç/bitişte durağa en fazla bu kadar yürünür */
@@ -268,9 +268,9 @@ class TransitRouter {
     inFoot: Int32Array,
     tripBoard: Int32Array,
   ): TransitJourney {
-    const { connDepStop, connDepTime, connArrTime, connTrip, tripRoute, tripPattern, patStart, patStops } = this.a;
+    const { connDepStop, connDepTime, connArrTime, connTrip, tripRoute, tripPattern } = this.a;
     const name = (s: number) => this.meta.stops.name[s];
-    const reversed: { step: TransitStep; geometry: [number, number][] }[] = [];
+    const reversed: TransitStep[] = [];
 
     // Son duraktan hedefe yürüme
     reversed.push(this.walkStep(name(lastStop), "Varış noktası", this.stopPoint(lastStop), to, arr[lastStop], arriveSec));
@@ -285,19 +285,19 @@ class TransitRouter {
         const boardStop = connDepStop[enter];
         const route = this.meta.routes[tripRoute[trip]];
         reversed.push({
-          step: {
-            kind: "binis",
-            from: name(boardStop),
-            to: name(s),
-            depart: toHHMM(connDepTime[enter] / 60),
-            arrive: toHHMM(connArrTime[exit] / 60),
-            durationMin: Math.round((connArrTime[exit] - connDepTime[enter]) / 60),
-            line: route.name,
-            lineName: route.longName,
-            // Marmaray veride metro (1) türünde ama banliyö treni
-            vehicle: /TCDD/i.test(route.agency) ? "tren" : (ROUTE_TYPE[route.type] ?? "otobus"),
-          },
-          geometry: this.patternSlice(patStart, patStops, tripPattern[trip], boardStop, s),
+          kind: "binis",
+          from: name(boardStop),
+          to: name(s),
+          depart: toHHMM(connDepTime[enter] / 60),
+          arrive: toHHMM(connArrTime[exit] / 60),
+          durationMin: Math.round((connArrTime[exit] - connDepTime[enter]) / 60),
+          line: route.name,
+          lineName: route.longName,
+          // Marmaray veride metro (1) türünde ama banliyö treni
+          vehicle: /TCDD/i.test(route.agency) ? "tren" : (ROUTE_TYPE[route.type] ?? "otobus"),
+          geometry: this.patternSlice(tripPattern[trip], boardStop, s),
+          // İBB'nin şekilleri de durak koordinatlarından ibaret; gerçek hat değil
+          geometryExact: false,
         });
         rides++;
         s = boardStop;
@@ -313,23 +313,15 @@ class TransitRouter {
       }
     }
 
-    const parts = reversed.reverse();
-    const geometry = parts.flatMap((p) => p.geometry);
-    let distanceKm = 0;
-    for (let i = 1; i < geometry.length; i++) {
-      distanceKm += haversineKm(
-        { lng: geometry[i - 1][0], lat: geometry[i - 1][1] },
-        { lng: geometry[i][0], lat: geometry[i][1] },
-      );
-    }
-    // Ardışık yürüme adımlarını birleştir, süresiz yürümeleri at
+    // Ardışık yürüme adımlarını birleştir (çizgileriyle), süresiz yürümeleri at
     const steps: TransitStep[] = [];
-    for (const { step } of parts) {
+    for (const step of reversed.reverse()) {
       const last = steps.at(-1);
       if (step.kind === "yurume" && last?.kind === "yurume") {
         last.to = step.to;
         last.arrive = step.arrive;
         last.durationMin += step.durationMin;
+        last.geometry = [...last.geometry, ...step.geometry.slice(1)];
       } else steps.push({ ...step });
     }
 
@@ -337,48 +329,41 @@ class TransitRouter {
       departSec,
       arriveSec,
       steps: steps.filter((st) => st.kind === "binis" || st.durationMin > 0),
-      geometry,
-      distanceKm,
+      geometry: steps.flatMap((st) => st.geometry),
+      distanceKm: steps.reduce((sum, st) => sum + lineLengthKm(st.geometry), 0),
       rides,
     };
   }
 
-  private walkStep(fromName: string, toName: string, a: Point, b: Point, t0: number, t1: number) {
+  private walkStep(fromName: string, toName: string, a: Point, b: Point, t0: number, t1: number): TransitStep {
     return {
-      step: {
-        kind: "yurume" as const,
-        from: fromName,
-        to: toName,
-        depart: toHHMM(t0 / 60),
-        arrive: toHHMM(t1 / 60),
-        durationMin: Math.round((t1 - t0) / 60),
-      },
+      kind: "yurume",
+      from: fromName,
+      to: toName,
+      depart: toHHMM(t0 / 60),
+      arrive: toHHMM(t1 / 60),
+      durationMin: Math.round((t1 - t0) / 60),
       geometry: [
         [a.lng, a.lat],
         [b.lng, b.lat],
-      ] as [number, number][],
+      ],
+      geometryExact: false,
     };
   }
 
-  /** Seferin kalıbından biniş ile iniş arasındaki durakların koordinatları */
-  private patternSlice(
-    patStart: Typed,
-    patStops: Typed,
-    pattern: number,
-    fromStop: number,
-    toStop: number,
-  ): [number, number][] {
+  /**
+   * Biniş ile iniş arasındaki çizgi. Kalıbın hat şekli varsa şekil
+   * noktalarından, yoksa ara durakların koordinatlarından oluşur.
+   */
+  private patternSlice(pattern: number, fromStop: number, toStop: number): [number, number][] {
+    const { patStart, patStops, patStopShapePt, shapeLat, shapeLng } = this.a;
     const startIdx = patStart[pattern];
     const endIdx = patStart[pattern + 1];
     let i = startIdx;
     while (i < endIdx && patStops[i] !== fromStop) i++;
-    const coords: [number, number][] = [];
-    for (; i < endIdx; i++) {
-      const p = this.stopPoint(patStops[i]);
-      coords.push([p.lng, p.lat]);
-      if (patStops[i] === toStop) break;
-    }
-    if (coords.length < 2) {
+    let j = i;
+    while (j < endIdx && patStops[j] !== toStop) j++;
+    if (i >= endIdx || j >= endIdx) {
       const a = this.stopPoint(fromStop);
       const b = this.stopPoint(toStop);
       return [
@@ -386,8 +371,30 @@ class TransitRouter {
         [b.lng, b.lat],
       ];
     }
+
+    const p0 = patStopShapePt[i];
+    const p1 = patStopShapePt[j];
+    if (p0 >= 0 && p1 > p0) {
+      const coords: [number, number][] = [];
+      for (let k = p0; k <= p1; k++) coords.push([shapeLng[k] / 1e6, shapeLat[k] / 1e6]);
+      return coords;
+    }
+
+    const coords: [number, number][] = [];
+    for (let k = i; k <= j; k++) {
+      const p = this.stopPoint(patStops[k]);
+      coords.push([p.lng, p.lat]);
+    }
     return coords;
   }
+}
+
+export function lineLengthKm(line: [number, number][]): number {
+  let km = 0;
+  for (let i = 1; i < line.length; i++) {
+    km += haversineKm({ lng: line[i - 1][0], lat: line[i - 1][1] }, { lng: line[i][0], lat: line[i][1] });
+  }
+  return km;
 }
 
 // ---------- Şehir bazlı tekil yükleme ----------

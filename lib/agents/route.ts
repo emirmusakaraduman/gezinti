@@ -18,8 +18,8 @@ import {
   toMinutes,
   weekday,
 } from "@/lib/geo";
-import { osrmRoute } from "@/lib/routing/osrm";
-import { getTransitRouter, type TransitJourney } from "@/lib/transit/router";
+import { osrmMatch, osrmRoute } from "@/lib/routing/osrm";
+import { getTransitRouter, lineLengthKm, type TransitJourney } from "@/lib/transit/router";
 import type {
   City,
   DayPlan,
@@ -151,6 +151,40 @@ export async function resolveLeg(
 
   // Toplu taşıma: GTFS varsa buildDay saatine göre yeniden planlar
   return fallback;
+}
+
+/** Bu uzunluğun altındaki yürümeler için OSRM'e sorulmaz */
+const MIN_REFINE_WALK_KM = 0.05;
+
+/**
+ * Yolculuk adımlarının çizgilerini gerçek yollara oturt: yürümeler OSRM
+ * yürüme rotasıyla, otobüs binişleri durak dizisinin araç yoluna
+ * eşleştirilmesiyle. Başarısız olan adım düz çizgi olarak kalır.
+ */
+async function refineJourney(journey: TransitJourney): Promise<TransitJourney> {
+  const steps = await Promise.all(
+    journey.steps.map(async (step) => {
+      const line = step.geometry;
+      if (step.kind === "yurume") {
+        if (lineLengthKm(line) < MIN_REFINE_WALK_KM) return step;
+        const [aLng, aLat] = line[0];
+        const [bLng, bLat] = line[line.length - 1];
+        const walk = await osrmRoute("foot", { lat: aLat, lng: aLng }, { lat: bLat, lng: bLng });
+        return walk ? { ...step, geometry: walk.geometry, geometryExact: true } : step;
+      }
+      if (step.vehicle === "otobus") {
+        const matched = await osrmMatch("car", line);
+        return matched ? { ...step, geometry: matched, geometryExact: true } : step;
+      }
+      return step;
+    }),
+  );
+  return {
+    ...journey,
+    steps,
+    geometry: steps.flatMap((s) => s.geometry),
+    distanceKm: steps.reduce((sum, s) => sum + lineLengthKm(s.geometry), 0),
+  };
 }
 
 /** GTFS yolculuğunu ayağa çevir; süre beklemeyi de içerir */
@@ -295,7 +329,7 @@ export async function buildDay(
       if (router && legs[i - 1].mode === "toplu_tasima") {
         const journey = router.plan(prev, place, clock * 60, weekday(date));
         legs[i - 1] = journey
-          ? transitLeg(prev, place, journey, clock, city, travelers)
+          ? transitLeg(prev, place, await refineJourney(journey), clock, city, travelers)
           : await walkInstead(prev, place, legs[i - 1]);
       }
       clock += legs[i - 1].durationMin;

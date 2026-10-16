@@ -12,7 +12,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const RAW = "data/gtfs/raw";
 const OUT = "data/gtfs/build";
-export const FORMAT_VERSION = 1;
+// 2: hat şekilleri (patStopShapePt, shapeLat, shapeLng) eklendi
+export const FORMAT_VERSION = 2;
 
 // İstanbul sınırları; bunun dışındaki (bozuk) koordinatlar atılır
 const BBOX = { minLat: 40.7, maxLat: 41.7, minLng: 27.9, maxLng: 29.95 };
@@ -160,6 +161,9 @@ const stopIndex = new Map(); // "feed:stop_id" → index
 const routes = []; // { name, longName, type, agency }
 const patterns = []; // durak index dizileri
 const patternIndex = new Map(); // "route|s1,s2,..." → index
+const patternShape = []; // kalıp → şekil index'i (-1: şekil yok)
+const shapes = []; // şekil → [[lat, lng], ...]
+const shapeIndex = new Map(); // "feed:shape_id" → index
 const trips = []; // { route, pattern }
 // Bağlantılar düz dizilerde: [depStop, arrStop, depTime, arrTime, trip, dayMask]
 const conns = [];
@@ -215,8 +219,28 @@ function addFeed(feed) {
     const route = routeIdx.get(t.route_id);
     const mask = serviceMask.get(t.service_id) ?? 0;
     if (route === undefined || mask === 0) continue;
-    tripInfo.set(t.trip_id, { route, mask });
+    tripInfo.set(t.trip_id, { route, mask, shape: t.shape_id || null });
   }
+
+  // Hat şekilleri (yalnızca toplu ulaşım setinde var; İETT'de yok)
+  const feedShapes = new Map();
+  for (const s of readCsv(`${dir}/shapes.csv`, { required: false })) {
+    const list = feedShapes.get(s.shape_id) ?? feedShapes.set(s.shape_id, []).get(s.shape_id);
+    list.push({ seq: Number(s.shape_pt_sequence), lat: Number(s.shape_pt_lat), lng: Number(s.shape_pt_lon) });
+  }
+  const shapeFor = (shapeId) => {
+    const pts = shapeId && feedShapes.get(shapeId);
+    if (!pts || pts.length < 2) return -1;
+    const key = `${feed}:${shapeId}`;
+    let idx = shapeIndex.get(key);
+    if (idx === undefined) {
+      idx = shapes.length;
+      shapeIndex.set(key, idx);
+      shapes.push(pts.sort((a, b) => a.seq - b.seq).map((p) => [p.lat, p.lng]));
+    }
+    return idx;
+  };
+  if (feedShapes.size) console.log(`  hat şekilleri: ${feedShapes.size}`);
 
   // Sefer frekansları (toplu ulaşım setinde)
   const freqs = new Map();
@@ -260,7 +284,7 @@ function addFeed(feed) {
       skipped++;
       continue;
     }
-    const { route, mask } = tripInfo.get(tripId);
+    const { route, mask, shape } = tripInfo.get(tripId);
     const stopSeq = list.map((s) => s.stop);
     const patKey = `${route}|${stopSeq.join(",")}`;
     let pattern = patternIndex.get(patKey);
@@ -268,6 +292,9 @@ function addFeed(feed) {
       pattern = patterns.length;
       patternIndex.set(patKey, pattern);
       patterns.push(stopSeq);
+      patternShape.push(shapeFor(shape));
+    } else if (patternShape[pattern] === -1) {
+      patternShape[pattern] = shapeFor(shape);
     }
 
     // Frekanslı seferde durak saatleri bir şablondur; her kalkış için çoğalt
@@ -402,6 +429,65 @@ patterns.forEach((p, i) => {
 });
 patStart[patterns.length] = off;
 
+// Şekil noktaları (CSR, mikroderece) ve her kalıp durağının şekil üzerindeki
+// noktası. Biniş-iniş arasındaki gerçek hat çizgisi buradan kesilir.
+const shapeStart = new Int32Array(shapes.length + 1);
+const shapeLat = new Int32Array(shapes.reduce((s, p) => s + p.length, 0));
+const shapeLng = new Int32Array(shapeLat.length);
+let soff = 0;
+shapes.forEach((pts, i) => {
+  shapeStart[i] = soff;
+  for (const [lat, lng] of pts) {
+    shapeLat[soff] = Math.round(lat * 1e6);
+    shapeLng[soff] = Math.round(lng * 1e6);
+    soff++;
+  }
+});
+shapeStart[shapes.length] = soff;
+
+const patStopShapePt = new Int32Array(patStops.length).fill(-1);
+let shapedPatterns = 0;
+patterns.forEach((stopSeq, p) => {
+  const sh = patternShape[p];
+  if (sh < 0) return;
+  const pts = shapes[sh];
+  const idx = projectStops(stopSeq, pts);
+  if (!idx) return;
+  idx.forEach((v, k) => (patStopShapePt[patStart[p] + k] = shapeStart[sh] + v));
+  shapedPatterns++;
+});
+console.log(
+  `Şekilli kalıp: ${shapedPatterns} (şekli olan ${patternShape.filter((s) => s >= 0).length}, toplam ${patterns.length}), şekil noktası: ${soff}`,
+);
+
+/**
+ * Durakları sırayı koruyarak şekil üzerindeki en yakın noktaya eşler.
+ * Bir durak şekle 150 m'den uzaksa şekil bu kalıba uymuyor sayılır.
+ */
+function projectStops(stopSeq, pts) {
+  const out = [];
+  let from = 0;
+  for (let k = 0; k < stopSeq.length; k++) {
+    const s = stops[stopSeq[k]];
+    // Kalan durakların sığabilmesi için aramayı sınırla
+    let best = -1;
+    let bestD = Infinity;
+    for (let i = from; i < pts.length; i++) {
+      const d = haversineM(s, { lat: pts[i][0], lng: pts[i][1] });
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+      // Yakın bir nokta bulduysak ve uzaklaşıyorsak dur (dönüşlü hatlar)
+      if (bestD < 60 && d > bestD + 400) break;
+    }
+    if (best < 0 || bestD > 150) return null;
+    out.push(best);
+    from = best;
+  }
+  return out;
+}
+
 // İkili dosya: art arda tipli diziler; her biri 4 bayta hizalı.
 // Tip, uzunluk ve konum meta dosyasında (layout).
 const arrays = {
@@ -412,6 +498,9 @@ const arrays = {
   tripPattern: Int32Array.from(trips, (t) => t.pattern),
   patStart,
   patStops,
+  patStopShapePt,
+  shapeLat,
+  shapeLng,
   footStart: foot.start,
   footTo: foot.to,
   footDur: foot.dur,
