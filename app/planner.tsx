@@ -7,9 +7,11 @@ import { formatRange } from "@/lib/geo";
 import type {
   PlaceCategory,
   PlanWarning,
+  TransitStep,
   TransportMode,
   TripPlan,
   TripRequest,
+  Vehicle,
 } from "@/lib/types";
 
 const INTERESTS: { id: PlaceCategory; label: string }[] = [
@@ -240,11 +242,14 @@ function PlanView({ plan }: { plan: TripPlan }) {
               return (
                 <li key={stop.place.id}>
                   {leg && (
-                    <p className="mb-2 ml-[5.75rem] text-xs text-zinc-500">
-                      ↓ {LEG_LABEL[leg.mode]} · {leg.estimated ? "~" : ""}{leg.durationMin} dk · {leg.distanceKm.toFixed(1)} km
-                      {leg.cost.max > 0 && ` · ${formatRange(leg.cost)}`}
-                      {leg.estimated && " (tahmini)"}
-                    </p>
+                    <div className="mb-2 ml-[5.75rem] text-xs text-zinc-500">
+                      <p>
+                        ↓ {LEG_LABEL[leg.mode]} · {leg.estimated ? "~" : ""}{leg.durationMin} dk · {leg.distanceKm.toFixed(1)} km
+                        {leg.cost.max > 0 && ` · ${formatRange(leg.cost)}`}
+                        {leg.estimated && " (tahmini)"}
+                      </p>
+                      {leg.transit && <TransitSteps steps={leg.transit} />}
+                    </div>
                   )}
                   <div className="flex gap-3">
                     <span
@@ -276,6 +281,40 @@ function PlanView({ plan }: { plan: TripPlan }) {
         </article>
       ))}
     </section>
+  );
+}
+
+const VEHICLE_LABEL: Record<Vehicle, string> = {
+  tramvay: "tramvayı",
+  metro: "metrosu",
+  tren: "treni",
+  otobus: "otobüsü",
+  vapur: "vapuru",
+  teleferik: "teleferiği",
+  funikuler: "füniküleri",
+};
+
+function TransitSteps({ steps }: { steps: TransitStep[] }) {
+  return (
+    <ul className="mt-1 space-y-0.5 border-l-2 border-zinc-200 pl-2 dark:border-zinc-800">
+      {steps.map((s, i) => (
+        <li key={i}>
+          <span className="font-mono">{s.depart}</span>{" "}
+          {s.kind === "binis" ? (
+            <>
+              <span className="font-semibold text-zinc-700 dark:text-zinc-300">
+                {s.line} {s.vehicle && VEHICLE_LABEL[s.vehicle]}
+              </span>{" "}
+              · {s.from} → {s.to} ({s.durationMin} dk)
+            </>
+          ) : (
+            <>
+              Yürü · {s.from} → {s.to} ({s.durationMin} dk)
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }
 

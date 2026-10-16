@@ -4,7 +4,8 @@
  * Seçilen mekanları gün içinde sıralar ve aralarındaki ulaşımı hesaplar.
  * Yürüme ve araba ayakları OSRM'den gerçek yol verisiyle gelir; OSRM'e
  * ulaşılamazsa kuş uçuşu mesafe + katsayı ile tahmin edilir.
- * TODO: toplu taşıma için GTFS + OpenTripPlanner bağlanacak.
+ * Toplu taşıma ayakları, şehrin derlenmiş GTFS verisi varsa o saatteki
+ * gerçek seferlerle planlanır (lib/transit/router.ts); yoksa tahmin edilir.
  */
 import {
   ZERO,
@@ -15,8 +16,10 @@ import {
   sumRanges,
   toHHMM,
   toMinutes,
+  weekday,
 } from "@/lib/geo";
 import { osrmRoute } from "@/lib/routing/osrm";
+import { getTransitRouter, type TransitJourney } from "@/lib/transit/router";
 import type {
   City,
   DayPlan,
@@ -42,6 +45,8 @@ const WALK_MAX_KM = 1.5;
 const CAR_TRAFFIC_FACTOR = 1.5;
 /** Bu kuş uçuşu mesafenin üstünde yürüme rotası hiç sorulmaz */
 const WALK_PROBE_KM = 1.6;
+/** Toplu taşıma bulunamazsa en fazla bu kadar yürüme önerilir */
+const MAX_WALK_INSTEAD_MIN = 45;
 
 export const DAY_START = "09:30";
 
@@ -144,11 +149,53 @@ export async function resolveLeg(
     return fallback;
   }
 
-  // Toplu taşıma: GTFS bağlanana kadar tahmin
+  // Toplu taşıma: GTFS varsa buildDay saatine göre yeniden planlar
   return fallback;
 }
 
-const isBreakfast =(p: Place) => p.tags.includes("kahvalti");
+/** GTFS yolculuğunu ayağa çevir; süre beklemeyi de içerir */
+function transitLeg(
+  from: Place,
+  to: Place,
+  journey: TransitJourney,
+  departMin: number,
+  city: City,
+  travelers: number,
+): Leg {
+  const rename = (name: string) =>
+    name === "Başlangıç noktası" ? from.name : name === "Varış noktası" ? to.name : name;
+  return {
+    fromId: from.id,
+    toId: to.id,
+    mode: "toplu_tasima",
+    distanceKm: journey.distanceKm,
+    durationMin: Math.ceil(journey.arriveSec / 60 - departMin),
+    // Her biniş tam bilet; İstanbulkart aktarma indirimi hesaba katılmıyor
+    cost: scaleRange(city.transitFare, travelers * journey.rides),
+    estimated: false,
+    geometry: journey.geometry,
+    transit: journey.steps.map((s) => ({ ...s, from: rename(s.from), to: rename(s.to) })),
+  };
+}
+
+/** Yönlendirici toplu taşıma bulamadı (yürümek daha hızlı ya da durak yok) */
+async function walkInstead(from: Place, to: Place, fallback: Leg): Promise<Leg> {
+  const walk = await osrmRoute("foot", from, to);
+  // Yakında durak olmadığı için null geldiyse uzun yürüyüş önerme
+  if (!walk || walk.durationMin > MAX_WALK_INSTEAD_MIN) return fallback;
+  return {
+    fromId: from.id,
+    toId: to.id,
+    mode: "yurume",
+    distanceKm: walk.distanceKm,
+    durationMin: Math.ceil(walk.durationMin),
+    cost: ZERO,
+    estimated: false,
+    geometry: walk.geometry,
+  };
+}
+
+const isBreakfast = (p: Place) => p.tags.includes("kahvalti");
 const isMeal = (p: Place) => p.category === "yemek" || p.category === "kafe";
 
 function tourLength(order: Place[]): number {
@@ -230,17 +277,29 @@ export async function buildDay(
   notes: Map<string, string>,
 ): Promise<DayPlan> {
   const ordered = orderDay(places);
-  // Tüm ayakları paralel sor (OSRM istemcisi eşzamanlılığı sınırlar)
+  const date = addDays(startDate, dayIndex);
+  // Saatten bağımsız ayakları paralel sor (OSRM istemcisi eşzamanlılığı sınırlar)
   const legs: Leg[] = await Promise.all(
     ordered
       .slice(1)
       .map((place, i) => resolveLeg(ordered[i], place, transport, city, travelers)),
   );
+  const router = transport === "toplu_tasima" ? getTransitRouter(city.id) : null;
   const stops: Stop[] = [];
   let clock = toMinutes(DAY_START);
 
-  ordered.forEach((place, i) => {
-    if (i > 0) clock += legs[i - 1].durationMin;
+  // Toplu taşıma kalkış saatine bağlı olduğundan günü sırayla yürüt
+  for (const [i, place] of ordered.entries()) {
+    if (i > 0) {
+      const prev = ordered[i - 1];
+      if (router && legs[i - 1].mode === "toplu_tasima") {
+        const journey = router.plan(prev, place, clock * 60, weekday(date));
+        legs[i - 1] = journey
+          ? transitLeg(prev, place, journey, clock, city, travelers)
+          : await walkInstead(prev, place, legs[i - 1]);
+      }
+      clock += legs[i - 1].durationMin;
+    }
     // Mekan henüz açılmadıysa bekle
     if (place.hours) clock = Math.max(clock, toMinutes(place.hours.open));
     const arrival = clock;
@@ -251,7 +310,7 @@ export async function buildDay(
       departure: toHHMM(clock),
       note: notes.get(place.id),
     });
-  });
+  }
 
   const placeCosts = ordered.map((p) => scaleRange(p.price, travelers));
   const legCosts = legs.map((l) => l.cost);
@@ -262,7 +321,7 @@ export async function buildDay(
 
   return {
     day: dayIndex + 1,
-    date: addDays(startDate, dayIndex),
+    date,
     stops,
     legs,
     cost: sumRanges([...placeCosts, ...legCosts, ...parking]),

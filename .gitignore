@@ -23,6 +23,10 @@
 # npm install sırasında node_modules'tan kopyalanır
 /public/maplibre/
 
+# GTFS ham verisi (İBB'den indirilir) ve derlenmiş çıktı (npm run gtfs:build)
+/data/gtfs/raw/
+/data/gtfs/build/
+
 # misc
 .DS_Store
 *.pem

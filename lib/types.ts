@@ -94,6 +94,29 @@ export type TripRequest = z.infer<typeof TripRequestSchema>;
 
 export type LegMode = "yurume" | "toplu_tasima" | "araba";
 
+export type Vehicle =
+  | "tramvay"
+  | "metro"
+  | "tren"
+  | "otobus"
+  | "vapur"
+  | "teleferik"
+  | "funikuler";
+
+/** Toplu taşıma yolculuğunun bir adımı (GTFS yönlendiricisinden) */
+export interface TransitStep {
+  kind: "yurume" | "binis";
+  from: string;
+  to: string;
+  depart: string; // "HH:MM"
+  arrive: string;
+  durationMin: number;
+  /** Binişlerde hat kodu/adı, ör. "T1" veya "KDK-EMN" */
+  line?: string;
+  lineName?: string;
+  vehicle?: Vehicle;
+}
+
 export interface Leg {
   fromId: string;
   toId: string;
@@ -105,6 +128,8 @@ export interface Leg {
   estimated: boolean;
   /** Gerçek yol çizgisi ([lng, lat]); tahminiyse null */
   geometry: [number, number][] | null;
+  /** Toplu taşıma ayağı GTFS ile planlandıysa adım adım yolculuk */
+  transit?: TransitStep[];
 }
 
 export interface Stop {

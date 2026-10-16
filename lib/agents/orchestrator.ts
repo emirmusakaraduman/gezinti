@@ -63,10 +63,18 @@ export async function planTrip(req: TripRequest): Promise<TripPlan> {
       ...budgetWarnings(budget),
       ...issues.map(({ level, message }) => ({ level, message })),
     ];
-    if (!city.hasGtfs && req.transport === "toplu_tasima") {
+    const transitLegs = days.flatMap((d) => d.legs).filter((l) => l.mode === "toplu_tasima");
+    if (transitLegs.some((l) => l.transit)) {
       warnings.push({
         level: "bilgi",
-        message: `${city.name} için toplu taşıma verisi yok; süreler yürüme ve tahmini değerlerle hesaplandı.`,
+        message:
+          "Toplu taşıma, İBB'nin GTFS sefer verisiyle planlandı. Sefer saatleri değişmiş olabilir; yola çıkmadan kontrol et.",
+      });
+    }
+    if (transitLegs.some((l) => !l.transit)) {
+      warnings.push({
+        level: "bilgi",
+        message: `${city.name} için bazı toplu taşıma süreleri tahminidir (sefer verisi yok veya güzergah bulunamadı).`,
       });
     }
     if (selection.plannedBy === "sezgisel") {

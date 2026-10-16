@@ -43,12 +43,43 @@ Yürüme ve araba ayakları `lib/routing/osrm.ts` ile OSRM'den gelir (varsayıla
 FOSSGIS'in açık sunucusu routing.openstreetmap.de, demo amaçlıdır). Kendi sunucun için
 `OSRM_CAR_URL` ve `OSRM_FOOT_URL` ortam değişkenlerini ver. OSRM trafiksiz süre verdiği için
 araba sürelerine ×1,5 trafik çarpanı uygulanır. OSRM'e ulaşılamazsa kuş uçuşu tahmine düşülür.
-Toplu taşıma şimdilik tahminidir.
+
+## Toplu taşıma (İstanbul, GTFS)
+
+`lib/transit/router.ts` Connection Scan Algorithm ile, o saatteki gerçek seferlere göre
+yürüme + biniş + aktarma adımlarından oluşan yolculuk bulur (metro, tramvay, Marmaray,
+füniküler, teleferik, vapur, İETT otobüsü ve Metrobüs). Ek sunucu gerektirmez.
+
+Veri git'e eklenmez; kurmak için İBB Açık Veri Portalı'ndan (data.ibb.gov.tr) şunları indir:
+
+- **Toplu Ulaşım GTFS Verisi** → `data/gtfs/raw/transit/*.csv` (agency, calendar, frequencies, routes, stops, stop_times, trips)
+- **İETT GTFS Verisi** → `data/gtfs/raw/iett/*.csv` (agency, calendar, routes, stops, trips)
+  ve tam durak saatleri için `stop_times.zip` içindeki `stop_times.txt` → `data/gtfs/raw/iett-zip/`
+  (portaldaki `stop_times.csv` seferlerin yalnızca ~%14'ünü içeriyor)
+
+Ardından:
+
+```bash
+npm run gtfs:build
+```
+
+Bu, `data/gtfs/build/istanbul.{bin,meta.json}` dosyalarını üretir (~110 MB, ~8 sn).
+Veri yoksa uygulama toplu taşımayı tahminle hesaplar.
+
+Notlar ve sınırlamalar:
+- Ham veri standart dışıdır (noktalı virgül ayraç, Windows-1254 ve çift UTF-8 kodlama,
+  bozuk koordinatlar, boş ara durak saatleri); dönüştürme betiği bunları düzeltir.
+- Metro/vapur verisi 2024, otobüs verisi 2026 tarihli; takvim tarihi yerine haftanın günü kullanılır.
+- Minibüs ve taksi-dolmuş hariç tutulur.
+- Her biniş karşılaştırmada 5 dk ceza alır (az aktarmalı rota tercih edilir); her biniş tam
+  bilet sayılır, İstanbulkart aktarma indirimi hesaba katılmaz.
+- Gece yarısını aşan yolculuklar desteklenmez.
 
 ## Sıradaki adımlar
 
 - OSM (Overpass) içe aktarma ile koordinatları doğrulama
-- Toplu taşıma için GTFS + OpenTripPlanner (vapur hatları dahil)
+- İzmir ve Ankara için GTFS (İzmir'in verisi Mobility Database'de mevcut)
+- Toplu taşıma güzergahlarında gerçek hat geometrisi (`shapes.csv`)
 
 ## Harita
 
