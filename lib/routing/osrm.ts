@@ -24,73 +24,100 @@ export interface OsrmRoute {
 
 type Point = { lat: number; lng: number };
 
-const BASE_URLS: Record<OsrmProfile, string> = {
-  car: process.env.OSRM_CAR_URL ?? "https://routing.openstreetmap.de/routed-car",
-  foot: process.env.OSRM_FOOT_URL ?? "https://routing.openstreetmap.de/routed-foot",
-};
-
 const TIMEOUT_MS = 6000;
 const USER_AGENT = "gezinti/0.1 (kisisel proje)";
-/** Açık sunucuya aynı anda en fazla bu kadar istek */
-const MAX_IN_FLIGHT = process.env.OSRM_CAR_URL || process.env.OSRM_FOOT_URL ? 8 : 2;
-/** Ardışık istekler arası en az süre (açık sunucunun hız sınırına takılmamak için) */
-const MIN_INTERVAL_MS = process.env.OSRM_CAR_URL || process.env.OSRM_FOOT_URL ? 0 : 700;
-/** 429/503 sonrası bu süre boyunca istek atılmaz */
+/** 429/503 sonrası bu süre boyunca o sunucuya istek atılmaz */
 const COOLDOWN_MS = 2 * 60 * 1000;
 /** Eşleştirmeye gönderilecek en fazla nokta (sunucu sınırının altında) */
 const MAX_MATCH_POINTS = 80;
-/** FOSSGIS sunucusu 50 m'yi "TooBig" diye reddediyor; 40 m kabul ediliyor */
-const MATCH_RADIUS_M = 35;
 const MAX_MEMORY_CACHE = 5000;
 const DISK_CACHE_DIR = path.join(process.cwd(), ".cache", "osrm");
+
+/**
+ * Profil başına sunucu ve durumu. Kendi sunucumuz (docker-compose.osrm.yml)
+ * sınırsız kullanılır; FOSSGIS'in açık sunucusu hız sınırı uyguladığı için
+ * istekler aralıklı ve az sayıda gönderilir. Profiller ayrı ayarlanabilir
+ * (ör. araba yerelde, yürüme açık sunucuda).
+ */
+interface Server {
+  baseUrl: string;
+  selfHosted: boolean;
+  maxInFlight: number;
+  /** Ardışık istekler arası en az süre */
+  minIntervalMs: number;
+  /**
+   * Durakların yola en fazla uzaklığı. FOSSGIS sunucusu 50 m'yi "TooBig" diye
+   * reddediyor (40 m kabul); kendi sunucumuzda sınır yok.
+   */
+  matchRadiusM: number;
+  inFlight: number;
+  waiting: (() => void)[];
+  coolUntil: number;
+  nextSlot: number;
+}
+
+function server(envUrl: string | undefined, publicUrl: string): Server {
+  const selfHosted = !!envUrl;
+  return {
+    baseUrl: envUrl ?? publicUrl,
+    selfHosted,
+    maxInFlight: selfHosted ? 8 : 2,
+    minIntervalMs: selfHosted ? 0 : 700,
+    matchRadiusM: selfHosted ? 50 : 35,
+    inFlight: 0,
+    waiting: [],
+    coolUntil: 0,
+    nextSlot: 0,
+  };
+}
+
+const SERVERS: Record<OsrmProfile, Server> = {
+  car: server(process.env.OSRM_CAR_URL, "https://routing.openstreetmap.de/routed-car"),
+  foot: server(process.env.OSRM_FOOT_URL, "https://routing.openstreetmap.de/routed-foot"),
+};
 
 const fmt = ([lng, lat]: [number, number]) => `${lng.toFixed(5)},${lat.toFixed(5)}`;
 const toPair = (p: Point): [number, number] => [p.lng, p.lat];
 
 // ---------- Eşzamanlılık sınırı ve soğuma ----------
 
-let inFlight = 0;
-const waiting: (() => void)[] = [];
-let coolUntil = 0;
-let nextSlot = 0;
-
-async function limited<T>(fn: () => Promise<T>): Promise<T> {
-  if (inFlight >= MAX_IN_FLIGHT) await new Promise<void>((r) => waiting.push(r));
-  inFlight++;
+async function limited<T>(s: Server, fn: () => Promise<T>): Promise<T> {
+  if (s.inFlight >= s.maxInFlight) await new Promise<void>((r) => s.waiting.push(r));
+  s.inFlight++;
   try {
     // İstekleri zamana yay: her istek bir sonraki boş zaman dilimini alır
     const now = Date.now();
-    const slot = Math.max(now, nextSlot);
-    nextSlot = slot + MIN_INTERVAL_MS;
+    const slot = Math.max(now, s.nextSlot);
+    s.nextSlot = slot + s.minIntervalMs;
     if (slot > now) await new Promise((r) => setTimeout(r, slot - now));
     return await fn();
   } finally {
-    inFlight--;
-    waiting.shift()?.();
+    s.inFlight--;
+    s.waiting.shift()?.();
   }
 }
+
+/** Sunucunun "bu noktalar için rota/eşleşme yok" dediği kalıcı yanıtlar */
+const PERMANENT_CODES = new Set(["NoRoute", "NoMatch", "NoSegment"]);
 
 /**
  * Sonuç türleri: "ok" ve "none" (sunucu rota/eşleşme bulamadı) kalıcıdır ve
  * önbelleğe yazılır; "fail" (ağ hatası, hız sınırı) geçicidir, yazılmaz.
  */
-/** Sunucunun "bu noktalar için rota/eşleşme yok" dediği kalıcı yanıtlar */
-const PERMANENT_CODES = new Set(["NoRoute", "NoMatch", "NoSegment"]);
-
 type Outcome<T> = { kind: "ok"; value: T } | { kind: "none" } | { kind: "fail" };
 
-async function fetchOsrm<T>(url: string, parse: (data: unknown) => T | null): Promise<Outcome<T>> {
-  if (Date.now() < coolUntil) return { kind: "fail" };
-  return limited(async () => {
-    if (Date.now() < coolUntil) return { kind: "fail" };
+async function fetchOsrm<T>(s: Server, url: string, parse: (data: unknown) => T | null): Promise<Outcome<T>> {
+  if (Date.now() < s.coolUntil) return { kind: "fail" };
+  return limited(s, async () => {
+    if (Date.now() < s.coolUntil) return { kind: "fail" };
     try {
       const res = await fetch(url, {
         headers: { "User-Agent": USER_AGENT },
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
       if (res.status === 429 || res.status === 503) {
-        coolUntil = Date.now() + COOLDOWN_MS;
-        console.warn(`[osrm] sunucu sınırladı (${res.status}); ${COOLDOWN_MS / 1000} sn istek atılmayacak`);
+        s.coolUntil = Date.now() + COOLDOWN_MS;
+        console.warn(`[osrm] ${s.baseUrl} sınırladı (${res.status}); ${COOLDOWN_MS / 1000} sn istek atılmayacak`);
         return { kind: "fail" };
       }
       // 400 hem kalıcı yanıtlar (NoRoute, NoMatch) hem de istek hataları
@@ -160,11 +187,12 @@ function cached<T>(key: string, load: () => Promise<Outcome<T>>): Promise<T | nu
 // ---------- Genel API ----------
 
 export function osrmRoute(profile: OsrmProfile, from: Point, to: Point): Promise<OsrmRoute | null> {
+  const s = SERVERS[profile];
   const coords = `${fmt(toPair(from))};${fmt(toPair(to))}`;
-  // FOSSGIS sunucularında profil yoldan seçilir; URL'deki "driving" sabittir
-  const url = `${BASE_URLS[profile]}/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+  // Profil sunucu adresinden seçilir; URL'deki "driving" her sunucuda sabittir
+  const url = `${s.baseUrl}/route/v1/driving/${coords}?overview=full&geometries=geojson`;
   return cached(`route|${profile}|${coords}`, () =>
-    fetchOsrm(url, (data) => {
+    fetchOsrm(s, url, (data) => {
       const d = data as {
         code: string;
         routes?: { distance: number; duration: number; geometry: { coordinates: [number, number][] } }[];
@@ -183,6 +211,7 @@ export function osrmRoute(profile: OsrmProfile, from: Point, to: Point): Promise
  */
 export function osrmMatch(profile: OsrmProfile, line: [number, number][]): Promise<[number, number][] | null> {
   if (line.length < 2) return Promise.resolve(null);
+  const s = SERVERS[profile];
   let points = line;
   if (points.length > MAX_MATCH_POINTS) {
     // Uçları koruyarak eşit aralıkla seyrelt
@@ -190,12 +219,12 @@ export function osrmMatch(profile: OsrmProfile, line: [number, number][]): Promi
     points = Array.from({ length: MAX_MATCH_POINTS }, (_, i) => line[Math.round(i * step)]);
   }
   const coords = points.map(fmt).join(";");
-  const radiuses = points.map(() => MATCH_RADIUS_M).join(";");
+  const radiuses = points.map(() => s.matchRadiusM).join(";");
   const url =
-    `${BASE_URLS[profile]}/match/v1/driving/${coords}` +
+    `${s.baseUrl}/match/v1/driving/${coords}` +
     `?overview=full&geometries=geojson&tidy=true&radiuses=${radiuses}`;
   return cached(`match|${profile}|${coords}`, () =>
-    fetchOsrm(url, (data) => {
+    fetchOsrm(s, url, (data) => {
       const d = data as { code: string; matchings?: { geometry: { coordinates: [number, number][] } }[] };
       // Eşleşme kopuk parçalara bölünebilir; sırayla birleştir
       return d.code === "Ok" && d.matchings?.length ? d.matchings.flatMap((m) => m.geometry.coordinates) : null;

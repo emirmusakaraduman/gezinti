@@ -23,8 +23,9 @@
 # npm install sırasında node_modules'tan kopyalanır
 /public/maplibre/
 
-# OSRM yanıt önbelleği
+# OSRM yanıt önbelleği ve yerel OSRM verisi (scripts/setup-osrm.ps1)
 /.cache/
+/data/osrm/
 
 # GTFS ham verisi (İBB'den indirilir) ve derlenmiş çıktı (npm run gtfs:build)
 /data/gtfs/raw/

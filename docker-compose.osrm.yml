@@ -1,0 +1,19 @@
+# Yerel OSRM sunucuları (önce scripts/setup-osrm.ps1 ile veriyi işle).
+#   docker compose -f docker-compose.osrm.yml up -d     # başlat
+#   docker compose -f docker-compose.osrm.yml down      # durdur
+services:
+  osrm-car:
+    image: ghcr.io/project-osrm/osrm-backend:v5.27.1
+    command: osrm-routed --algorithm mld --max-matching-size 200 /data/turkey-latest.osrm
+    volumes:
+      - ./data/osrm/car:/data
+    ports:
+      - "5000:5000"
+
+  osrm-foot:
+    image: ghcr.io/project-osrm/osrm-backend:v5.27.1
+    command: osrm-routed --algorithm mld --max-matching-size 200 /data/turkey-latest.osrm
+    volumes:
+      - ./data/osrm/foot:/data
+    ports:
+      - "5001:5000"
