@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T00:59:07.323Z",
+ "generatedAt": "2026-10-17T03:22:38.026Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -42,7 +42,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -98,7 +98,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -126,7 +126,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -412,7 +412,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -530,7 +530,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -670,7 +670,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -970,7 +970,7 @@
    "lat": 38.440446,
    "lng": 27.142587,
    "district": "Konak",
-   "description": "Tava kebabıyla bilinen köklü lokanta.",
+   "description": "Tava kebabıyla bilinen köklü lokanta; 2025 Michelin Bib Gourmand.",
    "durationMin": 60,
    "price": {
     "min": 500,
@@ -985,7 +985,11 @@
    ],
    "mustTry": "Tavada et ve kuzu",
    "osmId": "node/5287447547",
-   "source": "kurator"
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-bib",
+    "year": 2025
+   }
   },
   {
    "id": "izm-deniz-restaurant",
@@ -1032,6 +1036,143 @@
    "mustTry": "Çöp şiş",
    "osmId": "node/2985569861",
    "source": "kurator"
+  },
+  {
+   "id": "izm-begendik-abi",
+   "name": "Beğendik Abi",
+   "category": "yemek",
+   "lat": 38.448234,
+   "lng": 27.207964,
+   "district": "",
+   "description": "2025 Michelin Rehberi Türkiye: Michelin Bib Gourmand (makul fiyata çok iyi yemek).",
+   "durationMin": 60,
+   "price": {
+    "min": 700,
+    "max": 1600,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "osmId": "node/4142190391",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-bib",
+    "year": 2025
+   }
+  },
+  {
+   "id": "izm-adil-muftuoglu",
+   "name": "Adil Müftüoğlu",
+   "category": "yemek",
+   "lat": 38.393829,
+   "lng": 27.049844,
+   "district": "",
+   "description": "2025 Michelin Rehberi Türkiye: Michelin Bib Gourmand (makul fiyata çok iyi yemek).",
+   "durationMin": 60,
+   "price": {
+    "min": 700,
+    "max": 1600,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "08:00",
+    "close": "22:00",
+    "closedDays": []
+   },
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Kemeraltı köftesi",
+   "osmId": "node/12810439801",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-bib",
+    "year": 2025
+   }
+  },
+  {
+   "id": "izm-kasap-fuat",
+   "name": "Kasap Fuat",
+   "category": "yemek",
+   "lat": 38.434563,
+   "lng": 27.144556,
+   "district": "",
+   "description": "2025 Michelin Rehberi Türkiye: Michelin Rehberi tavsiyesi.",
+   "durationMin": 60,
+   "price": {
+    "min": 1500,
+    "max": 4000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "steak_house",
+    "restaurant"
+   ],
+   "osmId": "node/12806548801",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-tavsiye",
+    "year": 2025
+   }
+  },
+  {
+   "id": "izm-birinci-kordon-balik",
+   "name": "Birinci Kordon Balık",
+   "category": "yemek",
+   "lat": 38.433945,
+   "lng": 27.138425,
+   "district": "",
+   "description": "2025 Michelin Rehberi Türkiye: Michelin Rehberi tavsiyesi.",
+   "durationMin": 60,
+   "price": {
+    "min": 1500,
+    "max": 4000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "osmId": "node/5287447556",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-tavsiye",
+    "year": 2025
+   }
+  },
+  {
+   "id": "izm-scappi",
+   "name": "Scappi",
+   "category": "yemek",
+   "lat": 38.428085,
+   "lng": 27.13559,
+   "district": "",
+   "description": "2025 Michelin Rehberi Türkiye: Michelin Rehberi tavsiyesi.",
+   "durationMin": 60,
+   "price": {
+    "min": 1500,
+    "max": 4000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "italian;pizza",
+    "restaurant"
+   ],
+   "osmId": "node/12806536401",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-tavsiye",
+    "year": 2025
+   }
   }
  ]
 }

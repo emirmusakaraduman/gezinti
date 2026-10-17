@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T00:59:07.443Z",
+ "generatedAt": "2026-10-17T03:22:40.185Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -13,7 +13,7 @@
    "durationMin": 90,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -98,7 +98,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -361,7 +361,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -616,7 +616,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -672,7 +672,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -878,7 +878,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -906,7 +906,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -934,7 +934,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1198,6 +1198,81 @@
    ],
    "mustTry": "Akşam yemeği",
    "osmId": "node/10778181411",
+   "source": "kurator"
+  },
+  {
+   "id": "ank-kebap-49",
+   "name": "Kebap 49",
+   "category": "yemek",
+   "lat": 39.907398,
+   "lng": 32.860066,
+   "district": "",
+   "description": "1949'dan beri taş fırın ustalığı; geniş bahçeli.",
+   "durationMin": 60,
+   "price": {
+    "min": 600,
+    "max": 1200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Taş fırın kebap ve pide",
+   "osmId": "node/1706183095",
+   "source": "kurator"
+  },
+  {
+   "id": "ank-bogazici-lokantasi",
+   "name": "Boğaziçi Lokantası",
+   "category": "yemek",
+   "lat": 39.937911,
+   "lng": 32.859155,
+   "district": "",
+   "description": "1956'dan beri Ulus'ta Ankara tavasıyla bilinen esnaf lokantası.",
+   "durationMin": 60,
+   "price": {
+    "min": 400,
+    "max": 900,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "07:00",
+    "close": "21:00",
+    "closedDays": []
+   },
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "Ankara tava",
+   "osmId": "node/12057076369",
+   "source": "kurator"
+  },
+  {
+   "id": "ank-trilye-restoran",
+   "name": "Trilye Restoran",
+   "category": "yemek",
+   "lat": 39.894045,
+   "lng": 32.871835,
+   "district": "",
+   "description": "Ankara'nın en bilinen balık restoranlarından.",
+   "durationMin": 60,
+   "price": {
+    "min": 1500,
+    "max": 3500,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "seafood",
+    "restaurant"
+   ],
+   "mustTry": "Balık ve deniz mahsulleri",
+   "osmId": "node/112585692",
    "source": "kurator"
   }
  ]

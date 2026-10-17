@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T00:59:07.081Z",
+ "generatedAt": "2026-10-17T03:23:27.201Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -199,8 +199,8 @@
    "description": "İstanbulda bulunan tarihi su deposu.",
    "durationMin": 90,
    "price": {
-    "min": 0,
-    "max": 300,
+    "min": 300,
+    "max": 1300,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -233,7 +233,7 @@
    "durationMin": 90,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -253,15 +253,15 @@
   {
    "id": "ist-kapalicarsi",
    "name": "Kapalıçarşı",
-   "category": "tarih",
+   "category": "carsi",
    "lat": 41.010967,
    "lng": 28.968253,
    "district": "Fatih",
    "description": "Dünyanın en eski kapalı alışveriş merkezi.",
-   "durationMin": 90,
+   "durationMin": 60,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -291,7 +291,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -319,8 +319,8 @@
    "description": "İstanbul'da bulunan tarihî kule.",
    "durationMin": 45,
    "price": {
-    "min": 0,
-    "max": 300,
+    "min": 300,
+    "max": 1200,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -437,8 +437,8 @@
    "description": "İstanbul'un Beşiktaş ilçesinde tarihi yapı.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -522,7 +522,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -550,7 +550,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -611,8 +611,8 @@
    "description": "İstanbul'da eski kilise ve müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -784,8 +784,8 @@
    "description": "İstanbul Boğazı’nın Rumeli yakasında 15. yüzyılda inşa edilmiş Osmanlı kalesi.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -906,7 +906,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -993,7 +993,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1071,6 +1071,34 @@
     "views": 41253,
     "sitelinks": 30,
     "score": 5.81
+   }
+  },
+  {
+   "id": "ist-fethiye-camii",
+   "name": "Fethiye Camii",
+   "category": "tarih",
+   "lat": 41.029081,
+   "lng": 28.9464,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde kiliseden çevrilmiş tarihi cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/136456159",
+   "wikidata": "Q1420984",
+   "source": "populer",
+   "popularity": {
+    "views": 40528,
+    "sitelinks": 29,
+    "score": 5.79
    }
   },
   {
@@ -1224,8 +1252,8 @@
    "description": "İstanbul, Türkiye'de televizyon ve seyir kulesi.",
    "durationMin": 45,
    "price": {
-    "min": 0,
-    "max": 300,
+    "min": 200,
+    "max": 600,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1556,8 +1584,8 @@
    "description": "İstanbul'un Fatih ilçesinde tarihi yapı.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1775,12 +1803,12 @@
    "source": "kurator"
   },
   {
-   "id": "ist-hafiz-mustafa",
-   "name": "Hafız Mustafa",
+   "id": "ist-hafiz-mustafa-1864",
+   "name": "Hafız Mustafa 1864",
    "category": "kafe",
-   "lat": 41.007983,
-   "lng": 28.976908,
-   "district": "Fatih",
+   "lat": 41.014612,
+   "lng": 28.975651,
+   "district": "",
    "description": "1864'ten beri tatlı ve lokum; Sirkeci'deki tarihi şube.",
    "durationMin": 30,
    "price": {
@@ -1791,10 +1819,11 @@
    },
    "hours": null,
    "tags": [
-    "restaurant"
+    "coffee_shop",
+    "cafe"
    ],
    "mustTry": "Baklava, lokum ve sütlaç",
-   "osmId": "node/5108843102",
+   "osmId": "node/3104180391",
    "source": "kurator"
   },
   {
@@ -2093,6 +2122,314 @@
    "mustTry": "Menemen ve sulu yemekler",
    "osmId": "node/5149685225",
    "source": "kurator"
+  },
+  {
+   "id": "ist-kanaat-lokantasi",
+   "name": "Kanaat Lokantası",
+   "category": "yemek",
+   "lat": 41.02582,
+   "lng": 29.016472,
+   "district": "",
+   "description": "1933'ten beri Üsküdar'ın esnaf lokantası.",
+   "durationMin": 60,
+   "price": {
+    "min": 500,
+    "max": 1000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "Zeytinyağlılar ve sütlü tatlılar",
+   "osmId": "node/5427228422",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-hunkar",
+   "name": "Hünkar",
+   "category": "yemek",
+   "lat": 41.049518,
+   "lng": 28.991162,
+   "district": "",
+   "description": "1950'den beri ev yemeğinin şık hali.",
+   "durationMin": 60,
+   "price": {
+    "min": 900,
+    "max": 1800,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "Ev usulü Osmanlı yemekleri",
+   "osmId": "node/5511821197",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-konyali",
+   "name": "Konyalı",
+   "category": "yemek",
+   "lat": 41.01563,
+   "lng": 28.975962,
+   "district": "Fatih",
+   "description": "Tarihi yarımadanın köklü lokantası.",
+   "durationMin": 60,
+   "price": {
+    "min": 700,
+    "max": 1500,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Kuzu ve börekler",
+   "osmId": "node/5110347267",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-meshur-filibe-koftecisi",
+   "name": "Meşhur Filibe Köftecisi",
+   "category": "yemek",
+   "lat": 41.014099,
+   "lng": 28.97527,
+   "district": "Fatih",
+   "description": "1893'ten beri Sirkeci'de köfte.",
+   "durationMin": 60,
+   "price": {
+    "min": 400,
+    "max": 800,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Filibe köfte",
+   "osmId": "node/5108837431",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-develi",
+   "name": "Develi",
+   "category": "yemek",
+   "lat": 40.999983,
+   "lng": 28.931844,
+   "district": "Fatih",
+   "description": "1912'den beri Antep mutfağı; Samatya'daki ilk şube.",
+   "durationMin": 60,
+   "price": {
+    "min": 1000,
+    "max": 2000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Fıstıklı kebap ve çiğ köfte",
+   "osmId": "node/5088190875",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-turk-fatih-tutak",
+   "name": "TURK Fatih Tutak",
+   "category": "yemek",
+   "lat": 41.058273,
+   "lng": 28.977646,
+   "district": "",
+   "description": "2026 Michelin Rehberi Türkiye: iki Michelin yıldızı.",
+   "durationMin": 60,
+   "price": {
+    "min": 7000,
+    "max": 12000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Tadım menüsü",
+   "osmId": "node/11076786700",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-2-yildiz",
+    "year": 2026
+   }
+  },
+  {
+   "id": "ist-mikla",
+   "name": "Mikla",
+   "category": "yemek",
+   "lat": 41.031087,
+   "lng": 28.974017,
+   "district": "",
+   "description": "2026 Michelin Rehberi Türkiye: Michelin yıldızı.",
+   "durationMin": 60,
+   "price": {
+    "min": 4500,
+    "max": 9000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "osmId": "node/4209023791",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-yildiz",
+    "year": 2026
+   }
+  },
+  {
+   "id": "ist-neolokal",
+   "name": "Neolokal",
+   "category": "yemek",
+   "lat": 41.023782,
+   "lng": 28.973476,
+   "district": "",
+   "description": "2026 Michelin Rehberi Türkiye: Michelin yıldızı.",
+   "durationMin": 60,
+   "price": {
+    "min": 4500,
+    "max": 9000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "osmId": "node/6376832586",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-yildiz",
+    "year": 2026
+   }
+  },
+  {
+   "id": "ist-nicole",
+   "name": "Nicole",
+   "category": "yemek",
+   "lat": 41.03023,
+   "lng": 28.977828,
+   "district": "",
+   "description": "2026 Michelin Rehberi Türkiye: Michelin yıldızı.",
+   "durationMin": 60,
+   "price": {
+    "min": 4500,
+    "max": 9000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "osmId": "node/7005075785",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-yildiz",
+    "year": 2026
+   }
+  },
+  {
+   "id": "ist-casius",
+   "name": "Casius",
+   "category": "yemek",
+   "lat": 41.030822,
+   "lng": 28.983173,
+   "district": "",
+   "description": "2026 Michelin Rehberi Türkiye: Michelin Bib Gourmand (makul fiyata çok iyi yemek).",
+   "durationMin": 60,
+   "price": {
+    "min": 700,
+    "max": 1600,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "osmId": "node/3878343272",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-bib",
+    "year": 2026
+   }
+  },
+  {
+   "id": "ist-yanyali-fehmi-lokantasi",
+   "name": "Yanyalı Fehmi Lokantası",
+   "category": "yemek",
+   "lat": 40.990765,
+   "lng": 29.025509,
+   "district": "Kadıköy",
+   "description": "2026 Michelin Rehberi Türkiye: Michelin Bib Gourmand (makul fiyata çok iyi yemek).",
+   "durationMin": 60,
+   "price": {
+    "min": 700,
+    "max": 1600,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "21:00",
+    "closedDays": []
+   },
+   "tags": [
+    "turkish;regional",
+    "restaurant"
+   ],
+   "mustTry": "Tencere yemekleri ve tatlılar",
+   "osmId": "node/11335161041",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-bib",
+    "year": 2026
+   }
+  },
+  {
+   "id": "ist-mahir-lokantasi",
+   "name": "Mahir Lokantası",
+   "category": "yemek",
+   "lat": 41.052884,
+   "lng": 28.987094,
+   "district": "",
+   "description": "2026 Michelin Rehberi Türkiye: Michelin Bib Gourmand (makul fiyata çok iyi yemek).",
+   "durationMin": 60,
+   "price": {
+    "min": 700,
+    "max": 1600,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "osmId": "node/6290893686",
+   "source": "kurator",
+   "distinction": {
+    "kind": "michelin-bib",
+    "year": 2026
+   }
   }
  ]
 }

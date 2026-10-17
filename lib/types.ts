@@ -58,6 +58,13 @@ export const PlaceSchema = z.object({
    * "kurator": elle derlenmiş tavsiye (OSM'de doğrulanmış olabilir)
    */
   source: z.enum(["populer", "kurator"]).optional(),
+  /** Michelin Rehberi Türkiye ödülü ve yılı (yeme-içme) */
+  distinction: z
+    .object({
+      kind: z.enum(["michelin-2-yildiz", "michelin-yildiz", "michelin-bib", "michelin-tavsiye"]),
+      year: z.number().int(),
+    })
+    .optional(),
   /** Popülerlik göstergeleri (yalnızca "populer" kaynaklı yerlerde) */
   popularity: z
     .object({

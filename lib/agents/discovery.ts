@@ -54,6 +54,7 @@ Kurallar:
 - Mekanın kapalı olduğu günü (closedDays, 0=Pazar) o güne koyma.
 - Kullanıcının ilgi alanlarına öncelik ver, ama her gün en az bir yöresel lezzet olsun.
 - Gerçekten tavsiye edilecek yerleri seç: popularity alanı (Wikipedia okunma ve dil sayısından hesaplanan puan; yüksek = daha bilinen) yüksek olanları ve source "kurator" olan (elle seçilmiş köklü mekanlar) yerleri tercih et. Az bilinen bir yeri ancak güzergaha çok iyi oturuyorsa seç.
+- Yemek için michelin alanı olan yerleri öne çıkar: michelin-bib makul fiyata çok iyi yemektir ve çoğu bütçeye uyar; yıldızlı restoranlar pahalıdır, yalnızca bütçe rahatça elveriyorsa ve en fazla bir öğün için öner.
 - Bütçe kişi başı değil toplamdır; fiyatlar kişi başıdır ve aralık olarak verilir. Tahmini üst sınır bütçeyi aşmasın; ücretsiz yerlerle dengele.
 - Aynı mekanı iki kez seçme.
 - notes alanında seçtiğin önemli yerler için kısa, pratik bir ipucu yaz (ör. "Sabah erken git, kuyruk olur").
@@ -76,6 +77,7 @@ function candidatePayload(city: City, exclude: Set<string>) {
       mustTry: p.mustTry,
       source: p.source,
       popularity: p.popularity?.score,
+      michelin: p.distinction ? `${p.distinction.kind} (${p.distinction.year})` : undefined,
     }));
 }
 
@@ -162,7 +164,15 @@ async function selectWithClaude(
  * tavsiyelerin puanı yok; onlar bilinçli seçildiği için iyi bir varsayılan alır.
  */
 const CURATED_POPULARITY = 6;
-const popularity = (p: Place) => p.popularity?.score ?? CURATED_POPULARITY;
+/** Michelin ödülleri yeme-içmede popülerlik puanının yerini tutar */
+const DISTINCTION_SCORE: Record<NonNullable<Place["distinction"]>["kind"], number> = {
+  "michelin-2-yildiz": 8.5,
+  "michelin-yildiz": 8,
+  "michelin-bib": 7.5,
+  "michelin-tavsiye": 6.8,
+};
+const popularity = (p: Place) =>
+  p.popularity?.score ?? (p.distinction ? DISTINCTION_SCORE[p.distinction.kind] : CURATED_POPULARITY);
 
 /** 1 popülerlik puanı (×60) ≈ 1,5 km */
 const DISTANCE_PENALTY_PER_KM = 40;
@@ -184,11 +194,16 @@ function selectHeuristic(
   const score = (p: Place) =>
     (interest.has(p.category) ? 1000 : 0) + popularity(p) * 60 - p.price.max / 20;
   const sights = pool.filter((p) => !isMeal(p)).sort((a, b) => score(b) - score(a));
-  const meals = pool.filter(isMeal).sort((a, b) => a.price.max - b.price.max);
+  // Yemekte de en çok tavsiye edilen önce; pahalı yerler bütçe payına
+  // sığmazsa take() zaten atlar
+  const mealScore = (p: Place) => popularity(p) * 60 - p.price.max / 20;
+  const meals = pool.filter(isMeal).sort((a, b) => mealScore(b) - mealScore(a));
 
   // Ücretli kalemler için günlük pay (ulaşım ve otopark için %25 ayrılır)
   const dailyAllowance = (req.budget * 0.75) / req.days;
-  const cost = (p: Place) => p.price.max * req.travelers;
+  // Seçimde aralığın ortası; üst ucu bütçe ajanı ayrıca kontrol edip uyarır.
+  // Üst uçla seçim, ilk öğünden sonra günlük payı tüketiyordu.
+  const cost = (p: Place) => ((p.price.min + p.price.max) / 2) * req.travelers;
 
   /** Listeden o gün açık ve bütçeye sığan ilk `count` mekanı çıkar */
   const take = (list: Place[], count: number, dow: number, spent: { v: number }) => {
@@ -210,7 +225,7 @@ function selectHeuristic(
   for (let d = 0; d < req.days; d++) {
     const dow = weekday(addDays(req.startDate, d));
     const spent = { v: 0 };
-    // Yemek her gün olsun: önce en ucuz bir öğünü ayır
+    // Yemek her gün olsun: önce bütçeye sığan en çok tavsiye edilen öğünü ayır
     const firstMeal = take(meals, 1, dow, spent);
     const [seed] = take(sights, 1, dow, spent);
     if (!seed) {
@@ -229,8 +244,10 @@ function selectHeuristic(
       lat: day.reduce((s, p) => s + p.lat, 0) / day.length,
       lng: day.reduce((s, p) => s + p.lng, 0) / day.length,
     };
-    meals.sort((a, b) => haversineKm(centroid, a) - haversineKm(centroid, b));
+    const nearMeal = (p: Place) => mealScore(p) - DISTANCE_PENALTY_PER_KM * haversineKm(centroid, p);
+    meals.sort((a, b) => nearMeal(b) - nearMeal(a));
     day.push(...firstMeal, ...take(meals, MEALS_PER_DAY - 1, dow, spent));
+    meals.sort((a, b) => mealScore(b) - mealScore(a));
     days.push(day.map((p) => p.id));
   }
 

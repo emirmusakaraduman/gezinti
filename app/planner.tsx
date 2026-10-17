@@ -5,6 +5,7 @@ import { useState } from "react";
 import { dayColor } from "@/lib/colors";
 import { formatRange } from "@/lib/geo";
 import type {
+  Place,
   PlaceCategory,
   PlanWarning,
   TransitStep,
@@ -267,6 +268,7 @@ function PlanView({ plan }: { plan: TripPlan }) {
                           {stop.place.price.confidence === "tahmini" && stop.place.price.max > 0 && " (tahmini)"}
                         </span>
                       </p>
+                      <PlaceBadges place={stop.place} />
                       <p className="text-sm text-zinc-600 dark:text-zinc-400">{stop.place.description}</p>
                       {stop.place.mustTry && (
                         <p className="text-sm">Mutlaka dene: {stop.place.mustTry}</p>
@@ -281,6 +283,40 @@ function PlanView({ plan }: { plan: TripPlan }) {
         </article>
       ))}
     </section>
+  );
+}
+
+const DISTINCTION_LABEL: Record<NonNullable<Place["distinction"]>["kind"], string> = {
+  "michelin-2-yildiz": "★★ Michelin",
+  "michelin-yildiz": "★ Michelin",
+  "michelin-bib": "Michelin Bib Gourmand",
+  "michelin-tavsiye": "Michelin tavsiyesi",
+};
+
+/** Mekanın neden önerildiğini gösteren küçük rozetler */
+function PlaceBadges({ place }: { place: Place }) {
+  const badge = "mt-0.5 mr-1.5 inline-block rounded-full px-2 py-0.5 text-xs";
+  return (
+    <div>
+      {place.distinction && (
+        <span className={`${badge} bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200`}>
+          {DISTINCTION_LABEL[place.distinction.kind]} {place.distinction.year}
+        </span>
+      )}
+      {place.popularity && (
+        <span
+          className={`${badge} bg-sky-50 text-sky-800 dark:bg-sky-950 dark:text-sky-200`}
+          title={`Son 12 ayda ${place.popularity.views.toLocaleString("tr-TR")} Wikipedia okunması, ${place.popularity.sitelinks} dilde maddesi var`}
+        >
+          {place.popularity.sitelinks} dilde Wikipedia
+        </span>
+      )}
+      {place.source === "kurator" && !place.distinction && (
+        <span className={`${badge} bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200`}>
+          Köklü mekan
+        </span>
+      )}
+    </div>
   );
 }
 
