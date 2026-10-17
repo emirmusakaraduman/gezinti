@@ -1,0 +1,519 @@
+// Şehirlerin mekan listesini açık verilerden üretir.
+//
+//   node scripts/fetch-places.mjs            # tüm şehirler
+//   node scripts/fetch-places.mjs istanbul   # tek şehir
+//
+// Gezilecek yerler: OpenStreetMap'te Wikidata bağlantısı olan yerler (Overpass),
+// Wikipedia popülerliğiyle sıralanır: kaç dilde maddesi olduğu (Wikidata) ve
+// son 12 aylık tr + en görüntülenmesi (Wikimedia Pageviews).
+//
+// Yeme-içme: açık veride puan yok. Köklü ve yaygın tavsiye edilen mekanlar
+// elle derlenir (FOOD) ve OSM'de aranır; bulunamayan listeye girmez.
+//
+// Çıktı: data/cities/<şehir>.places.json (git'e girer).
+// Ham yanıtlar .cache/places altında saklanır; yeniden çalıştırmada kullanılır.
+//
+// Lisans: OSM verisi ODbL (atıf gerekir), Wikidata ve Pageviews CC0.
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+
+const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
+const CACHE = ".cache/places";
+const OVERPASS = "https://overpass-api.de/api/interpreter";
+
+// ---------- Şehirler ----------
+
+/** bbox: güney, batı, kuzey, doğu (turistik merkez; il geneli değil) */
+const CITIES = {
+  istanbul: { prefix: "ist", bbox: [40.96, 28.85, 41.2, 29.12], take: 70 },
+  izmir: { prefix: "izm", bbox: [38.36, 27.03, 38.48, 27.25], take: 45 },
+  ankara: { prefix: "ank", bbox: [39.86, 32.75, 39.97, 32.92], take: 45 },
+};
+
+/**
+ * Elle hariç tutulanlar (Wikidata kimliği → gerekçe). Popüler ama gezgin
+ * için anlamlı olmayan yerler.
+ */
+const EXCLUDE = {
+  Q48898: "Levent: iş ve ofis bölgesi",
+};
+
+/** Wikidata adı belirsiz kalanlara anlaşılır ad */
+const RENAME = {
+  Q1379299: "Eski Smyrna Ören Yeri (Bayraklı Tepekule)",
+};
+
+/** Semtler konut bölgesi de olabildiği için daha yüksek popülerlik istenir */
+const SEMT_MIN_SCORE = 4.5;
+
+/** Görüntülenmesi sorulacak en fazla aday (dil sayısına göre en bilinenler) */
+const PAGEVIEW_CANDIDATES = 250;
+const PAGEVIEW_DELAY_MS = 150;
+
+/** Bir kategoriden en fazla bu kadar yer seçilir (çeşitlilik için) */
+const CATEGORY_CAP = { tarih: 22, muze: 16, doga: 10, manzara: 8, semt: 12, carsi: 6 };
+
+// ---------- Küratörlü yeme-içme ----------
+// pattern: OSM adında aranacak ifade (büyük/küçük harf duyarsız)
+// near: yaklaşık konum; aynı adlı şubeler arasından buna en yakını seçilir
+
+const yemek = (min, max) => ({ min, max });
+
+const FOOD = {
+  istanbul: [
+    { pattern: "Karaköy Güllüoğlu", near: [41.0236, 28.9774], category: "kafe", price: yemek(250, 500), mustTry: "Fıstıklı baklava ve su böreği", description: "1949'dan beri İstanbul'un en bilinen baklavacılarından." },
+    { pattern: "^Hafız Mustafa( 1864)?$", near: [41.0146, 28.9763], category: "kafe", price: yemek(250, 500), mustTry: "Baklava, lokum ve sütlaç", description: "1864'ten beri tatlı ve lokum; Sirkeci'deki tarihi şube." },
+    { pattern: "Çiya Sofrası", near: [40.9905, 29.0261], category: "yemek", price: yemek(600, 1200), mustTry: "Günün tencere yemekleri ve kebaplar", description: "Anadolu mutfağının unutulmuş yemeklerini yaşatan lokanta." },
+    // "Meşhur Sultanahmet Köftecisi" ayrı bir işletme; asıl tarihi mekan bu
+    { pattern: "Tarihi Sultanahmet Köftecisi|Selim Usta", near: [41.008, 28.9771], category: "yemek", price: yemek(450, 800), mustTry: "Izgara köfte ve piyaz", description: "1920'den beri tarihi yarımadanın köfte lokantası." },
+    { pattern: "Pandeli", near: [41.0166, 28.9706], category: "yemek", price: yemek(900, 1800), mustTry: "Patlıcan böreği ve kuzu", description: "Mısır Çarşısı'nın üstünde, çinili salonlu tarihi restoran." },
+    { pattern: "^Hamdi", near: [41.0172, 28.9717], category: "yemek", price: yemek(900, 1800), mustTry: "Fıstıklı kebap ve lahmacun", description: "Haliç manzaralı, Güneydoğu mutfağıyla ünlü kebapçı." },
+    { pattern: "Vefa Bozacısı", near: [41.0156, 28.9575], category: "kafe", price: yemek(80, 200), mustTry: "Leblebili boza", description: "1876'dan beri boza yapan tarihi dükkan." },
+    { pattern: "Karaköy Lokantası", near: [41.0245, 28.977], category: "yemek", price: yemek(700, 1400), mustTry: "Öğlen esnaf yemekleri, akşam meze", description: "Turkuaz çinili salonuyla Karaköy'ün sevilen lokantası." },
+    { pattern: "Kurukahveci Mehmet Efendi", near: [41.0168, 28.9709], category: "kafe", price: yemek(100, 300), mustTry: "Taze çekilmiş Türk kahvesi", description: "1871'den beri Türk kahvesi kavuran tarihi dükkan." },
+    { pattern: "Mandabatmaz", near: [41.0333, 28.9767], category: "kafe", price: yemek(80, 200), mustTry: "Yoğun köpüklü Türk kahvesi", description: "İstiklal'in arka sokağında efsanevi küçük kahveci." },
+    { pattern: "Kızılkayalar", near: [41.0365, 28.9862], category: "yemek", price: yemek(80, 200), mustTry: "Islak hamburger", description: "Taksim'in gece yarısı klasiği ıslak hamburger." },
+    { pattern: "Asmalı Cavit", near: [41.0302, 28.9752], category: "yemek", price: yemek(1200, 2500), mustTry: "Meze ve balık", description: "Asmalımescit'in köklü meyhanesi." },
+    { pattern: "Baylan", near: [40.9893, 29.0255], category: "kafe", price: yemek(200, 450), mustTry: "Kup Griye", description: "1923'ten beri Kadıköy'ün tarihi pastanesi." },
+    { pattern: "Lades", near: [41.0346, 28.9785], category: "yemek", price: yemek(250, 500), mustTry: "Menemen ve sulu yemekler", description: "Beyoğlu'nun esnaf lokantası klasiği." },
+  ],
+  izmir: [
+    // OSM'de "dostlar firini" olarak kayıtlı (ı/i)
+    { pattern: "Dostlar F[ıi]r[ıi]n[ıi]", name: "Dostlar Fırını", near: [38.4369, 27.143], category: "kafe", price: yemek(80, 200), mustTry: "Boyoz ve haşlanmış yumurta", description: "Alsancak'ın en bilinen boyozcusu." },
+    { pattern: "Reyhan", near: [38.4352, 27.1446], category: "kafe", price: yemek(200, 450), mustTry: "Pasta ve şam tatlısı", description: "İzmir'in köklü pastanesi." },
+    { pattern: "Sevinç", near: [38.4355, 27.1428], category: "kafe", price: yemek(150, 400), mustTry: "Pasta ve kurabiye", description: "Alsancak'ta 1945'ten beri pastane." },
+    { pattern: "Tavacı Recep", near: [38.4362, 27.1438], category: "yemek", price: yemek(500, 1000), mustTry: "Tavada et ve kuzu", description: "Tava kebabıyla bilinen köklü lokanta." },
+    { pattern: "Deniz Restaurant", near: [38.4367, 27.1405], category: "yemek", price: yemek(1000, 2000), mustTry: "Balık ve deniz mahsulleri", description: "Kordon'da körfez manzaralı balık restoranı." },
+    { pattern: "^Topçu$", near: [38.4261, 27.1331], category: "yemek", price: yemek(300, 600), mustTry: "Çöp şiş", description: "İzmir usulü çöp şişin bilinen adresi." },
+    { pattern: "Şevkiye", near: [38.4195, 27.1335], category: "kafe", price: yemek(60, 180), mustTry: "Boyoz", description: "Kemeraltı'nın eski boyoz fırını." },
+  ],
+  ankara: [
+    { pattern: "Uludağ", near: [39.9419, 32.8547], category: "yemek", price: yemek(600, 1200), mustTry: "İskender kebap", description: "Ulus'ta 1956'dan beri İskender kebap." },
+    { pattern: "Masabaşı", near: [39.9192, 32.8593], category: "yemek", price: yemek(600, 1200), mustTry: "Kebap ve lahmacun", description: "Ankara'nın en bilinen kebapçılarından." },
+    { pattern: "Washington", near: [39.9405, 32.8645], category: "yemek", price: yemek(800, 1600), mustTry: "Ankara tava ve kuzu", description: "Ankara Kalesi'nde tarihi konakta restoran." },
+    { pattern: "Zenger Paşa", near: [39.9402, 32.8641], category: "yemek", price: yemek(600, 1200), mustTry: "Gözleme ve kuzu tandır", description: "Kale içinde şehir manzaralı tarihi konak." },
+    { pattern: "Hacı Arif Bey", near: [39.9086, 32.8551], category: "yemek", price: yemek(600, 1200), mustTry: "Kebap ve künefe", description: "Ankara'nın bilinen kebapçılarından." },
+    { pattern: "Çengelhan", near: [39.9402, 32.8639], category: "yemek", price: yemek(800, 1600), mustTry: "Akşam yemeği", description: "Tarihi Çengelhan'da restoran." },
+    { pattern: "Akman Boza", near: [39.9404, 32.8547], category: "kafe", price: yemek(80, 250), mustTry: "Boza ve tavuk göğsü", description: "Ulus'ta tarihi boza ve pasta salonu." },
+  ],
+};
+
+// ---------- Yardımcılar ----------
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+mkdirSync(CACHE, { recursive: true });
+
+/** Yanıtı önbellekten ver ya da indirip önbelleğe yaz */
+async function cachedJson(key, fetcher) {
+  const file = `${CACHE}/${createHash("sha1").update(key).digest("hex")}.json`;
+  if (existsSync(file)) return JSON.parse(readFileSync(file, "utf8"));
+  const data = await fetcher();
+  writeFileSync(file, JSON.stringify(data));
+  return data;
+}
+
+async function getJson(url, init = {}, tries = 6) {
+  for (let i = 1; ; i++) {
+    const res = await fetch(url, { ...init, headers: { "User-Agent": USER_AGENT, ...(init.headers ?? {}) } });
+    if (res.ok) return res.json();
+    if (res.status === 404) return null;
+    if (i >= tries || ![429, 500, 502, 503, 504].includes(res.status)) {
+      throw new Error(`${res.status} ${url.slice(0, 120)}`);
+    }
+    // Sunucu ne kadar bekleneceğini söylüyorsa ona uy
+    const retryAfter = Number(res.headers.get("retry-after"));
+    await sleep(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 3000 * i);
+  }
+}
+
+function overpass(query) {
+  return cachedJson(`overpass|${query}`, () =>
+    getJson(OVERPASS, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `data=${encodeURIComponent(query)}`,
+    }),
+  );
+}
+
+/** Basit eşzamanlılık sınırıyla map */
+async function pool(items, limit, fn) {
+  const out = new Array(items.length);
+  let next = 0;
+  await Promise.all(
+    Array.from({ length: limit }, async () => {
+      while (next < items.length) {
+        const i = next++;
+        out[i] = await fn(items[i], i);
+      }
+    }),
+  );
+  return out;
+}
+
+function haversineM(a, b) {
+  const R = 6371000;
+  const rad = (d) => (d * Math.PI) / 180;
+  const h =
+    Math.sin(rad(b[0] - a[0]) / 2) ** 2 +
+    Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(rad(b[1] - a[1]) / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+const slug = (s) =>
+  s
+    .toLocaleLowerCase("tr")
+    .replace(/[çğıöşü]/g, (c) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u" })[c])
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40);
+
+const center = (el) => (el.type === "node" ? [el.lat, el.lon] : el.center ? [el.center.lat, el.center.lon] : null);
+
+// ---------- Açılış saatleri ----------
+
+const DAY = { Su: 0, Mo: 1, Tu: 2, We: 3, Th: 4, Fr: 5, Sa: 6 };
+const ORDER = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+
+function expandDays(spec) {
+  const days = new Set();
+  for (const part of spec.split(",")) {
+    const [a, b] = part.trim().split("-");
+    if (!(a in DAY)) return null;
+    if (!b) {
+      days.add(DAY[a]);
+      continue;
+    }
+    if (!(b in DAY)) return null;
+    let i = ORDER.indexOf(a);
+    for (let guard = 0; guard < 7; guard++) {
+      days.add(DAY[ORDER[i]]);
+      if (ORDER[i] === b) break;
+      i = (i + 1) % 7;
+    }
+  }
+  return days;
+}
+
+/**
+ * OSM opening_hours'ın sık görülen basit biçimlerini çevirir
+ * ("Mo-Su 09:00-19:00", "Tu-Su 09:00-17:00; Mo off"). Karmaşıksa null.
+ */
+function parseOpeningHours(raw) {
+  if (!raw) return null;
+  if (raw.trim() === "24/7") return null;
+  const open = new Set();
+  let start = Infinity;
+  let end = -Infinity;
+  for (const rule of raw.split(";").map((r) => r.trim()).filter(Boolean)) {
+    if (/^PH\b/.test(rule) || /\boff$/.test(rule)) continue;
+    const m = rule.match(/^([A-Za-z,\- ]+)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/) ?? rule.match(/^()(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+    if (!m) return null;
+    const days = m[1] ? expandDays(m[1].replace(/\s/g, "")) : new Set([0, 1, 2, 3, 4, 5, 6]);
+    if (!days) return null;
+    days.forEach((d) => open.add(d));
+    const [s, e] = [m[2], m[3]].map((t) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3)));
+    start = Math.min(start, s);
+    end = Math.max(end, e === 0 ? 24 * 60 - 1 : e);
+  }
+  if (!open.size) return null;
+  const hhmm = (t) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
+  return {
+    open: hhmm(start),
+    close: hhmm(Math.min(end, 23 * 60 + 59)),
+    closedDays: [0, 1, 2, 3, 4, 5, 6].filter((d) => !open.has(d)),
+  };
+}
+
+// ---------- Kategori, süre, fiyat ----------
+
+function categorize(tags) {
+  const name = tags.name ?? "";
+  // Saray ve kasırlar çoğunlukla müze; bahçe etiketiyle "doğa" sayılmasınlar
+  if (/^(museum|gallery)$/.test(tags.tourism ?? "") || /Saray(ı)?\b|Kasr(ı)?\b|Köşk(ü)?\b/.test(name)) return "muze";
+  if (tags.tourism === "viewpoint" || tags.man_made === "tower" || /Kule(si)?\b/.test(name)) return "manzara";
+  // Park olmayan tarihi yapılar (ör. çeşmeler su etiketiyle "doğa" sayılıyordu)
+  if (tags.historic && !tags.leisure) return "tarih";
+  if (/^(park|garden|nature_reserve)$/.test(tags.leisure ?? "") || tags.natural || /^(zoo|aquarium)$/.test(tags.tourism ?? "")) return "doga";
+  if (/^(quarter|neighbourhood|suburb)$/.test(tags.place ?? "")) return "semt";
+  if (tags.amenity === "marketplace" || /Çarşı(sı)?\b|Bedesten/.test(name)) return "carsi";
+  if (tags.historic || tags.amenity === "place_of_worship" || tags.tourism === "attraction") return "tarih";
+  return null;
+}
+
+const DURATION = { muze: 90, tarih: 45, doga: 60, manzara: 45, semt: 90, carsi: 60 };
+
+function price(category, tags) {
+  const est = (min, max) => ({ min, max, confidence: "tahmini", lastVerified: null });
+  if (tags.fee === "no" || tags.amenity === "place_of_worship") return est(0, 0);
+  if (category === "semt" || category === "carsi") return est(0, 0);
+  if (category === "doga") return tags.fee === "yes" ? est(50, 300) : est(0, 0);
+  if (category === "muze") return est(150, 700);
+  if (tags.fee === "yes") return est(100, 500);
+  // Ücret bilgisi yok: çoğu tarihi yapı ücretsiz, bazıları değil
+  return est(0, 300);
+}
+
+// ---------- Gezilecek yerler ----------
+
+/**
+ * İnsan ve olay türleri. Alt sınıf zinciri (P279*) sorgusu zaman aşımına
+ * uğradığı için yaygın türler doğrudan listelenir.
+ */
+const NOT_PLACE_CLASSES = [
+  "Q5", // insan
+  "Q1190554", // olay (occurrence)
+  "Q1656682", // olay (event)
+  "Q13418847", // tarihi olay
+  "Q273120", // protesto
+  "Q175331", // gösteri
+  "Q178561", // muharebe
+  "Q188055", // kuşatma
+  "Q124734", // isyan
+  "Q3917681", // büyükelçilik (bahçesi park olarak etiketlenmiş olabiliyor)
+  "Q7843791", // diplomatik misyon
+];
+
+/** Verilen Wikidata öğelerinden insan ya da olay olanlar */
+async function humansAndEvents(qids) {
+  const out = new Set();
+  const classes = NOT_PLACE_CLASSES.map((c) => `wd:${c}`).join(" ");
+  for (let i = 0; i < qids.length; i += 150) {
+    const values = qids.slice(i, i + 150).map((q) => `wd:${q}`).join(" ");
+    const sparql = `SELECT ?item WHERE { VALUES ?item { ${values} } VALUES ?cls { ${classes} } ?item wdt:P31 ?cls }`;
+    const url = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(sparql)}`;
+    const d = await cachedJson(`sparql|${sparql}`, () => getJson(url, { headers: { Accept: "application/sparql-results+json" } }));
+    for (const b of d.results.bindings) out.add(b.item.value.split("/").pop());
+  }
+  return out;
+}
+
+async function attractions(cityId, cfg) {
+  const [s, w, n, e] = cfg.bbox;
+  const bb = `(${s},${w},${n},${e})`;
+  const query = `[out:json][timeout:180];
+(
+  nwr["wikidata"]["tourism"~"^(attraction|museum|gallery|viewpoint|zoo|aquarium)$"]${bb};
+  nwr["wikidata"]["historic"]${bb};
+  nwr["wikidata"]["leisure"~"^(park|garden|nature_reserve)$"]${bb};
+  nwr["wikidata"]["amenity"~"^(place_of_worship|marketplace)$"]${bb};
+  nwr["wikidata"]["place"~"^(quarter|neighbourhood|suburb)$"]${bb};
+);
+out center tags;`;
+  const data = await overpass(query);
+  console.log(`  OSM: ${data.elements.length} öğe`);
+
+  // Aynı Wikidata öğesine bağlı birden çok OSM nesnesi olabilir; birini al
+  const byQid = new Map();
+  for (const el of data.elements) {
+    const tags = el.tags ?? {};
+    const qid = tags.wikidata;
+    const pos = center(el);
+    const category = categorize(tags);
+    if (!/^Q\d+$/.test(qid ?? "") || !pos || !category || !tags.name) continue;
+    if (!byQid.has(qid)) byQid.set(qid, { qid, tags, pos, category, osmId: `${el.type}/${el.id}` });
+  }
+  // OSM'de bazı türbeler gömülü kişinin, bazı parklar bir olayın Wikidata
+  // kaydına bağlanmış; o zaman popülerlik yere değil kişiye/olaya ait olur.
+  const notPlaces = await humansAndEvents([...byQid.keys()]);
+  const items = [...byQid.values()].filter((x) => !notPlaces.has(x.qid) && !(x.qid in EXCLUDE));
+  console.log(`  Wikidata'lı aday: ${items.length} (kişi/olay olduğu için ${notPlaces.size} elendi)`);
+
+  // Wikidata: dil sayısı, Türkçe ad/açıklama, tr/en Wikipedia başlıkları
+  const entities = {};
+  for (let i = 0; i < items.length; i += 50) {
+    const ids = items.slice(i, i + 50).map((x) => x.qid).join("|");
+    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=sitelinks|labels|descriptions&languages=tr|en&ids=${ids}`;
+    const d = await cachedJson(`wd|${ids}`, () => getJson(url));
+    Object.assign(entities, d.entities);
+  }
+
+  // Wikimedia Pageviews: son 12 tam ay, tr + en
+  const now = new Date();
+  const endMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 0));
+  const startMonth = new Date(Date.UTC(endMonth.getUTCFullYear() - 1, endMonth.getUTCMonth() + 1, 1));
+  const ymd = (d) => d.toISOString().slice(0, 10).replace(/-/g, "");
+  const range = `${ymd(startMonth)}00/${ymd(endMonth)}00`;
+
+  async function views(project, title) {
+    if (!title) return 0;
+    const t = encodeURIComponent(title.replace(/ /g, "_"));
+    const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/${project}/all-access/user/${t}/monthly/${range}`;
+    const d = await cachedJson(`pv|${url}`, async () => {
+      await sleep(PAGEVIEW_DELAY_MS); // nazik ol: önbellekte olmayan her istekten önce
+      return getJson(url);
+    });
+    return (d?.items ?? []).reduce((sum, it) => sum + it.views, 0);
+  }
+
+  // Görüntülenme sorgusu pahalı (madde başına 2 istek); önce ucuz olan dil
+  // sayısıyla en bilinen adayları ayır, yalnızca onları sor
+  const withLinks = items
+    .map((it) => {
+      const ent = entities[it.qid] ?? {};
+      const sitelinks = Object.keys(ent.sitelinks ?? {}).filter((k) => k.endsWith("wiki") && k !== "commonswiki").length;
+      return { ...it, ent, sitelinks };
+    })
+    .filter((it) => it.sitelinks >= 2)
+    .sort((a, b) => b.sitelinks - a.sitelinks)
+    .slice(0, PAGEVIEW_CANDIDATES);
+  console.log(`  görüntülenmesi sorulacak: ${withLinks.length}`);
+
+  const scored = await pool(withLinks, 2, async (it) => {
+    const { ent, sitelinks } = it;
+    const tr = await views("tr.wikipedia", ent.sitelinks?.trwiki?.title);
+    const en = await views("en.wikipedia", ent.sitelinks?.enwiki?.title);
+    const total = tr + en;
+    // Görüntülenme ağırlıklı; dil sayısı uluslararası bilinirliği yansıtır
+    const score = Math.round((Math.log10(total + 10) + 0.8 * Math.log10(sitelinks + 1)) * 100) / 100;
+    return { ...it, views: total, score };
+  });
+
+  // Asgari bilinirlik: birkaç dilde maddesi ya da kayda değer okunması olsun
+  const ranked = scored
+    .filter((x) => x.sitelinks >= 3 || x.views >= 5000)
+    .filter((x) => x.category !== "semt" || x.score >= SEMT_MIN_SCORE)
+    .sort((a, b) => b.score - a.score);
+
+  const counts = {};
+  const chosen = [];
+  for (const x of ranked) {
+    if (chosen.length >= cfg.take) break;
+    if ((counts[x.category] ?? 0) >= CATEGORY_CAP[x.category]) continue;
+    // Çok yakın iki öğeden (ör. cami ve avlusu) daha popüler olanı yeter
+    if (chosen.some((c) => haversineM(c.pos, x.pos) < 60)) continue;
+    counts[x.category] = (counts[x.category] ?? 0) + 1;
+    chosen.push(x);
+  }
+  console.log(`  seçilen: ${chosen.length}`, counts);
+
+  return chosen.map((x, rank) => {
+    const name = RENAME[x.qid] ?? x.ent.labels?.tr?.value ?? x.tags["name:tr"] ?? x.tags.name;
+    const desc = x.ent.descriptions?.tr?.value ?? x.ent.descriptions?.en?.value ?? "";
+    return {
+      id: `${cfg.prefix}-${slug(name)}`,
+      name,
+      category: x.category,
+      lat: Math.round(x.pos[0] * 1e6) / 1e6,
+      lng: Math.round(x.pos[1] * 1e6) / 1e6,
+      district: x.tags["addr:district"] ?? x.tags["addr:suburb"] ?? "",
+      description: desc ? desc[0].toLocaleUpperCase("tr") + desc.slice(1) + "." : "",
+      // En popüler müzelere ve çok bilinen tarihi yerlere daha uzun süre ayır
+      durationMin:
+        x.category === "muze" && rank < 10
+          ? 120
+          : x.category === "tarih" && x.score >= 6.5
+            ? 90
+            : DURATION[x.category],
+      price: price(x.category, x.tags),
+      hours: parseOpeningHours(x.tags.opening_hours),
+      tags: [x.tags.historic, x.tags.tourism, x.tags.leisure, x.tags.amenity].filter(Boolean),
+      osmId: x.osmId,
+      wikidata: x.qid,
+      source: "populer",
+      popularity: { views: x.views, sitelinks: x.sitelinks, score: x.score },
+    };
+  });
+}
+
+// ---------- Yeme-içme ----------
+
+async function food(cityId, cfg) {
+  const list = FOOD[cityId] ?? [];
+  if (!list.length) return [];
+  const [s, w, n, e] = cfg.bbox;
+  const bb = `(${s - 0.03},${w - 0.03},${n + 0.03},${e + 0.03})`;
+  const names = list.map((f) => f.pattern).join("|");
+  const query = `[out:json][timeout:120];
+(
+  nwr["name"~"${names}",i]["amenity"~"^(restaurant|cafe|fast_food|ice_cream|pub|bar)$"]${bb};
+  nwr["name"~"${names}",i]["shop"~"^(pastry|confectionery|bakery|coffee|deli)$"]${bb};
+);
+out center tags;`;
+  const data = await overpass(query);
+
+  const best = (elements, f, maxM) => {
+    const re = new RegExp(f.pattern, "i");
+    return elements
+      .filter((el) => re.test(el.tags?.name ?? "") && center(el))
+      .map((el) => ({ el, d: haversineM(center(el), f.near) }))
+      .filter((m) => m.d < maxM)
+      .sort((a, b) => a.d - b.d)[0];
+  };
+
+  // Etiketle bulunamayanlar için etiketsiz arama (ör. Masabaşı'nda restoran
+  // etiketi yok); yanlış eşleşmeyi önlemek için daha dar mesafe
+  const missing = list.filter((f) => !best(data.elements, f, 3000));
+  let untagged = [];
+  if (missing.length) {
+    const q2 = `[out:json][timeout:120];
+nwr["name"~"${missing.map((f) => f.pattern).join("|")}",i][!"highway"][!"landuse"][!"military"]${bb};
+out center tags;`;
+    untagged = (await overpass(q2)).elements;
+  }
+
+  const out = [];
+  for (const f of list) {
+    const match = best(data.elements, f, 3000) ?? best(untagged, f, 1500);
+    if (!match) {
+      console.log(`  ✗ OSM'de bulunamadı, atlandı: ${f.pattern}`);
+      continue;
+    }
+    const { el } = match;
+    const pos = center(el);
+    console.log(`  ✓ ${f.pattern} → ${el.tags.name} (${Math.round(match.d)} m)`);
+    // OSM adı bozuk yazılmışsa (ör. küçük harf) küratörlü adı kullan
+    const name = f.name ?? el.tags.name;
+    out.push({
+      id: `${cfg.prefix}-${slug(name)}`,
+      name,
+      category: f.category,
+      lat: Math.round(pos[0] * 1e6) / 1e6,
+      lng: Math.round(pos[1] * 1e6) / 1e6,
+      district: el.tags["addr:district"] ?? el.tags["addr:suburb"] ?? "",
+      description: f.description,
+      durationMin: f.category === "kafe" ? 30 : 60,
+      price: { ...f.price, confidence: "tahmini", lastVerified: null },
+      hours: parseOpeningHours(el.tags.opening_hours),
+      tags: [el.tags.cuisine, el.tags.amenity ?? el.tags.shop].filter(Boolean),
+      mustTry: f.mustTry,
+      osmId: `${el.type}/${el.id}`,
+      source: "kurator",
+    });
+  }
+  return out;
+}
+
+// ---------- Çalıştır ----------
+
+const selected = process.argv[2] ? [process.argv[2]] : Object.keys(CITIES);
+for (const cityId of selected) {
+  const cfg = CITIES[cityId];
+  if (!cfg) throw new Error(`Bilinmeyen şehir: ${cityId}`);
+  console.log(`\n========== ${cityId} ==========`);
+  const places = [...(await attractions(cityId, cfg)), ...(await food(cityId, cfg))];
+
+  // Kimlikler benzersiz olsun
+  const seen = new Map();
+  for (const p of places) {
+    const k = seen.get(p.id) ?? 0;
+    seen.set(p.id, k + 1);
+    if (k) p.id = `${p.id}-${k + 1}`;
+  }
+
+  const file = `data/cities/${cityId}.places.json`;
+  writeFileSync(
+    file,
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        sources: "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
+        places,
+      },
+      null,
+      1,
+    ) + "\n",
+  );
+  console.log(`Yazıldı: ${file} (${places.length} mekan)`);
+}

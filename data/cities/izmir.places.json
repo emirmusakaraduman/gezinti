@@ -1,0 +1,1037 @@
+{
+ "generatedAt": "2026-10-17T00:59:07.323Z",
+ "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
+ "places": [
+  {
+   "id": "izm-eski-smyrna-oren-yeri-bayrakli-tepekule",
+   "name": "Eski Smyrna Ören Yeri (Bayraklı Tepekule)",
+   "category": "tarih",
+   "lat": 38.463923,
+   "lng": 27.170235,
+   "district": "",
+   "description": "İzmir'de bulunan antik şehir.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "archaeological_site",
+    "attraction"
+   ],
+   "osmId": "way/37291336",
+   "wikidata": "Q1379299",
+   "source": "populer",
+   "popularity": {
+    "views": 257278,
+    "sitelinks": 30,
+    "score": 6.6
+   }
+  },
+  {
+   "id": "izm-izmir-saat-kulesi",
+   "name": "İzmir Saat Kulesi",
+   "category": "manzara",
+   "lat": 38.418875,
+   "lng": 27.128695,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir saat kulesi.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "monument"
+   ],
+   "osmId": "way/863380997",
+   "wikidata": "Q3696052",
+   "source": "populer",
+   "popularity": {
+    "views": 42424,
+    "sitelinks": 19,
+    "score": 5.67
+   }
+  },
+  {
+   "id": "izm-tarihi-asansor",
+   "name": "Tarihî Asansör",
+   "category": "manzara",
+   "lat": 38.408786,
+   "lng": 27.117476,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir asansör.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction"
+   ],
+   "osmId": "way/882072895",
+   "wikidata": "Q4803558",
+   "source": "populer",
+   "popularity": {
+    "views": 49153,
+    "sitelinks": 14,
+    "score": 5.63
+   }
+  },
+  {
+   "id": "izm-ataturk-maski",
+   "name": "Atatürk Maskı",
+   "category": "tarih",
+   "lat": 38.406035,
+   "lng": 27.145592,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir heykel.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "monument"
+   ],
+   "osmId": "node/8006698029",
+   "wikidata": "Q48816032",
+   "source": "populer",
+   "popularity": {
+    "views": 15697,
+    "sitelinks": 14,
+    "score": 5.14
+   }
+  },
+  {
+   "id": "izm-kadifekale",
+   "name": "Kadifekale",
+   "category": "tarih",
+   "lat": 38.413784,
+   "lng": 27.144956,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir kale.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "castle"
+   ],
+   "osmId": "node/1936293144",
+   "wikidata": "Q4810717",
+   "source": "populer",
+   "popularity": {
+    "views": 14568,
+    "sitelinks": 12,
+    "score": 5.05
+   }
+  },
+  {
+   "id": "izm-izmir-agorasi",
+   "name": "İzmir Agorası",
+   "category": "muze",
+   "lat": 38.418981,
+   "lng": 27.138414,
+   "district": "Konak",
+   "description": "İzmir'de bulunan antik bir meydan.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "ruins",
+    "museum"
+   ],
+   "osmId": "way/256317190",
+   "wikidata": "Q2827071",
+   "source": "populer",
+   "popularity": {
+    "views": 17058,
+    "sitelinks": 7,
+    "score": 4.95
+   }
+  },
+  {
+   "id": "izm-kemeralti",
+   "name": "Kemeraltı",
+   "category": "semt",
+   "lat": 38.41918,
+   "lng": 27.132694,
+   "district": "",
+   "description": "İzmir, Türkiye'de tarihî bir çarşı.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/8417578519",
+   "wikidata": "Q6386921",
+   "source": "populer",
+   "popularity": {
+    "views": 12446,
+    "sitelinks": 7,
+    "score": 4.82
+   }
+  },
+  {
+   "id": "izm-hisar-camii",
+   "name": "Hisar Camii",
+   "category": "tarih",
+   "lat": 38.421492,
+   "lng": 27.133587,
+   "district": "Konak",
+   "description": "İzmir, Türkiye'de bir cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/49422242",
+   "wikidata": "Q5772358",
+   "source": "populer",
+   "popularity": {
+    "views": 8854,
+    "sitelinks": 11,
+    "score": 4.81
+   }
+  },
+  {
+   "id": "izm-kulturpark",
+   "name": "Kültürpark",
+   "category": "doga",
+   "lat": 38.427837,
+   "lng": 27.145478,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir park.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction",
+    "park"
+   ],
+   "osmId": "way/555908291",
+   "wikidata": "Q6067386",
+   "source": "populer",
+   "popularity": {
+    "views": 7438,
+    "sitelinks": 9,
+    "score": 4.67
+   }
+  },
+  {
+   "id": "izm-tcg-pirireis-s-343",
+   "name": "TCG Pirireis (S-343)",
+   "category": "muze",
+   "lat": 38.412367,
+   "lng": 27.034825,
+   "district": "",
+   "description": "1951 Tang-class submarine.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "ship",
+    "museum"
+   ],
+   "osmId": "way/173066986",
+   "wikidata": "Q4817276",
+   "source": "populer",
+   "popularity": {
+    "views": 9398,
+    "sitelinks": 6,
+    "score": 4.65
+   }
+  },
+  {
+   "id": "izm-aziz-yuhanna-katedrali",
+   "name": "Aziz Yuhanna Katedrali",
+   "category": "tarih",
+   "lat": 38.428776,
+   "lng": 27.139631,
+   "district": "Konak",
+   "description": "İzmir, Türkiye'de bir katedral.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction",
+    "place_of_worship"
+   ],
+   "osmId": "way/736310381",
+   "wikidata": "Q6418951",
+   "source": "populer",
+   "popularity": {
+    "views": 5109,
+    "sitelinks": 12,
+    "score": 4.6
+   }
+  },
+  {
+   "id": "izm-izmir-arkeoloji-muzesi",
+   "name": "İzmir Arkeoloji Müzesi",
+   "category": "muze",
+   "lat": 38.413935,
+   "lng": 27.128067,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "08:30",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/4815186885",
+   "wikidata": "Q6102069",
+   "source": "populer",
+   "popularity": {
+    "views": 4495,
+    "sitelinks": 10,
+    "score": 4.49
+   }
+  },
+  {
+   "id": "izm-aziz-polikarp-kilisesi",
+   "name": "Aziz Polikarp Kilisesi",
+   "category": "tarih",
+   "lat": 38.425682,
+   "lng": 27.135698,
+   "district": "Konak",
+   "description": "İzmir, Türkiye'de bir kilise.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/547240859",
+   "wikidata": "Q54413070",
+   "source": "populer",
+   "popularity": {
+    "views": 4247,
+    "sitelinks": 10,
+    "score": 4.46
+   }
+  },
+  {
+   "id": "izm-bet-israel-sinagogu",
+   "name": "Bet İsrael Sinagogu",
+   "category": "tarih",
+   "lat": 38.409095,
+   "lng": 27.116208,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir sinagog.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/881972707",
+   "wikidata": "Q4897154",
+   "source": "populer",
+   "popularity": {
+    "views": 4445,
+    "sitelinks": 7,
+    "score": 4.37
+   }
+  },
+  {
+   "id": "izm-izmir-ataturk-aniti",
+   "name": "İzmir Atatürk Anıtı",
+   "category": "tarih",
+   "lat": 38.428902,
+   "lng": 27.134486,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir anıt.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "memorial"
+   ],
+   "osmId": "node/6372383188",
+   "wikidata": "Q6086895",
+   "source": "populer",
+   "popularity": {
+    "views": 4955,
+    "sitelinks": 6,
+    "score": 4.37
+   }
+  },
+  {
+   "id": "izm-salepcioglu-camii",
+   "name": "Salepçioğlu Camii",
+   "category": "tarih",
+   "lat": 38.416994,
+   "lng": 27.132461,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/304963684",
+   "wikidata": "Q7404289",
+   "source": "populer",
+   "popularity": {
+    "views": 4319,
+    "sitelinks": 6,
+    "score": 4.31
+   }
+  },
+  {
+   "id": "izm-yesilova-hoyugu",
+   "name": "Yeşilova Höyüğü",
+   "category": "tarih",
+   "lat": 38.441728,
+   "lng": 27.214359,
+   "district": "",
+   "description": "İzmir, Türkiye'de arkeolojik sit.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "archaeological_site"
+   ],
+   "osmId": "way/78432040",
+   "wikidata": "Q8053378",
+   "source": "populer",
+   "popularity": {
+    "views": 6727,
+    "sitelinks": 3,
+    "score": 4.31
+   }
+  },
+  {
+   "id": "izm-izmir-muze-gemiler",
+   "name": "İzmir Müze Gemiler",
+   "category": "muze",
+   "lat": 38.412144,
+   "lng": 27.03396,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "17:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/5494664308",
+   "wikidata": "Q8080136",
+   "source": "populer",
+   "popularity": {
+    "views": 5367,
+    "sitelinks": 4,
+    "score": 4.29
+   }
+  },
+  {
+   "id": "izm-ilk-kursun-aniti",
+   "name": "İlk Kurşun Anıtı",
+   "category": "tarih",
+   "lat": 38.419396,
+   "lng": 27.128432,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir anıt.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "memorial"
+   ],
+   "osmId": "node/8440791220",
+   "wikidata": "Q6058600",
+   "source": "populer",
+   "popularity": {
+    "views": 5641,
+    "sitelinks": 3,
+    "score": 4.23
+   }
+  },
+  {
+   "id": "izm-kestanepazari-camii",
+   "name": "Kestanepazarı Camii",
+   "category": "tarih",
+   "lat": 38.419999,
+   "lng": 27.134876,
+   "district": "",
+   "description": "İzmir'in Konak ilçesinde tarihi cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/304963685",
+   "wikidata": "Q6395213",
+   "source": "populer",
+   "popularity": {
+    "views": 3883,
+    "sitelinks": 5,
+    "score": 4.21
+   }
+  },
+  {
+   "id": "izm-izmir-ataturk-muzesi",
+   "name": "İzmir Atatürk Müzesi",
+   "category": "muze",
+   "lat": 38.435693,
+   "lng": 27.140567,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/4167431689",
+   "wikidata": "Q24883371",
+   "source": "populer",
+   "popularity": {
+    "views": 4041,
+    "sitelinks": 4,
+    "score": 4.17
+   }
+  },
+  {
+   "id": "izm-aziz-yuhanna-kilisesi",
+   "name": "Aziz Yuhanna Kilisesi",
+   "category": "tarih",
+   "lat": 38.437038,
+   "lng": 27.147274,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir kilise.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/869791063",
+   "wikidata": "Q17021192",
+   "source": "populer",
+   "popularity": {
+    "views": 4004,
+    "sitelinks": 4,
+    "score": 4.16
+   }
+  },
+  {
+   "id": "izm-basdurak-camii",
+   "name": "Başdurak Camii",
+   "category": "tarih",
+   "lat": 38.418481,
+   "lng": 27.133475,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/304963683",
+   "wikidata": "Q4875350",
+   "source": "populer",
+   "popularity": {
+    "views": 2076,
+    "sitelinks": 9,
+    "score": 4.12
+   }
+  },
+  {
+   "id": "izm-ataturk-annesi-ve-kadin-haklari-aniti",
+   "name": "Atatürk, Annesi ve Kadın Hakları Anıtı",
+   "category": "tarih",
+   "lat": 38.455579,
+   "lng": 27.124132,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir anıt.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "yes"
+   ],
+   "osmId": "way/377727509",
+   "wikidata": "Q6048240",
+   "source": "populer",
+   "popularity": {
+    "views": 2150,
+    "sitelinks": 6,
+    "score": 4.01
+   }
+  },
+  {
+   "id": "izm-alsancak-hocazade-camii",
+   "name": "Alsancak Hocazade Camii",
+   "category": "tarih",
+   "lat": 38.433942,
+   "lng": 27.14424,
+   "district": "",
+   "description": "Mosque in İzmir, western Turkey.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/865968491",
+   "wikidata": "Q4735764",
+   "source": "populer",
+   "popularity": {
+    "views": 1486,
+    "sitelinks": 7,
+    "score": 3.9
+   }
+  },
+  {
+   "id": "izm-arkas-sanat-merkezi",
+   "name": "Arkas Sanat Merkezi",
+   "category": "muze",
+   "lat": 38.431923,
+   "lng": 27.136958,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir sanat müzesi.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "10:00",
+    "close": "18:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/4815177744",
+   "wikidata": "Q5997141",
+   "source": "populer",
+   "popularity": {
+    "views": 1925,
+    "sitelinks": 3,
+    "score": 3.77
+   }
+  },
+  {
+   "id": "izm-umran-baradan-oyun-ve-oyuncak-muzesi",
+   "name": "Ümran Baradan Oyun ve Oyuncak Müzesi",
+   "category": "muze",
+   "lat": 38.413497,
+   "lng": 27.126744,
+   "district": "",
+   "description": "Türkiye, İzmir'deki oyuncak müzesi.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/882959220",
+   "wikidata": "Q6059641",
+   "source": "populer",
+   "popularity": {
+    "views": 1470,
+    "sitelinks": 4,
+    "score": 3.73
+   }
+  },
+  {
+   "id": "izm-santa-maria-katolik-kilisesi",
+   "name": "Santa Maria Katolik Kilisesi",
+   "category": "tarih",
+   "lat": 38.465659,
+   "lng": 27.219909,
+   "district": "",
+   "description": "Bornova, İzmir, Türkiye'de bir kilise.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "relation/12166974",
+   "wikidata": "Q5996651",
+   "source": "populer",
+   "popularity": {
+    "views": 1081,
+    "sitelinks": 5,
+    "score": 3.66
+   }
+  },
+  {
+   "id": "izm-sinyora-giveret-sinagogu",
+   "name": "Sinyora Giveret Sinagogu",
+   "category": "tarih",
+   "lat": 38.420079,
+   "lng": 27.135583,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir sinagog.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/909014962",
+   "wikidata": "Q24573783",
+   "source": "populer",
+   "popularity": {
+    "views": 1254,
+    "sitelinks": 3,
+    "score": 3.58
+   }
+  },
+  {
+   "id": "izm-izmir-kadin-muzesi",
+   "name": "İzmir Kadın Müzesi",
+   "category": "muze",
+   "lat": 38.421097,
+   "lng": 27.142324,
+   "district": "",
+   "description": "İzmir, Türkiye'de bir müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/866758590",
+   "wikidata": "Q21526565",
+   "source": "populer",
+   "popularity": {
+    "views": 742,
+    "sitelinks": 6,
+    "score": 3.55
+   }
+  },
+  {
+   "id": "izm-ege-universitesi-tabiat-tarihi-muzesi",
+   "name": "Ege Üniversitesi Tabiat Tarihi Müzesi",
+   "category": "muze",
+   "lat": 38.462157,
+   "lng": 27.219699,
+   "district": "",
+   "description": "Bornova'da müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/8425950751",
+   "wikidata": "Q28222005",
+   "source": "populer",
+   "popularity": {
+    "views": 756,
+    "sitelinks": 3,
+    "score": 3.37
+   }
+  },
+  {
+   "id": "izm-bostanli-acik-hava-arkeoloji-muzesi",
+   "name": "Bostanlı Açık Hava Arkeoloji Müzesi",
+   "category": "muze",
+   "lat": 38.454858,
+   "lng": 27.099196,
+   "district": "",
+   "description": "Karşıyaka'da müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/377719864",
+   "wikidata": "Q20949105",
+   "source": "populer",
+   "popularity": {
+    "views": 583,
+    "sitelinks": 3,
+    "score": 3.25
+   }
+  },
+  {
+   "id": "izm-dostlar-firini",
+   "name": "Dostlar Fırını",
+   "category": "kafe",
+   "lat": 38.439241,
+   "lng": 27.143857,
+   "district": "",
+   "description": "Alsancak'ın en bilinen boyozcusu.",
+   "durationMin": 30,
+   "price": {
+    "min": 80,
+    "max": 200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Boyoz ve haşlanmış yumurta",
+   "osmId": "node/5287460075",
+   "source": "kurator"
+  },
+  {
+   "id": "izm-sevinc-pastanesi",
+   "name": "Sevinç Pastanesi",
+   "category": "kafe",
+   "lat": 38.434788,
+   "lng": 27.142125,
+   "district": "",
+   "description": "Alsancak'ta 1945'ten beri pastane.",
+   "durationMin": 30,
+   "price": {
+    "min": 150,
+    "max": 400,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "cafe"
+   ],
+   "mustTry": "Pasta ve kurabiye",
+   "osmId": "node/11825031470",
+   "source": "kurator"
+  },
+  {
+   "id": "izm-meshur-tavaci-recep-usta",
+   "name": "Meşhur Tavacı Recep Usta",
+   "category": "yemek",
+   "lat": 38.440446,
+   "lng": 27.142587,
+   "district": "Konak",
+   "description": "Tava kebabıyla bilinen köklü lokanta.",
+   "durationMin": 60,
+   "price": {
+    "min": 500,
+    "max": 1000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "Tavada et ve kuzu",
+   "osmId": "node/5287447547",
+   "source": "kurator"
+  },
+  {
+   "id": "izm-deniz-restaurant",
+   "name": "Deniz Restaurant",
+   "category": "yemek",
+   "lat": 38.431255,
+   "lng": 27.135958,
+   "district": "",
+   "description": "Kordon'da körfez manzaralı balık restoranı.",
+   "durationMin": 60,
+   "price": {
+    "min": 1000,
+    "max": 2000,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Balık ve deniz mahsulleri",
+   "osmId": "node/9981839416",
+   "source": "kurator"
+  },
+  {
+   "id": "izm-topcu",
+   "name": "Topçu",
+   "category": "yemek",
+   "lat": 38.426067,
+   "lng": 27.133064,
+   "district": "",
+   "description": "İzmir usulü çöp şişin bilinen adresi.",
+   "durationMin": 60,
+   "price": {
+    "min": 300,
+    "max": 600,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Çöp şiş",
+   "osmId": "node/2985569861",
+   "source": "kurator"
+  }
+ ]
+}

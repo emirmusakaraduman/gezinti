@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "node scripts/copy-maplibre-worker.mjs",
-    "gtfs:build": "node --max-old-space-size=6144 scripts/build-gtfs.mjs"
+    "gtfs:build": "node --max-old-space-size=6144 scripts/build-gtfs.mjs",
+    "places:fetch": "node scripts/fetch-places.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

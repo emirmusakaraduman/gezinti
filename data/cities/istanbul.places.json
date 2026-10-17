@@ -1,0 +1,2098 @@
+{
+ "generatedAt": "2026-10-17T00:59:07.081Z",
+ "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
+ "places": [
+  {
+   "id": "ist-ayasofya",
+   "name": "Ayasofya",
+   "category": "tarih",
+   "lat": 41.008511,
+   "lng": 28.979998,
+   "district": "Fatih",
+   "description": "Bizans döneminde katedral olarak yapılan ve günümüzde cami olarak kullanılan tarihî yapı.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "19:30",
+    "closedDays": []
+   },
+   "tags": [
+    "church",
+    "attraction",
+    "place_of_worship"
+   ],
+   "osmId": "way/109862851",
+   "wikidata": "Q12506",
+   "source": "populer",
+   "popularity": {
+    "views": 1221944,
+    "sitelinks": 141,
+    "score": 7.81
+   }
+  },
+  {
+   "id": "ist-sultanahmet-camii",
+   "name": "Sultanahmet Camii",
+   "category": "tarih",
+   "lat": 41.005407,
+   "lng": 28.97665,
+   "district": "Fatih",
+   "description": "İstanbul'un Fatih ilçesinde tarihî camii.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "mosque",
+    "attraction",
+    "place_of_worship"
+   ],
+   "osmId": "relation/18055570",
+   "wikidata": "Q80541",
+   "source": "populer",
+   "popularity": {
+    "views": 373600,
+    "sitelinks": 87,
+    "score": 7.13
+   }
+  },
+  {
+   "id": "ist-topkapi-sarayi",
+   "name": "Topkapı Sarayı",
+   "category": "muze",
+   "lat": 41.011344,
+   "lng": 28.983203,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde tarihi yapı.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "18:00",
+    "closedDays": [
+     2
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/10284696709",
+   "wikidata": "Q170495",
+   "source": "populer",
+   "popularity": {
+    "views": 403840,
+    "sitelinks": 78,
+    "score": 7.12
+   }
+  },
+  {
+   "id": "ist-dolmabahce-sarayi",
+   "name": "Dolmabahçe Sarayı",
+   "category": "muze",
+   "lat": 41.039017,
+   "lng": 28.999649,
+   "district": "",
+   "description": "İstanbul'un Beşiktaş ilçesinde tarihi saray.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/24826707",
+   "wikidata": "Q274141",
+   "source": "populer",
+   "popularity": {
+    "views": 318683,
+    "sitelinks": 52,
+    "score": 6.88
+   }
+  },
+  {
+   "id": "ist-suleymaniye-camii",
+   "name": "Süleymaniye Camii",
+   "category": "tarih",
+   "lat": 41.01624,
+   "lng": 28.963825,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde tarihi cami.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "relation/1564032",
+   "wikidata": "Q178643",
+   "source": "populer",
+   "popularity": {
+    "views": 241478,
+    "sitelinks": 67,
+    "score": 6.85
+   }
+  },
+  {
+   "id": "ist-galata-kulesi",
+   "name": "Galata Kulesi",
+   "category": "manzara",
+   "lat": 41.025634,
+   "lng": 28.974213,
+   "district": "",
+   "description": "İstanbul'un Beyoğlu ilçesinde tarihi kule.",
+   "durationMin": 45,
+   "price": {
+    "min": 100,
+    "max": 500,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "20:30",
+    "closedDays": []
+   },
+   "tags": [
+    "tower",
+    "attraction"
+   ],
+   "osmId": "way/23236783",
+   "wikidata": "Q91274",
+   "source": "populer",
+   "popularity": {
+    "views": 274356,
+    "sitelinks": 56,
+    "score": 6.84
+   }
+  },
+  {
+   "id": "ist-yerebatan-sarnici",
+   "name": "Yerebatan Sarnıcı",
+   "category": "tarih",
+   "lat": 41.00848,
+   "lng": 28.978383,
+   "district": "Fatih",
+   "description": "İstanbulda bulunan tarihi su deposu.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "19:00",
+    "closedDays": []
+   },
+   "tags": [
+    "cistern",
+    "attraction"
+   ],
+   "osmId": "node/11006008339",
+   "wikidata": "Q216511",
+   "source": "populer",
+   "popularity": {
+    "views": 284216,
+    "sitelinks": 39,
+    "score": 6.74
+   }
+  },
+  {
+   "id": "ist-konstantinopolis-surlari",
+   "name": "Konstantinopolis Surları",
+   "category": "tarih",
+   "lat": 40.997113,
+   "lng": 28.921232,
+   "district": "",
+   "description": "Konstantinopolis'in surları (modern İstanbul, Türkiye).",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "citywalls"
+   ],
+   "osmId": "way/23261420",
+   "wikidata": "Q89917",
+   "source": "populer",
+   "popularity": {
+    "views": 221988,
+    "sitelinks": 40,
+    "score": 6.64
+   }
+  },
+  {
+   "id": "ist-kapalicarsi",
+   "name": "Kapalıçarşı",
+   "category": "tarih",
+   "lat": 41.010967,
+   "lng": 28.968253,
+   "district": "Fatih",
+   "description": "Dünyanın en eski kapalı alışveriş merkezi.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "district",
+    "attraction",
+    "marketplace"
+   ],
+   "osmId": "way/303807317",
+   "wikidata": "Q505954",
+   "source": "populer",
+   "popularity": {
+    "views": 187235,
+    "sitelinks": 45,
+    "score": 6.6
+   }
+  },
+  {
+   "id": "ist-atmeydani",
+   "name": "Atmeydanı",
+   "category": "tarih",
+   "lat": 41.006521,
+   "lng": 28.976053,
+   "district": "",
+   "description": "İstanbul'da tarihî meydan.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "square",
+    "attraction"
+   ],
+   "osmId": "way/25512790",
+   "wikidata": "Q387548",
+   "source": "populer",
+   "popularity": {
+    "views": 140399,
+    "sitelinks": 47,
+    "score": 6.49
+   }
+  },
+  {
+   "id": "ist-kiz-kulesi",
+   "name": "Kız Kulesi",
+   "category": "manzara",
+   "lat": 41.021091,
+   "lng": 29.004138,
+   "district": "",
+   "description": "İstanbul'da bulunan tarihî kule.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction"
+   ],
+   "osmId": "way/103821246",
+   "wikidata": "Q848397",
+   "source": "populer",
+   "popularity": {
+    "views": 147799,
+    "sitelinks": 43,
+    "score": 6.48
+   }
+  },
+  {
+   "id": "ist-fatih-camii",
+   "name": "Fatih Camii",
+   "category": "tarih",
+   "lat": 41.004491,
+   "lng": 28.852695,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "node/976474174",
+   "wikidata": "Q756189",
+   "source": "populer",
+   "popularity": {
+    "views": 162474,
+    "sitelinks": 38,
+    "score": 6.48
+   }
+  },
+  {
+   "id": "ist-kariye-camii",
+   "name": "Kariye Camii",
+   "category": "tarih",
+   "lat": 41.031213,
+   "lng": 28.939039,
+   "district": "Fatih",
+   "description": "İstanbul'un Fatih ilçesinde tarihî cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "18:00",
+    "closedDays": []
+   },
+   "tags": [
+    "church",
+    "place_of_worship"
+   ],
+   "osmId": "relation/7614527",
+   "wikidata": "Q849489",
+   "source": "populer",
+   "popularity": {
+    "views": 103784,
+    "sitelinks": 43,
+    "score": 6.33
+   }
+  },
+  {
+   "id": "ist-sehzade-camii",
+   "name": "Şehzade Camii",
+   "category": "tarih",
+   "lat": 41.013882,
+   "lng": 28.957083,
+   "district": "Fatih",
+   "description": "İstanbul'un Fatih ilçesinde tarihi cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction",
+    "place_of_worship"
+   ],
+   "osmId": "relation/7656706",
+   "wikidata": "Q644677",
+   "source": "populer",
+   "popularity": {
+    "views": 94881,
+    "sitelinks": 42,
+    "score": 6.28
+   }
+  },
+  {
+   "id": "ist-ciragan-sarayi",
+   "name": "Çırağan Sarayı",
+   "category": "muze",
+   "lat": 41.043466,
+   "lng": 29.01531,
+   "district": "",
+   "description": "İstanbul'un Beşiktaş ilçesinde tarihi yapı.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "castle"
+   ],
+   "osmId": "way/498861861",
+   "wikidata": "Q273225",
+   "source": "populer",
+   "popularity": {
+    "views": 107124,
+    "sitelinks": 33,
+    "score": 6.26
+   }
+  },
+  {
+   "id": "ist-camlica-camii",
+   "name": "Çamlıca Camii",
+   "category": "tarih",
+   "lat": 41.034429,
+   "lng": 29.07031,
+   "district": "Üsküdar",
+   "description": "İstanbul'un Çamlıca semtinde bir cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "relation/7534888",
+   "wikidata": "Q18341384",
+   "source": "populer",
+   "popularity": {
+    "views": 122627,
+    "sitelinks": 27,
+    "score": 6.25
+   }
+  },
+  {
+   "id": "ist-yildiz-sarayi",
+   "name": "Yıldız Sarayı",
+   "category": "muze",
+   "lat": 41.050711,
+   "lng": 29.011704,
+   "district": "",
+   "description": "İstanbul'un Beşiktaş ilçesinde tarihi saray.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction"
+   ],
+   "osmId": "node/4477143891",
+   "wikidata": "Q911734",
+   "source": "populer",
+   "popularity": {
+    "views": 102859,
+    "sitelinks": 33,
+    "score": 6.24
+   }
+  },
+  {
+   "id": "ist-dikilitas",
+   "name": "Dikilitaş",
+   "category": "tarih",
+   "lat": 41.005928,
+   "lng": 28.9754,
+   "district": "",
+   "description": "Sultanahmet Meydanı'nın güneyindeki Antik Mısır yapımı dikilitaş.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "monument"
+   ],
+   "osmId": "way/1120852417",
+   "wikidata": "Q763854",
+   "source": "populer",
+   "popularity": {
+    "views": 100637,
+    "sitelinks": 30,
+    "score": 6.2
+   }
+  },
+  {
+   "id": "ist-taksim-meydani",
+   "name": "Taksim Meydanı",
+   "category": "tarih",
+   "lat": 41.037824,
+   "lng": 28.985615,
+   "district": "",
+   "description": "İstanbul, Türkiye'de bir meydan.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction"
+   ],
+   "osmId": "relation/4473230",
+   "wikidata": "Q736072",
+   "source": "populer",
+   "popularity": {
+    "views": 66189,
+    "sitelinks": 49,
+    "score": 6.18
+   }
+  },
+  {
+   "id": "ist-beylerbeyi-sarayi",
+   "name": "Beylerbeyi Sarayı",
+   "category": "muze",
+   "lat": 41.042718,
+   "lng": 29.040036,
+   "district": "Üsküdar",
+   "description": "İstanbul'un Üsküdar ilçesinde saray.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "18:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/61736367",
+   "wikidata": "Q794349",
+   "source": "populer",
+   "popularity": {
+    "views": 89344,
+    "sitelinks": 32,
+    "score": 6.17
+   }
+  },
+  {
+   "id": "ist-aya-irini",
+   "name": "Aya İrini",
+   "category": "muze",
+   "lat": 41.009829,
+   "lng": 28.980948,
+   "district": "",
+   "description": "İstanbul'da eski kilise ve müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "yes",
+    "museum"
+   ],
+   "osmId": "relation/4742554",
+   "wikidata": "Q736676",
+   "source": "populer",
+   "popularity": {
+    "views": 75616,
+    "sitelinks": 38,
+    "score": 6.15
+   }
+  },
+  {
+   "id": "ist-masumiyet-muzesi",
+   "name": "Masumiyet Müzesi",
+   "category": "muze",
+   "lat": 41.030872,
+   "lng": 28.979795,
+   "district": "",
+   "description": "Beyoğlu, İstanbul, Türkiye'de müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "10:00",
+    "close": "18:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/3279398393",
+   "wikidata": "Q15961492",
+   "source": "populer",
+   "popularity": {
+    "views": 104579,
+    "sitelinks": 25,
+    "score": 6.15
+   }
+  },
+  {
+   "id": "ist-galata",
+   "name": "Galata",
+   "category": "semt",
+   "lat": 41.025286,
+   "lng": 28.972792,
+   "district": "",
+   "description": "Geçmişte Pera olarak anılan Haliç'in kuzey yakasında yer alan Beyoğlu, İstanbul'daki semt.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/6263066077",
+   "wikidata": "Q501817",
+   "source": "populer",
+   "popularity": {
+    "views": 69818,
+    "sitelinks": 40,
+    "score": 6.13
+   }
+  },
+  {
+   "id": "ist-yeni-cami",
+   "name": "Yeni Cami",
+   "category": "tarih",
+   "lat": 41.01695,
+   "lng": 28.97208,
+   "district": "Fatih",
+   "description": "İstanbul'un Fatih ilçesinde tarihî cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "relation/7574356",
+   "wikidata": "Q911720",
+   "source": "populer",
+   "popularity": {
+    "views": 69837,
+    "sitelinks": 39,
+    "score": 6.13
+   }
+  },
+  {
+   "id": "ist-ortakoy-camii",
+   "name": "Ortaköy Camii",
+   "category": "tarih",
+   "lat": 41.047311,
+   "lng": 29.026789,
+   "district": "",
+   "description": "Osmanlı dönemi Neo Barok tarzındaki cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/498861735",
+   "wikidata": "Q176380",
+   "source": "populer",
+   "popularity": {
+    "views": 69948,
+    "sitelinks": 37,
+    "score": 6.11
+   }
+  },
+  {
+   "id": "ist-aya-yorgi-patrikhane-kilisesi",
+   "name": "Aya Yorgi Patrikhane Kilisesi",
+   "category": "tarih",
+   "lat": 41.029121,
+   "lng": 28.951895,
+   "district": "Fatih",
+   "description": "İstanbul, Türkiye'de kilise.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/526875901",
+   "wikidata": "Q1346546",
+   "source": "populer",
+   "popularity": {
+    "views": 82273,
+    "sitelinks": 29,
+    "score": 6.1
+   }
+  },
+  {
+   "id": "ist-rumeli-hisari",
+   "name": "Rumeli Hisarı",
+   "category": "muze",
+   "lat": 41.084915,
+   "lng": 29.056094,
+   "district": "",
+   "description": "İstanbul Boğazı’nın Rumeli yakasında 15. yüzyılda inşa edilmiş Osmanlı kalesi.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "17:00",
+    "closedDays": [
+     3
+    ]
+   },
+   "tags": [
+    "castle",
+    "museum"
+   ],
+   "osmId": "relation/7318154",
+   "wikidata": "Q90801",
+   "source": "populer",
+   "popularity": {
+    "views": 71758,
+    "sitelinks": 33,
+    "score": 6.08
+   }
+  },
+  {
+   "id": "ist-sariyer",
+   "name": "Sarıyer",
+   "category": "semt",
+   "lat": 41.169534,
+   "lng": 29.055516,
+   "district": "",
+   "description": "İstanbul ilçesi (Avrupa Yakası).",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/251359886",
+   "wikidata": "Q857107",
+   "source": "populer",
+   "popularity": {
+    "views": 62640,
+    "sitelinks": 36,
+    "score": 6.05
+   }
+  },
+  {
+   "id": "ist-istanbul-arkeoloji-muzeleri",
+   "name": "İstanbul Arkeoloji Müzeleri",
+   "category": "muze",
+   "lat": 41.011694,
+   "lng": 28.981213,
+   "district": "",
+   "description": "Türkiye'deki ilk müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "21:00",
+    "closedDays": []
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/335374188",
+   "wikidata": "Q636978",
+   "source": "populer",
+   "popularity": {
+    "views": 53764,
+    "sitelinks": 35,
+    "score": 5.98
+   }
+  },
+  {
+   "id": "ist-eyup-sultan-camii",
+   "name": "Eyüp Sultan Camii",
+   "category": "tarih",
+   "lat": 41.048015,
+   "lng": 28.93374,
+   "district": "",
+   "description": "İstanbul'un Eyüp ilçesinde tarihi cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/261821356",
+   "wikidata": "Q956677",
+   "source": "populer",
+   "popularity": {
+    "views": 61364,
+    "sitelinks": 28,
+    "score": 5.96
+   }
+  },
+  {
+   "id": "ist-bozdogan-kemeri",
+   "name": "Bozdoğan Kemeri",
+   "category": "tarih",
+   "lat": 41.016158,
+   "lng": 28.955167,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde su kemeri.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "aqueduct",
+    "attraction"
+   ],
+   "osmId": "way/23276526",
+   "wikidata": "Q952924",
+   "source": "populer",
+   "popularity": {
+    "views": 53572,
+    "sitelinks": 33,
+    "score": 5.95
+   }
+  },
+  {
+   "id": "ist-nuruosmaniye-camii",
+   "name": "Nuruosmaniye Camii",
+   "category": "tarih",
+   "lat": 41.010342,
+   "lng": 28.970406,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde barok üsluplu cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "yes",
+    "attraction",
+    "place_of_worship"
+   ],
+   "osmId": "relation/18161438",
+   "wikidata": "Q1430090",
+   "source": "populer",
+   "popularity": {
+    "views": 50377,
+    "sitelinks": 29,
+    "score": 5.88
+   }
+  },
+  {
+   "id": "ist-kucuk-ayasofya-camii",
+   "name": "Küçük Ayasofya Camii",
+   "category": "tarih",
+   "lat": 41.002743,
+   "lng": 28.972201,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde kiliseden çevrilmiş cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/303179753",
+   "wikidata": "Q1144576",
+   "source": "populer",
+   "popularity": {
+    "views": 41883,
+    "sitelinks": 35,
+    "score": 5.87
+   }
+  },
+  {
+   "id": "ist-cemberlitas-sutunu",
+   "name": "Çemberlitaş Sütunu",
+   "category": "tarih",
+   "lat": 41.008553,
+   "lng": 28.971283,
+   "district": "",
+   "description": "Fatih'te dikilitaş ve sütun.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "monument",
+    "attraction"
+   ],
+   "osmId": "way/1153684927",
+   "wikidata": "Q1247287",
+   "source": "populer",
+   "popularity": {
+    "views": 51764,
+    "sitelinks": 27,
+    "score": 5.87
+   }
+  },
+  {
+   "id": "ist-misir-carsisi",
+   "name": "Mısır Çarşısı",
+   "category": "carsi",
+   "lat": 41.016463,
+   "lng": 28.971098,
+   "district": "Fatih",
+   "description": "Eminönü'nde bulunan bir çarşı.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "08:00",
+    "close": "19:00",
+    "closedDays": []
+   },
+   "tags": [
+    "marketplace"
+   ],
+   "osmId": "way/24234971",
+   "wikidata": "Q668641",
+   "source": "populer",
+   "popularity": {
+    "views": 39857,
+    "sitelinks": 33,
+    "score": 5.83
+   }
+  },
+  {
+   "id": "ist-zeyrek-camii",
+   "name": "Zeyrek Camii",
+   "category": "tarih",
+   "lat": 41.019702,
+   "lng": 28.957177,
+   "district": "Fatih",
+   "description": "Bizans İmparatorluğu dönemine ait dinî yapı.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "church",
+    "attraction",
+    "place_of_worship"
+   ],
+   "osmId": "way/137519649",
+   "wikidata": "Q197094",
+   "source": "populer",
+   "popularity": {
+    "views": 41253,
+    "sitelinks": 30,
+    "score": 5.81
+   }
+  },
+  {
+   "id": "ist-anadolu-hisari",
+   "name": "Anadolu Hisarı",
+   "category": "semt",
+   "lat": 41.084092,
+   "lng": 29.068368,
+   "district": "",
+   "description": "İstanbul'un Beykoz ilçesinde tarihi yapı.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/8582643114",
+   "wikidata": "Q81650",
+   "source": "populer",
+   "popularity": {
+    "views": 37741,
+    "sitelinks": 31,
+    "score": 5.78
+   }
+  },
+  {
+   "id": "ist-eminonu",
+   "name": "Eminönü",
+   "category": "semt",
+   "lat": 41.017536,
+   "lng": 28.971015,
+   "district": "",
+   "description": "Fatih, İstanbul, Türkiye'de semt.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/6310508017",
+   "wikidata": "Q1767191",
+   "source": "populer",
+   "popularity": {
+    "views": 30523,
+    "sitelinks": 33,
+    "score": 5.71
+   }
+  },
+  {
+   "id": "ist-tekfur-sarayi",
+   "name": "Tekfur Sarayı",
+   "category": "muze",
+   "lat": 41.033955,
+   "lng": 28.940535,
+   "district": "Fatih",
+   "description": "Fatih'te müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "17:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "building",
+    "museum"
+   ],
+   "osmId": "relation/21597522",
+   "wikidata": "Q1472490",
+   "source": "populer",
+   "popularity": {
+    "views": 37872,
+    "sitelinks": 23,
+    "score": 5.68
+   }
+  },
+  {
+   "id": "ist-fener",
+   "name": "Fener",
+   "category": "semt",
+   "lat": 41.029817,
+   "lng": 28.950922,
+   "district": "",
+   "description": "İstanbul Fatih'te bulunan tarihi semt.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/6093191297",
+   "wikidata": "Q985842",
+   "source": "populer",
+   "popularity": {
+    "views": 35272,
+    "sitelinks": 24,
+    "score": 5.67
+   }
+  },
+  {
+   "id": "ist-gulhane-parki",
+   "name": "Gülhane Parkı",
+   "category": "doga",
+   "lat": 41.013123,
+   "lng": 28.98231,
+   "district": "Fatih",
+   "description": "Fatih'in Eminönü semtinde tarihî park.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/25542618",
+   "wikidata": "Q1560106",
+   "source": "populer",
+   "popularity": {
+    "views": 32886,
+    "sitelinks": 26,
+    "score": 5.66
+   }
+  },
+  {
+   "id": "ist-camlica-kulesi",
+   "name": "Çamlıca Kulesi",
+   "category": "manzara",
+   "lat": 41.016372,
+   "lng": 29.065541,
+   "district": "",
+   "description": "İstanbul, Türkiye'de televizyon ve seyir kulesi.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction"
+   ],
+   "osmId": "way/722961117",
+   "wikidata": "Q28657490",
+   "source": "populer",
+   "popularity": {
+    "views": 69311,
+    "sitelinks": 9,
+    "score": 5.64
+   }
+  },
+  {
+   "id": "ist-ortakoy",
+   "name": "Ortaköy",
+   "category": "semt",
+   "lat": 41.054627,
+   "lng": 29.02819,
+   "district": "",
+   "description": "Beşiktaş, İstanbul, Türkiye'de mahalle.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/4996585371",
+   "wikidata": "Q2249546",
+   "source": "populer",
+   "popularity": {
+    "views": 23577,
+    "sitelinks": 30,
+    "score": 5.57
+   }
+  },
+  {
+   "id": "ist-nisantasi",
+   "name": "Nişantaşı",
+   "category": "semt",
+   "lat": 41.051687,
+   "lng": 28.991696,
+   "district": "",
+   "description": "İstanbul'un Şişli ilçesindeki bir semt.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/269491733",
+   "wikidata": "Q251601",
+   "source": "populer",
+   "popularity": {
+    "views": 30537,
+    "sitelinks": 19,
+    "score": 5.53
+   }
+  },
+  {
+   "id": "ist-karakoy",
+   "name": "Karaköy",
+   "category": "semt",
+   "lat": 41.023435,
+   "lng": 28.977217,
+   "district": "",
+   "description": "Beyoğlu, İstanbul'da bir semt.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/6263071172",
+   "wikidata": "Q2706262",
+   "source": "populer",
+   "popularity": {
+    "views": 27292,
+    "sitelinks": 21,
+    "score": 5.51
+   }
+  },
+  {
+   "id": "ist-kucuksu-kasri",
+   "name": "Küçüksu Kasrı",
+   "category": "muze",
+   "lat": 41.078412,
+   "lng": 29.064885,
+   "district": "Beykoz",
+   "description": "İstanbul'un Beykoz ilçesinde tarihi yapı.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "17:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/230687140",
+   "wikidata": "Q1755906",
+   "source": "populer",
+   "popularity": {
+    "views": 26904,
+    "sitelinks": 19,
+    "score": 5.47
+   }
+  },
+  {
+   "id": "ist-bebek",
+   "name": "Bebek",
+   "category": "semt",
+   "lat": 41.079016,
+   "lng": 29.043959,
+   "district": "",
+   "description": "Beşiktaş, İstanbul, Türkiye'de mahalle.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/251358471",
+   "wikidata": "Q813531",
+   "source": "populer",
+   "popularity": {
+    "views": 26356,
+    "sitelinks": 19,
+    "score": 5.46
+   }
+  },
+  {
+   "id": "ist-binbirdirek-sarnici",
+   "name": "Binbirdirek Sarnıcı",
+   "category": "muze",
+   "lat": 41.007606,
+   "lng": 28.974417,
+   "district": "",
+   "description": "Bizans Konstantinopolis'i sarnıcı.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/2472730735",
+   "wikidata": "Q2728644",
+   "source": "populer",
+   "popularity": {
+    "views": 21239,
+    "sitelinks": 21,
+    "score": 5.4
+   }
+  },
+  {
+   "id": "ist-arnavutkoy",
+   "name": "Arnavutköy",
+   "category": "semt",
+   "lat": 41.067234,
+   "lng": 29.043254,
+   "district": "",
+   "description": "Beşiktaş, İstanbul, Türkiye'de mahalle.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/251358479",
+   "wikidata": "Q1095321",
+   "source": "populer",
+   "popularity": {
+    "views": 21928,
+    "sitelinks": 18,
+    "score": 5.36
+   }
+  },
+  {
+   "id": "ist-kuzguncuk",
+   "name": "Kuzguncuk",
+   "category": "semt",
+   "lat": 41.03216,
+   "lng": 29.036027,
+   "district": "",
+   "description": "Üsküdar, İstanbul, Türkiye'de mahalle.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/251358397",
+   "wikidata": "Q2555555",
+   "source": "populer",
+   "popularity": {
+    "views": 27830,
+    "sitelinks": 13,
+    "score": 5.36
+   }
+  },
+  {
+   "id": "ist-taksim-gezi-parki",
+   "name": "Taksim Gezi Parkı",
+   "category": "doga",
+   "lat": 41.038855,
+   "lng": 28.986903,
+   "district": "Beyoğlu",
+   "description": "Beyoğlu'nda şehir parkı.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/4471925",
+   "wikidata": "Q6048634",
+   "source": "populer",
+   "popularity": {
+    "views": 17015,
+    "sitelinks": 23,
+    "score": 5.34
+   }
+  },
+  {
+   "id": "ist-maslak",
+   "name": "Maslak",
+   "category": "semt",
+   "lat": 41.109999,
+   "lng": 29.020591,
+   "district": "",
+   "description": "Sarıyer, İstanbul, Türkiye'de mahalle.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/1758441314",
+   "wikidata": "Q1050148",
+   "source": "populer",
+   "popularity": {
+    "views": 19018,
+    "sitelinks": 20,
+    "score": 5.34
+   }
+  },
+  {
+   "id": "ist-serefiye-sarnici",
+   "name": "Şerefiye Sarnıcı",
+   "category": "muze",
+   "lat": 41.007415,
+   "lng": 28.972395,
+   "district": "",
+   "description": "Şerefiye Sarnıcı, İstanbul’un tarihi yarımada içerisinde bulunan en eski su yapılarından birisidir.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "18:00",
+    "closedDays": []
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/1154702450",
+   "wikidata": "Q3150393",
+   "source": "populer",
+   "popularity": {
+    "views": 19343,
+    "sitelinks": 18,
+    "score": 5.31
+   }
+  },
+  {
+   "id": "ist-ibrahim-pasa-sarayi",
+   "name": "İbrahim Paşa Sarayı",
+   "category": "muze",
+   "lat": 41.006397,
+   "lng": 28.974808,
+   "district": "",
+   "description": "İstanbul'un Fatih ilçesinde tarihi yapı.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "castle"
+   ],
+   "osmId": "relation/8120955",
+   "wikidata": "Q1655940",
+   "source": "populer",
+   "popularity": {
+    "views": 28815,
+    "sitelinks": 10,
+    "score": 5.29
+   }
+  },
+  {
+   "id": "ist-miniaturk",
+   "name": "Miniatürk",
+   "category": "muze",
+   "lat": 41.059005,
+   "lng": 28.949068,
+   "district": "",
+   "description": "İstanbul'da bir minyatür parkı.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "19:00",
+    "closedDays": []
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/1352425761",
+   "wikidata": "Q1085952",
+   "source": "populer",
+   "popularity": {
+    "views": 13690,
+    "sitelinks": 20,
+    "score": 5.19
+   }
+  },
+  {
+   "id": "ist-ihlamur-kasri",
+   "name": "Ihlamur Kasrı",
+   "category": "muze",
+   "lat": 41.050726,
+   "lng": 29.001195,
+   "district": "",
+   "description": "İstanbul'un Beşiktaş ilçesinde tarihi yapı.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/312484207",
+   "wikidata": "Q2330055",
+   "source": "populer",
+   "popularity": {
+    "views": 17307,
+    "sitelinks": 14,
+    "score": 5.18
+   }
+  },
+  {
+   "id": "ist-emirga-n-korusu",
+   "name": "Emirgân Korusu",
+   "category": "doga",
+   "lat": 41.108997,
+   "lng": 29.052819,
+   "district": "",
+   "description": "İstanbul'un Sarıyer ilçesinde yer alan koru.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/569310851",
+   "wikidata": "Q5185642",
+   "source": "populer",
+   "popularity": {
+    "views": 18398,
+    "sitelinks": 11,
+    "score": 5.13
+   }
+  },
+  {
+   "id": "ist-yildiz-parki",
+   "name": "Yıldız Parkı",
+   "category": "doga",
+   "lat": 41.048307,
+   "lng": 29.016889,
+   "district": "",
+   "description": "İstanbul, Türkiye'de şehir parkı.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "08:00",
+    "close": "22:00",
+    "closedDays": []
+   },
+   "tags": [
+    "park"
+   ],
+   "osmId": "relation/6606776",
+   "wikidata": "Q1818005",
+   "source": "populer",
+   "popularity": {
+    "views": 11380,
+    "sitelinks": 17,
+    "score": 5.06
+   }
+  },
+  {
+   "id": "ist-buyuk-camlica-tepesi",
+   "name": "Büyük Çamlıca Tepesi",
+   "category": "doga",
+   "lat": 41.026756,
+   "lng": 29.067676,
+   "district": "",
+   "description": "İstanbul'da bir tepe ve seyir terası.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "relation/9948513",
+   "wikidata": "Q2414579",
+   "source": "populer",
+   "popularity": {
+    "views": 12525,
+    "sitelinks": 9,
+    "score": 4.9
+   }
+  },
+  {
+   "id": "ist-macka-demokrasi-parki",
+   "name": "Maçka Demokrasi Parkı",
+   "category": "doga",
+   "lat": 41.044343,
+   "lng": 28.993996,
+   "district": "",
+   "description": "İstanbul, Türkiye'de şehir parkı.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/26970150",
+   "wikidata": "Q6098591",
+   "source": "populer",
+   "popularity": {
+    "views": 6198,
+    "sitelinks": 6,
+    "score": 4.47
+   }
+  },
+  {
+   "id": "ist-karakoy-gulluoglu-uretim-ve-satis",
+   "name": "Karaköy Güllüoğlu Üretim ve Satış",
+   "category": "kafe",
+   "lat": 41.025594,
+   "lng": 28.979982,
+   "district": "Beyoğlu",
+   "description": "1949'dan beri İstanbul'un en bilinen baklavacılarından.",
+   "durationMin": 30,
+   "price": {
+    "min": 250,
+    "max": 500,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "pastry"
+   ],
+   "mustTry": "Fıstıklı baklava ve su böreği",
+   "osmId": "node/3452097032",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-hafiz-mustafa",
+   "name": "Hafız Mustafa",
+   "category": "kafe",
+   "lat": 41.007983,
+   "lng": 28.976908,
+   "district": "Fatih",
+   "description": "1864'ten beri tatlı ve lokum; Sirkeci'deki tarihi şube.",
+   "durationMin": 30,
+   "price": {
+    "min": 250,
+    "max": 500,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Baklava, lokum ve sütlaç",
+   "osmId": "node/5108843102",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-ciya-sofrasi",
+   "name": "Çiya Sofrası",
+   "category": "yemek",
+   "lat": 40.989347,
+   "lng": 29.024429,
+   "district": "",
+   "description": "Anadolu mutfağının unutulmuş yemeklerini yaşatan lokanta.",
+   "durationMin": 60,
+   "price": {
+    "min": 600,
+    "max": 1200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "11:00",
+    "close": "22:00",
+    "closedDays": []
+   },
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "Günün tencere yemekleri ve kebaplar",
+   "osmId": "node/9869626517",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-tarihi-sultanahmet-koftecisi-selim-usta",
+   "name": "Tarihi Sultanahmet Köftecisi Selim Usta",
+   "category": "yemek",
+   "lat": 41.008003,
+   "lng": 28.976967,
+   "district": "",
+   "description": "1920'den beri tarihi yarımadanın köfte lokantası.",
+   "durationMin": 60,
+   "price": {
+    "min": 450,
+    "max": 800,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "10:30",
+    "close": "23:00",
+    "closedDays": []
+   },
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "Izgara köfte ve piyaz",
+   "osmId": "node/4790800225",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-pandeli",
+   "name": "Pandeli",
+   "category": "yemek",
+   "lat": 41.017145,
+   "lng": 28.971179,
+   "district": "",
+   "description": "Mısır Çarşısı'nın üstünde, çinili salonlu tarihi restoran.",
+   "durationMin": 60,
+   "price": {
+    "min": 900,
+    "max": 1800,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "Patlıcan böreği ve kuzu",
+   "osmId": "node/3079823142",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-hamdi",
+   "name": "Hamdi",
+   "category": "yemek",
+   "lat": 41.017163,
+   "lng": 28.969899,
+   "district": "",
+   "description": "Haliç manzaralı, Güneydoğu mutfağıyla ünlü kebapçı.",
+   "durationMin": 60,
+   "price": {
+    "min": 900,
+    "max": 1800,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Fıstıklı kebap ve lahmacun",
+   "osmId": "node/262402714",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-vefa-bozacisi-1876",
+   "name": "Vefa Bozacısı 1876",
+   "category": "kafe",
+   "lat": 41.015324,
+   "lng": 28.958419,
+   "district": "Fatih",
+   "description": "1876'dan beri boza yapan tarihi dükkan.",
+   "durationMin": 30,
+   "price": {
+    "min": 80,
+    "max": 200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "08:00",
+    "close": "22:00",
+    "closedDays": []
+   },
+   "tags": [
+    "cafe"
+   ],
+   "mustTry": "Leblebili boza",
+   "osmId": "node/5110342187",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-karakoy-lokantasi",
+   "name": "Karaköy Lokantası",
+   "category": "yemek",
+   "lat": 41.024592,
+   "lng": 28.980028,
+   "district": "",
+   "description": "Turkuaz çinili salonuyla Karaköy'ün sevilen lokantası.",
+   "durationMin": 60,
+   "price": {
+    "min": 700,
+    "max": 1400,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "international;regional;michelin_starred",
+    "restaurant"
+   ],
+   "mustTry": "Öğlen esnaf yemekleri, akşam meze",
+   "osmId": "node/1898334690",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-kurukahveci-mehmet-efendi",
+   "name": "Kurukahveci Mehmet Efendi",
+   "category": "kafe",
+   "lat": 41.016553,
+   "lng": 28.970274,
+   "district": "Fatih",
+   "description": "1871'den beri Türk kahvesi kavuran tarihi dükkan.",
+   "durationMin": 30,
+   "price": {
+    "min": 100,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "cafe"
+   ],
+   "mustTry": "Taze çekilmiş Türk kahvesi",
+   "osmId": "node/5244796179",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-mandabatmaz",
+   "name": "Mandabatmaz",
+   "category": "kafe",
+   "lat": 41.032763,
+   "lng": 28.97617,
+   "district": "",
+   "description": "İstiklal'in arka sokağında efsanevi küçük kahveci.",
+   "durationMin": 30,
+   "price": {
+    "min": 80,
+    "max": 200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "coffee_shop",
+    "cafe"
+   ],
+   "mustTry": "Yoğun köpüklü Türk kahvesi",
+   "osmId": "node/5115410024",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-kizilkayalar",
+   "name": "Kızılkayalar",
+   "category": "yemek",
+   "lat": 41.036177,
+   "lng": 28.984678,
+   "district": "",
+   "description": "Taksim'in gece yarısı klasiği ıslak hamburger.",
+   "durationMin": 60,
+   "price": {
+    "min": 80,
+    "max": 200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "fast_food"
+   ],
+   "mustTry": "Islak hamburger",
+   "osmId": "node/2982682484",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-asmali-cavit",
+   "name": "Asmalı Cavit",
+   "category": "yemek",
+   "lat": 41.030166,
+   "lng": 28.974706,
+   "district": "",
+   "description": "Asmalımescit'in köklü meyhanesi.",
+   "durationMin": 60,
+   "price": {
+    "min": 1200,
+    "max": 2500,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Meze ve balık",
+   "osmId": "node/10688168407",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-baylan-pastanesi",
+   "name": "Baylan Pastanesi",
+   "category": "kafe",
+   "lat": 40.990372,
+   "lng": 29.02378,
+   "district": "",
+   "description": "1923'ten beri Kadıköy'ün tarihi pastanesi.",
+   "durationMin": 30,
+   "price": {
+    "min": 200,
+    "max": 450,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "cafe"
+   ],
+   "mustTry": "Kup Griye",
+   "osmId": "node/1394941165",
+   "source": "kurator"
+  },
+  {
+   "id": "ist-lades-menemen",
+   "name": "Lades Menemen",
+   "category": "yemek",
+   "lat": 41.034602,
+   "lng": 28.980844,
+   "district": "",
+   "description": "Beyoğlu'nun esnaf lokantası klasiği.",
+   "durationMin": 60,
+   "price": {
+    "min": 250,
+    "max": 500,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "07:00",
+    "close": "22:00",
+    "closedDays": []
+   },
+   "tags": [
+    "fast_food"
+   ],
+   "mustTry": "Menemen ve sulu yemekler",
+   "osmId": "node/5149685225",
+   "source": "kurator"
+  }
+ ]
+}

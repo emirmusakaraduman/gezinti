@@ -1,0 +1,1204 @@
+{
+ "generatedAt": "2026-10-17T00:59:07.443Z",
+ "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
+ "places": [
+  {
+   "id": "ank-anitkabir",
+   "name": "Anıtkabir",
+   "category": "tarih",
+   "lat": 39.925011,
+   "lng": 32.836902,
+   "district": "",
+   "description": "Ankara'da Türkiye Cumhuriyeti'nin kurucusu Atatürk'ün anıt mezarı.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "monument"
+   ],
+   "osmId": "node/34668145",
+   "wikidata": "Q615404",
+   "source": "populer",
+   "popularity": {
+    "views": 184091,
+    "sitelinks": 48,
+    "score": 6.62
+   }
+  },
+  {
+   "id": "ank-anadolu-medeniyetleri-muzesi",
+   "name": "Anadolu Medeniyetleri Müzesi",
+   "category": "muze",
+   "lat": 39.937952,
+   "lng": 32.861763,
+   "district": "Altındağ",
+   "description": "Ankara'daki bir tarih ve arkeoloji müzesi.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/363095473",
+   "wikidata": "Q754322",
+   "source": "populer",
+   "popularity": {
+    "views": 38222,
+    "sitelinks": 39,
+    "score": 5.86
+   }
+  },
+  {
+   "id": "ank-kocatepe-camii",
+   "name": "Kocatepe Camii",
+   "category": "tarih",
+   "lat": 39.916734,
+   "lng": 32.860693,
+   "district": "",
+   "description": "Ankara'nın Çankaya ilçesinde tarihi cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "attraction",
+    "place_of_worship"
+   ],
+   "osmId": "relation/6276462",
+   "wikidata": "Q853935",
+   "source": "populer",
+   "popularity": {
+    "views": 35234,
+    "sitelinks": 39,
+    "score": 5.83
+   }
+  },
+  {
+   "id": "ank-ankara-kalesi",
+   "name": "Ankara Kalesi",
+   "category": "tarih",
+   "lat": 39.941493,
+   "lng": 32.865427,
+   "district": "",
+   "description": "Altındağ'da kale.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "castle"
+   ],
+   "osmId": "node/3058034430",
+   "wikidata": "Q206225",
+   "source": "populer",
+   "popularity": {
+    "views": 50816,
+    "sitelinks": 22,
+    "score": 5.8
+   }
+  },
+  {
+   "id": "ank-cankaya-kosku",
+   "name": "Çankaya Köşkü",
+   "category": "muze",
+   "lat": 39.887072,
+   "lng": 32.863567,
+   "district": "",
+   "description": "Türkiye cumhurbaşkanlarının resmî konutu ve çalışma yeri (1923–2014).",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "garden"
+   ],
+   "osmId": "way/1199776030",
+   "wikidata": "Q8077521",
+   "source": "populer",
+   "popularity": {
+    "views": 62592,
+    "sitelinks": 12,
+    "score": 5.69
+   }
+  },
+  {
+   "id": "ank-ankara-etnografya-muzesi",
+   "name": "Ankara Etnografya Müzesi",
+   "category": "muze",
+   "lat": 39.932672,
+   "lng": 32.855299,
+   "district": "Ulus",
+   "description": "Ankara'nın Altındağ ilçesinde müze.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "17:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/217483084",
+   "wikidata": "Q4533056",
+   "source": "populer",
+   "popularity": {
+    "views": 44455,
+    "sitelinks": 17,
+    "score": 5.65
+   }
+  },
+  {
+   "id": "ank-ulucanlar-cezaevi-muzesi",
+   "name": "Ulucanlar Cezaevi Müzesi",
+   "category": "muze",
+   "lat": 39.938163,
+   "lng": 32.873268,
+   "district": "",
+   "description": "Müze olarak yeniden düzenlenmiş eski bir cezaevi.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/420319692",
+   "wikidata": "Q190497",
+   "source": "populer",
+   "popularity": {
+    "views": 53463,
+    "sitelinks": 7,
+    "score": 5.45
+   }
+  },
+  {
+   "id": "ank-augustus-tapinagi",
+   "name": "Augustus Tapınağı",
+   "category": "tarih",
+   "lat": 39.944205,
+   "lng": 32.858314,
+   "district": "",
+   "description": "Ankara'da tarihi bir tapınak.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "archaeological_site",
+    "attraction"
+   ],
+   "osmId": "way/469691342",
+   "wikidata": "Q1640233",
+   "source": "populer",
+   "popularity": {
+    "views": 20163,
+    "sitelinks": 21,
+    "score": 5.38
+   }
+  },
+  {
+   "id": "ank-arslanhane-camii",
+   "name": "Arslanhane Camii",
+   "category": "tarih",
+   "lat": 39.936698,
+   "lng": 32.86524,
+   "district": "",
+   "description": "Ankara'nın Altındağ ilçesinde cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/363095476",
+   "wikidata": "Q6033876",
+   "source": "populer",
+   "popularity": {
+    "views": 17598,
+    "sitelinks": 17,
+    "score": 5.25
+   }
+  },
+  {
+   "id": "ank-ankara-resim-ve-heykel-muzesi",
+   "name": "Ankara Resim ve Heykel Müzesi",
+   "category": "muze",
+   "lat": 39.933313,
+   "lng": 32.855749,
+   "district": "Ulus",
+   "description": "Ankara'da bulunan bir sanat müzesi.",
+   "durationMin": 120,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "17:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/318274938",
+   "wikidata": "Q4818221",
+   "source": "populer",
+   "popularity": {
+    "views": 11227,
+    "sitelinks": 17,
+    "score": 5.05
+   }
+  },
+  {
+   "id": "ank-ankara-palas",
+   "name": "Ankara Palas",
+   "category": "muze",
+   "lat": 39.940555,
+   "lng": 32.852362,
+   "district": "Altındağ",
+   "description": "Altındağ'da otel.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/783229342",
+   "wikidata": "Q4765980",
+   "source": "populer",
+   "popularity": {
+    "views": 18157,
+    "sitelinks": 8,
+    "score": 5.02
+   }
+  },
+  {
+   "id": "ank-kizilay-cankaya",
+   "name": "Kızılay, Çankaya",
+   "category": "semt",
+   "lat": 39.921552,
+   "lng": 32.85172,
+   "district": "",
+   "description": "Çankaya, Ankara, Türkiye'de mahalle.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "osmId": "node/4544835026",
+   "wikidata": "Q2115982",
+   "source": "populer",
+   "popularity": {
+    "views": 10354,
+    "sitelinks": 15,
+    "score": 4.98
+   }
+  },
+  {
+   "id": "ank-zafer-aniti",
+   "name": "Zafer Anıtı",
+   "category": "tarih",
+   "lat": 39.941766,
+   "lng": 32.854778,
+   "district": "",
+   "description": "Ankara'da bulunan bir anıt.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "monument"
+   ],
+   "osmId": "node/2726221369",
+   "wikidata": "Q140152",
+   "source": "populer",
+   "popularity": {
+    "views": 12023,
+    "sitelinks": 12,
+    "score": 4.97
+   }
+  },
+  {
+   "id": "ank-ankara-roma-hamami",
+   "name": "Ankara Roma Hamamı",
+   "category": "tarih",
+   "lat": 39.946438,
+   "lng": 32.853267,
+   "district": "",
+   "description": "Ankara'da bulunan Roma hamamı.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "archaeological_site",
+    "attraction"
+   ],
+   "osmId": "way/363095481",
+   "wikidata": "Q7361597",
+   "source": "populer",
+   "popularity": {
+    "views": 9659,
+    "sitelinks": 15,
+    "score": 4.95
+   }
+  },
+  {
+   "id": "ank-kugulu-park",
+   "name": "Kuğulu Park",
+   "category": "doga",
+   "lat": 39.901837,
+   "lng": 32.860204,
+   "district": "",
+   "description": "Çankaya, Ankara, Türkiye'de park.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/10126955",
+   "wikidata": "Q6102675",
+   "source": "populer",
+   "popularity": {
+    "views": 15325,
+    "sitelinks": 7,
+    "score": 4.91
+   }
+  },
+  {
+   "id": "ank-kurtulus-savasi-muzesi",
+   "name": "Kurtuluş Savaşı Müzesi",
+   "category": "muze",
+   "lat": 39.941904,
+   "lng": 32.85368,
+   "district": "Altındağ",
+   "description": "Türkiye'nin ilk parlamento binası (1920–1924).",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "building",
+    "museum"
+   ],
+   "osmId": "way/419393108",
+   "wikidata": "Q7968654",
+   "source": "populer",
+   "popularity": {
+    "views": 19221,
+    "sitelinks": 5,
+    "score": 4.91
+   }
+  },
+  {
+   "id": "ank-cumhuriyet-muzesi",
+   "name": "Cumhuriyet Müzesi",
+   "category": "muze",
+   "lat": 39.941379,
+   "lng": 32.851631,
+   "district": "Ulus",
+   "description": "Türkiye'nin ikinci parlamento binası (1924–1960).",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "building",
+    "museum"
+   ],
+   "osmId": "way/419393082",
+   "wikidata": "Q6090164",
+   "source": "populer",
+   "popularity": {
+    "views": 17795,
+    "sitelinks": 5,
+    "score": 4.87
+   }
+  },
+  {
+   "id": "ank-pembe-kosk",
+   "name": "Pembe Köşk",
+   "category": "muze",
+   "lat": 39.894887,
+   "lng": 32.860912,
+   "district": "",
+   "description": "Ankara'da müze ev.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/404138723",
+   "wikidata": "Q7161864",
+   "source": "populer",
+   "popularity": {
+    "views": 15732,
+    "sitelinks": 5,
+    "score": 4.82
+   }
+  },
+  {
+   "id": "ank-melike-hatun-camii",
+   "name": "Melike Hatun Camii",
+   "category": "tarih",
+   "lat": 39.936346,
+   "lng": 32.855566,
+   "district": "",
+   "description": "Mosque.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/501323477",
+   "wikidata": "Q46999764",
+   "source": "populer",
+   "popularity": {
+    "views": 8892,
+    "sitelinks": 9,
+    "score": 4.75
+   }
+  },
+  {
+   "id": "ank-ahmet-hamdi-akseki-camii",
+   "name": "Ahmet Hamdi Akseki Camii",
+   "category": "tarih",
+   "lat": 39.906481,
+   "lng": 32.762949,
+   "district": "",
+   "description": "Ankara'da bir cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/420026456",
+   "wikidata": "Q25472397",
+   "source": "populer",
+   "popularity": {
+    "views": 10722,
+    "sitelinks": 6,
+    "score": 4.71
+   }
+  },
+  {
+   "id": "ank-genclik-parki",
+   "name": "Gençlik Parkı",
+   "category": "doga",
+   "lat": 39.937232,
+   "lng": 32.849348,
+   "district": "",
+   "description": "Ankara, Türkiye'deki bir park.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/10711293",
+   "wikidata": "Q5533865",
+   "source": "populer",
+   "popularity": {
+    "views": 5974,
+    "sitelinks": 11,
+    "score": 4.64
+   }
+  },
+  {
+   "id": "ank-julianus-sutunu",
+   "name": "Julianus Sütunu",
+   "category": "tarih",
+   "lat": 39.943334,
+   "lng": 32.855949,
+   "district": "",
+   "description": "Altındağ'da dikilitaş ve sütun.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "memorial"
+   ],
+   "osmId": "node/2930603491",
+   "wikidata": "Q1712135",
+   "source": "populer",
+   "popularity": {
+    "views": 5007,
+    "sitelinks": 8,
+    "score": 4.46
+   }
+  },
+  {
+   "id": "ank-maltepe-camii",
+   "name": "Maltepe Camii",
+   "category": "tarih",
+   "lat": 39.924784,
+   "lng": 32.847145,
+   "district": "",
+   "description": "Ankara'da bir camii.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/405159101",
+   "wikidata": "Q3906393",
+   "source": "populer",
+   "popularity": {
+    "views": 3519,
+    "sitelinks": 12,
+    "score": 4.44
+   }
+  },
+  {
+   "id": "ank-akkopru",
+   "name": "Akköprü",
+   "category": "tarih",
+   "lat": 39.953918,
+   "lng": 32.832386,
+   "district": "",
+   "description": "Ankara'nın Yenimahalle ilçesinde tarihi köprü.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "bridge"
+   ],
+   "osmId": "node/10162240603",
+   "wikidata": "Q4701420",
+   "source": "populer",
+   "popularity": {
+    "views": 4752,
+    "sitelinks": 7,
+    "score": 4.4
+   }
+  },
+  {
+   "id": "ank-ataturk-ve-kurtulus-savasi-muzesi",
+   "name": "Atatürk ve Kurtuluş Savaşı Müzesi",
+   "category": "muze",
+   "lat": 39.924983,
+   "lng": 32.837696,
+   "district": "",
+   "description": "Ankara'daki bir müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "16:00",
+    "closedDays": []
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/28241510",
+   "wikidata": "Q6099419",
+   "source": "populer",
+   "popularity": {
+    "views": 5577,
+    "sitelinks": 5,
+    "score": 4.37
+   }
+  },
+  {
+   "id": "ank-dikmen-vadisi",
+   "name": "Dikmen Vadisi",
+   "category": "doga",
+   "lat": 39.885443,
+   "lng": 32.846811,
+   "district": "",
+   "description": "Çankaya, Ankara'da bir park.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "relation/14290362",
+   "wikidata": "Q85969772",
+   "source": "populer",
+   "popularity": {
+    "views": 4173,
+    "sitelinks": 7,
+    "score": 4.34
+   }
+  },
+  {
+   "id": "ank-guvenpark",
+   "name": "Güvenpark",
+   "category": "doga",
+   "lat": 39.919459,
+   "lng": 32.852849,
+   "district": "",
+   "description": "Çankaya'da şehir parkı.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "relation/11927069",
+   "wikidata": "Q6044471",
+   "source": "populer",
+   "popularity": {
+    "views": 5221,
+    "sitelinks": 5,
+    "score": 4.34
+   }
+  },
+  {
+   "id": "ank-turkiye-is-bankasi-iktisadi-bagimsizlik-",
+   "name": "Türkiye İş Bankası İktisadi Bağımsızlık Müzesi",
+   "category": "muze",
+   "lat": 39.942752,
+   "lng": 32.854953,
+   "district": "Altındağ",
+   "description": "Ankara'nın Altındağ ilçesinde bulunan bir bankacılık müzesi.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "10:00",
+    "close": "18:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/289497043",
+   "wikidata": "Q63485357",
+   "source": "populer",
+   "popularity": {
+    "views": 4821,
+    "sitelinks": 4,
+    "score": 4.24
+   }
+  },
+  {
+   "id": "ank-mehmet-akif-ersoy-muze-evi",
+   "name": "Mehmet Akif Ersoy Müze Evi",
+   "category": "muze",
+   "lat": 39.93264,
+   "lng": 32.864869,
+   "district": "",
+   "description": "Ankara'da müze evi.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/421299643",
+   "wikidata": "Q6086284",
+   "source": "populer",
+   "popularity": {
+    "views": 7283,
+    "sitelinks": 2,
+    "score": 4.24
+   }
+  },
+  {
+   "id": "ank-sultan-alaeddin-camii",
+   "name": "Sultan Alaeddin Camii",
+   "category": "tarih",
+   "lat": 39.939162,
+   "lng": 32.864333,
+   "district": "",
+   "description": "Altındağ'da cami.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "place_of_worship"
+   ],
+   "osmId": "way/363091626",
+   "wikidata": "Q3906397",
+   "source": "populer",
+   "popularity": {
+    "views": 5254,
+    "sitelinks": 3,
+    "score": 4.2
+   }
+  },
+  {
+   "id": "ank-guvenlik-aniti",
+   "name": "Güvenlik Anıtı",
+   "category": "tarih",
+   "lat": 39.92004,
+   "lng": 32.853407,
+   "district": "",
+   "description": "Ankara'da bulunan bir anıt.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "monument"
+   ],
+   "osmId": "way/638950300",
+   "wikidata": "Q6076995",
+   "source": "populer",
+   "popularity": {
+    "views": 3674,
+    "sitelinks": 4,
+    "score": 4.13
+   }
+  },
+  {
+   "id": "ank-karyagdi-hatun-turbesi",
+   "name": "Karyağdı Hatun Türbesi",
+   "category": "tarih",
+   "lat": 39.938159,
+   "lng": 32.856261,
+   "district": "",
+   "description": "Ankara'da türbe.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "tomb"
+   ],
+   "osmId": "way/1269029198",
+   "wikidata": "Q19611633",
+   "source": "populer",
+   "popularity": {
+    "views": 3671,
+    "sitelinks": 4,
+    "score": 4.13
+   }
+  },
+  {
+   "id": "ank-suluhan",
+   "name": "Suluhan",
+   "category": "tarih",
+   "lat": 39.939528,
+   "lng": 32.858405,
+   "district": "",
+   "description": "Altındağ'da pasaj-işhanı.",
+   "durationMin": 45,
+   "price": {
+    "min": 0,
+    "max": 300,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "caravanserai"
+   ],
+   "osmId": "relation/18550535",
+   "wikidata": "Q16933438",
+   "source": "populer",
+   "popularity": {
+    "views": 4255,
+    "sitelinks": 3,
+    "score": 4.11
+   }
+  },
+  {
+   "id": "ank-altinpark-park",
+   "name": "Altınpark (park)",
+   "category": "doga",
+   "lat": 39.966417,
+   "lng": 32.879118,
+   "district": "",
+   "description": "Public park in Turkey.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/9779358",
+   "wikidata": "Q4737090",
+   "source": "populer",
+   "popularity": {
+    "views": 3474,
+    "sitelinks": 4,
+    "score": 4.1
+   }
+  },
+  {
+   "id": "ank-feza-gursey-bilim-merkezi",
+   "name": "Feza Gürsey Bilim Merkezi",
+   "category": "muze",
+   "lat": 39.968375,
+   "lng": 32.879879,
+   "district": "Altındağ",
+   "description": "Altındağ'da müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/1503934520",
+   "wikidata": "Q5446180",
+   "source": "populer",
+   "popularity": {
+    "views": 2617,
+    "sitelinks": 4,
+    "score": 3.98
+   }
+  },
+  {
+   "id": "ank-odtu-bilim-ve-teknoloji-muzesi",
+   "name": "ODTÜ Bilim ve Teknoloji Müzesi",
+   "category": "muze",
+   "lat": 39.901375,
+   "lng": 32.771533,
+   "district": "",
+   "description": "Ankara'daki bilim müzesi.",
+   "durationMin": 90,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "museum"
+   ],
+   "osmId": "way/423686190",
+   "wikidata": "Q6715515",
+   "source": "populer",
+   "popularity": {
+    "views": 2030,
+    "sitelinks": 4,
+    "score": 3.87
+   }
+  },
+  {
+   "id": "ank-ptt-pul-muzesi",
+   "name": "PTT Pul Müzesi",
+   "category": "muze",
+   "lat": 39.938124,
+   "lng": 32.854709,
+   "district": "Altındağ",
+   "description": "Ankara'da müze.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "09:00",
+    "close": "17:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "building",
+    "museum"
+   ],
+   "osmId": "way/267159228",
+   "wikidata": "Q51526923",
+   "source": "populer",
+   "popularity": {
+    "views": 2011,
+    "sitelinks": 4,
+    "score": 3.86
+   }
+  },
+  {
+   "id": "ank-gokyay-vakfi-satranc-muzesi",
+   "name": "Gökyay Vakfı Satranç Müzesi",
+   "category": "muze",
+   "lat": 39.934696,
+   "lng": 32.863308,
+   "district": "Altndağ",
+   "description": "Ankara'daki bir satranç müzesi.",
+   "durationMin": 90,
+   "price": {
+    "min": 150,
+    "max": 700,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": {
+    "open": "10:00",
+    "close": "18:00",
+    "closedDays": [
+     1
+    ]
+   },
+   "tags": [
+    "museum"
+   ],
+   "osmId": "node/10303297758",
+   "wikidata": "Q28136272",
+   "source": "populer",
+   "popularity": {
+    "views": 1859,
+    "sitelinks": 4,
+    "score": 3.83
+   }
+  },
+  {
+   "id": "ank-abdi-ipekci-parki",
+   "name": "Abdi İpekçi Parkı",
+   "category": "doga",
+   "lat": 39.927529,
+   "lng": 32.857044,
+   "district": "",
+   "description": "Park in Sıhhiye Square, Turkey.",
+   "durationMin": 60,
+   "price": {
+    "min": 0,
+    "max": 0,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "park"
+   ],
+   "osmId": "way/385163790",
+   "wikidata": "Q6026977",
+   "source": "populer",
+   "popularity": {
+    "views": 1135,
+    "sitelinks": 3,
+    "score": 3.54
+   }
+  },
+  {
+   "id": "ank-uludag-kebapcisi",
+   "name": "Uludağ Kebapçısı",
+   "category": "yemek",
+   "lat": 39.934494,
+   "lng": 32.857228,
+   "district": "",
+   "description": "Ulus'ta 1956'dan beri İskender kebap.",
+   "durationMin": 60,
+   "price": {
+    "min": 600,
+    "max": 1200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "turkish",
+    "restaurant"
+   ],
+   "mustTry": "İskender kebap",
+   "osmId": "node/824237315",
+   "source": "kurator"
+  },
+  {
+   "id": "ank-masabasi-kebapcisi",
+   "name": "Masabaşı Kebapçısı",
+   "category": "yemek",
+   "lat": 39.919178,
+   "lng": 32.859278,
+   "district": "",
+   "description": "Ankara'nın en bilinen kebapçılarından.",
+   "durationMin": 60,
+   "price": {
+    "min": 600,
+    "max": 1200,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [],
+   "mustTry": "Kebap ve lahmacun",
+   "osmId": "way/227061475",
+   "source": "kurator"
+  },
+  {
+   "id": "ank-divan-brasserie-cengelhan",
+   "name": "Divan Brasserie Çengelhan",
+   "category": "yemek",
+   "lat": 39.937481,
+   "lng": 32.863294,
+   "district": "Altındağ",
+   "description": "Tarihi Çengelhan'da restoran.",
+   "durationMin": 60,
+   "price": {
+    "min": 800,
+    "max": 1600,
+    "confidence": "tahmini",
+    "lastVerified": null
+   },
+   "hours": null,
+   "tags": [
+    "restaurant"
+   ],
+   "mustTry": "Akşam yemeği",
+   "osmId": "node/10778181411",
+   "source": "kurator"
+  }
+ ]
+}

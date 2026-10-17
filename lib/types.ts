@@ -52,6 +52,22 @@ export const PlaceSchema = z.object({
   /** Yemek mekanları için öne çıkan lezzet */
   mustTry: z.string().optional(),
   osmId: z.string().optional(),
+  wikidata: z.string().optional(),
+  /**
+   * "populer": OSM + Wikipedia popülerliğiyle seçildi;
+   * "kurator": elle derlenmiş tavsiye (OSM'de doğrulanmış olabilir)
+   */
+  source: z.enum(["populer", "kurator"]).optional(),
+  /** Popülerlik göstergeleri (yalnızca "populer" kaynaklı yerlerde) */
+  popularity: z
+    .object({
+      /** Son 12 ay Wikipedia görüntülenmesi (tr + en) */
+      views: z.number(),
+      /** Kaç dilde Wikipedia maddesi var */
+      sitelinks: z.number(),
+      score: z.number(),
+    })
+    .optional(),
 });
 export type Place = z.infer<typeof PlaceSchema>;
 

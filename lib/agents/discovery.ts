@@ -53,6 +53,7 @@ Kurallar:
 - Aynı gündeki yerler coğrafi olarak birbirine yakın olsun (district ve koordinatlara bak). Toplu taşımayla gezen biri için bu daha da önemli.
 - Mekanın kapalı olduğu günü (closedDays, 0=Pazar) o güne koyma.
 - Kullanıcının ilgi alanlarına öncelik ver, ama her gün en az bir yöresel lezzet olsun.
+- Gerçekten tavsiye edilecek yerleri seç: popularity alanı (Wikipedia okunma ve dil sayısından hesaplanan puan; yüksek = daha bilinen) yüksek olanları ve source "kurator" olan (elle seçilmiş köklü mekanlar) yerleri tercih et. Az bilinen bir yeri ancak güzergaha çok iyi oturuyorsa seç.
 - Bütçe kişi başı değil toplamdır; fiyatlar kişi başıdır ve aralık olarak verilir. Tahmini üst sınır bütçeyi aşmasın; ücretsiz yerlerle dengele.
 - Aynı mekanı iki kez seçme.
 - notes alanında seçtiğin önemli yerler için kısa, pratik bir ipucu yaz (ör. "Sabah erken git, kuyruk olur").
@@ -73,6 +74,8 @@ function candidatePayload(city: City, exclude: Set<string>) {
       hours: p.hours,
       tags: p.tags,
       mustTry: p.mustTry,
+      source: p.source,
+      popularity: p.popularity?.score,
     }));
 }
 
@@ -154,6 +157,16 @@ async function selectWithClaude(
 
 // ---------- Sezgisel yedek ----------
 
+/**
+ * Popülerlik puanı (Wikipedia okunma + dil sayısı; ~3-8 arası). Elle seçilmiş
+ * tavsiyelerin puanı yok; onlar bilinçli seçildiği için iyi bir varsayılan alır.
+ */
+const CURATED_POPULARITY = 6;
+const popularity = (p: Place) => p.popularity?.score ?? CURATED_POPULARITY;
+
+/** 1 popülerlik puanı (×60) ≈ 1,5 km */
+const DISTANCE_PENALTY_PER_KM = 40;
+
 const SIGHTS_PER_DAY = 4;
 const MEALS_PER_DAY = 2;
 
@@ -167,8 +180,9 @@ function selectHeuristic(
   const interest = new Set(req.interests);
   const pool = city.places.filter((p) => !exclude.has(p.id));
 
-  // İlgi alanına uyan önce, sonra ucuz olan önce
-  const score = (p: Place) => (interest.has(p.category) ? 1000 : 0) - p.price.max / 10;
+  // İlgi alanı önce, sonra popülerlik; fiyat yalnızca küçük bir etken
+  const score = (p: Place) =>
+    (interest.has(p.category) ? 1000 : 0) + popularity(p) * 60 - p.price.max / 20;
   const sights = pool.filter((p) => !isMeal(p)).sort((a, b) => score(b) - score(a));
   const meals = pool.filter(isMeal).sort((a, b) => a.price.max - b.price.max);
 
@@ -204,9 +218,12 @@ function selectHeuristic(
       break;
     }
     const day = [seed];
-    // Tohuma en yakın gezi noktalarını ekle
-    sights.sort((a, b) => haversineKm(seed, a) - haversineKm(seed, b));
+    // Tohuma göre popülerlik ile yakınlığı dengele: biraz uzak ama çok bilinen
+    // bir yer, hemen yandaki az bilinen yerin önüne geçebilsin
+    const nearScore = (p: Place) => score(p) - DISTANCE_PENALTY_PER_KM * haversineKm(seed, p);
+    sights.sort((a, b) => nearScore(b) - nearScore(a));
     day.push(...take(sights, SIGHTS_PER_DAY - 1, dow, spent));
+    sights.sort((a, b) => score(b) - score(a));
     // Günün merkezine en yakın yemek durakları
     const centroid = {
       lat: day.reduce((s, p) => s + p.lat, 0) / day.length,
