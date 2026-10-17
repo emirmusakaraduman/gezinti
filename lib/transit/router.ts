@@ -30,6 +30,8 @@ const TRANSFER_SLACK_S = 120;
  * etkilemez.
  */
 const BOARDING_PENALTY_S = 300;
+/** Şekil noktası / durak oranı bunun üstündeyse şekil gerçek hat sayılır */
+const DENSE_SHAPE_RATIO = 2;
 /** Binilen duraktan bundan kısa binişler kaydedilmez; o mesafe yürünür */
 const MIN_RIDE_M = 500;
 const INF = 0x7fffffff;
@@ -284,6 +286,7 @@ class TransitRouter {
         const enter = tripBoard[trip];
         const boardStop = connDepStop[enter];
         const route = this.meta.routes[tripRoute[trip]];
+        const slice = this.patternSlice(tripPattern[trip], boardStop, s);
         reversed.push({
           kind: "binis",
           from: name(boardStop),
@@ -295,9 +298,8 @@ class TransitRouter {
           lineName: route.longName,
           // Marmaray veride metro (1) türünde ama banliyö treni
           vehicle: /TCDD/i.test(route.agency) ? "tren" : (ROUTE_TYPE[route.type] ?? "otobus"),
-          geometry: this.patternSlice(tripPattern[trip], boardStop, s),
-          // İBB'nin şekilleri de durak koordinatlarından ibaret; gerçek hat değil
-          geometryExact: false,
+          geometry: slice.line,
+          geometryExact: slice.exact,
         });
         rides++;
         s = boardStop;
@@ -354,8 +356,16 @@ class TransitRouter {
   /**
    * Biniş ile iniş arasındaki çizgi. Kalıbın hat şekli varsa şekil
    * noktalarından, yoksa ara durakların koordinatlarından oluşur.
+   *
+   * exact: şekil duraklardan belirgin şekilde fazla nokta içeriyorsa gerçek
+   * hat geometrisi sayılır (ör. ESHOT). İBB'nin şekilleri neredeyse yalnızca
+   * durak koordinatlarından oluştuğu için (oran ~1,5) gerçek sayılmaz.
    */
-  private patternSlice(pattern: number, fromStop: number, toStop: number): [number, number][] {
+  private patternSlice(
+    pattern: number,
+    fromStop: number,
+    toStop: number,
+  ): { line: [number, number][]; exact: boolean } {
     const { patStart, patStops, patStopShapePt, shapeLat, shapeLng } = this.a;
     const startIdx = patStart[pattern];
     const endIdx = patStart[pattern + 1];
@@ -366,26 +376,29 @@ class TransitRouter {
     if (i >= endIdx || j >= endIdx) {
       const a = this.stopPoint(fromStop);
       const b = this.stopPoint(toStop);
-      return [
-        [a.lng, a.lat],
-        [b.lng, b.lat],
-      ];
+      return {
+        line: [
+          [a.lng, a.lat],
+          [b.lng, b.lat],
+        ],
+        exact: false,
+      };
     }
 
     const p0 = patStopShapePt[i];
     const p1 = patStopShapePt[j];
     if (p0 >= 0 && p1 > p0) {
-      const coords: [number, number][] = [];
-      for (let k = p0; k <= p1; k++) coords.push([shapeLng[k] / 1e6, shapeLat[k] / 1e6]);
-      return coords;
+      const line: [number, number][] = [];
+      for (let k = p0; k <= p1; k++) line.push([shapeLng[k] / 1e6, shapeLat[k] / 1e6]);
+      return { line, exact: line.length >= DENSE_SHAPE_RATIO * (j - i + 1) };
     }
 
-    const coords: [number, number][] = [];
+    const line: [number, number][] = [];
     for (let k = i; k <= j; k++) {
       const p = this.stopPoint(patStops[k]);
-      coords.push([p.lng, p.lat]);
+      line.push([p.lng, p.lat]);
     }
-    return coords;
+    return { line, exact: false };
   }
 }
 

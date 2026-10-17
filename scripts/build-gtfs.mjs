@@ -1,22 +1,71 @@
-// İstanbul GTFS verisini toplu taşıma yönlendiricisinin okuyacağı kompakt
+// Şehirlerin GTFS verisini toplu taşıma yönlendiricisinin okuyacağı kompakt
 // biçime dönüştürür.
 //
-//   Girdi:  data/gtfs/raw/{iett,transit}/*.csv  (İBB Açık Veri Portalı)
-//   Çıktı:  data/gtfs/build/istanbul.meta.json  (duraklar, hatlar, kalıplar)
-//           data/gtfs/build/istanbul.bin        (bağlantılar + yürüme aktarmaları)
+//   node scripts/build-gtfs.mjs            # verisi olan tüm şehirler
+//   node scripts/build-gtfs.mjs izmir      # tek şehir
 //
-// Ham veri standart dışı: İETT dosyaları ';' ile ayrılmış, hat adları çift
-// UTF-8 kodlanmış, koordinatlar binlik ayracıyla bozulmuş; toplu ulaşım
+//   Girdi:  data/gtfs/raw/... (her şehrin beslemeleri aşağıda, CITIES)
+//   Çıktı:  data/gtfs/build/<şehir>.meta.json  (duraklar, hatlar, kalıplar)
+//           data/gtfs/build/<şehir>.bin        (bağlantılar + yürüme aktarmaları)
+//
+// İstanbul verisi standart dışı: İETT dosyaları ';' ile ayrılmış, hat adları
+// çift UTF-8 kodlanmış, koordinatlar binlik ayracıyla bozulmuş; toplu ulaşım
 // dosyaları Windows-1254 kodlu ve bazı seferler frequencies.csv ile tanımlı.
+// Okuyucu bunları otomatik algılar; standart veriyi (İzmir) olduğu gibi okur.
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const RAW = "data/gtfs/raw";
 const OUT = "data/gtfs/build";
 // 2: hat şekilleri (patStopShapePt, shapeLat, shapeLng) eklendi
 export const FORMAT_VERSION = 2;
 
-// İstanbul sınırları; bunun dışındaki (bozuk) koordinatlar atılır
-const BBOX = { minLat: 40.7, maxLat: 41.7, minLng: 27.9, maxLng: 29.95 };
+/**
+ * Şehir yapılandırması. bbox dışındaki (bozuk) koordinatlar atılır.
+ * Bir beslemenin stopTimes alanı, varsayılan stop_times dosyası yerine
+ * kullanılacak dosyayı verir (yoksa varsayılana düşülür).
+ */
+const CITIES = {
+  istanbul: {
+    bbox: { minLat: 40.7, maxLat: 41.7, minLng: 27.9, maxLng: 29.95 },
+    source: "İBB Açık Veri Portalı (data.ibb.gov.tr): İETT GTFS, Toplu Ulaşım GTFS",
+    feeds: [
+      { name: "transit", dir: `${RAW}/transit` },
+      // İETT'nin portaldaki stop_times.csv'si kesik (seferlerin ~%14'ü);
+      // tam veri ayrı zip içinde
+      { name: "iett", dir: `${RAW}/iett`, stopTimes: `${RAW}/iett-zip/stop_times.txt` },
+    ],
+  },
+  izmir: {
+    // İl geneli: Selçuk–Bergama, Çeşme–Kiraz
+    bbox: { minLat: 37.7, maxLat: 39.5, minLng: 26.1, maxLng: 28.6 },
+    source: "İzmir BB Açık Veri Portalı (acikveri.bizizmir.com): ESHOT, Metro, Tramvay, İZBAN GTFS",
+    feeds: ["eshot", "metro", "tram", "izban"].map((name) => ({ name, dir: `${RAW}/izmir/${name}` })),
+  },
+};
+
+// Şehir verilmezse verisi olan her şehri ayrı süreçte derle (durum karışmasın)
+const CITY = process.argv[2];
+if (!CITY) {
+  const ready = Object.entries(CITIES).filter(([, c]) => c.feeds.some((f) => existsSync(f.dir)));
+  if (!ready.length) console.warn("Hiçbir şehrin ham GTFS verisi yok (data/gtfs/raw)");
+  let failed = false;
+  for (const [id] of ready) {
+    console.log(`\n========== ${id} ==========`);
+    const r = spawnSync(process.execPath, [...process.execArgv, fileURLToPath(import.meta.url), id], {
+      stdio: "inherit",
+    });
+    failed ||= r.status !== 0;
+  }
+  process.exit(failed ? 1 : 0);
+}
+const CONFIG = CITIES[CITY];
+if (!CONFIG) {
+  console.error(`Bilinmeyen şehir: ${CITY} (bilinenler: ${Object.keys(CITIES).join(", ")})`);
+  process.exit(1);
+}
+const BBOX = CONFIG.bbox;
 const TRANSFER_RADIUS_M = 500;
 const WALK_M_PER_S = 4.5 / 3.6;
 const ROAD_FACTOR = 1.3;
@@ -78,6 +127,12 @@ function eachRow(path, cb) {
     pos = end + 1;
     if (line) cb(line.split(delim), col);
   }
+}
+
+/** GTFS dosyasının yolu: standart .txt, yoksa İBB'nin kullandığı .csv */
+function gtfsPath(dir, base) {
+  const txt = `${dir}/${base}.txt`;
+  return existsSync(txt) ? txt : `${dir}/${base}.csv`;
 }
 
 /** Tırnaklı alanları destekleyen basit CSV ayrıştırıcı; ayracı başlıktan bulur */
@@ -168,14 +223,13 @@ const trips = []; // { route, pattern }
 // Bağlantılar düz dizilerde: [depStop, arrStop, depTime, arrTime, trip, dayMask]
 const conns = [];
 
-function addFeed(feed) {
-  const dir = `${RAW}/${feed}`;
+function addFeed({ name: feed, dir, stopTimes }) {
   console.log(`\n[${feed}] okunuyor…`);
 
   // Duraklar
   let dropped = 0;
   const stopsBefore = stops.length;
-  for (const s of readCsv(`${dir}/stops.csv`)) {
+  for (const s of readCsv(gtfsPath(dir, "stops"))) {
     const lat = parseCoord(s.stop_lat);
     const lng = parseCoord(s.stop_lon);
     if (!(lat >= BBOX.minLat && lat <= BBOX.maxLat && lng >= BBOX.minLng && lng <= BBOX.maxLng)) {
@@ -189,42 +243,51 @@ function addFeed(feed) {
 
   // Takvim → haftanın günü maskesi (bit 0 = Pazar, JS getDay ile aynı)
   const serviceMask = new Map();
-  for (const c of readCsv(`${dir}/calendar.csv`)) {
+  for (const c of readCsv(gtfsPath(dir, "calendar"), { required: false })) {
     let mask = 0;
     DAY_FIELDS.forEach((d, i) => {
       if (c[d] === "1") mask |= 1 << i;
     });
     serviceMask.set(c.service_id, mask);
   }
+  // Takvimde olmayıp yalnızca calendar_dates ile tanımlı servisler: eklenen
+  // tarihlerin haftanın günlerini birleştir
+  for (const d of readCsv(gtfsPath(dir, "calendar_dates"), { required: false })) {
+    if (d.exception_type !== "1" || serviceMask.get(d.service_id)) continue;
+    const dow = new Date(`${d.date.slice(0, 4)}-${d.date.slice(4, 6)}-${d.date.slice(6, 8)}T12:00:00Z`).getUTCDay();
+    serviceMask.set(d.service_id, (serviceMask.get(d.service_id) ?? 0) | (1 << dow));
+  }
 
   // Hatlar
   const agencies = new Map(
-    readCsv(`${dir}/agency.csv`).map((a) => [a.agency_id, fixMojibake(a.agency_name)]),
+    readCsv(gtfsPath(dir, "agency")).map((a) => [a.agency_id, fixMojibake(a.agency_name)]),
   );
+  // agency_id isteğe bağlı; tek işletmeli beslemelerde boş olabilir
+  const defaultAgency = agencies.size === 1 ? [...agencies.values()][0] : "";
   const routeIdx = new Map();
-  for (const r of readCsv(`${dir}/routes.csv`)) {
+  for (const r of readCsv(gtfsPath(dir, "routes"))) {
     if (EXCLUDED_ROUTE_TYPES.has(Number(r.route_type))) continue;
     routeIdx.set(r.route_id, routes.length);
     routes.push({
       name: fixMojibake(r.route_short_name || r.route_long_name),
       longName: fixMojibake(r.route_long_name),
       type: Number(r.route_type),
-      agency: agencies.get(r.agency_id) ?? "",
+      agency: agencies.get(r.agency_id) ?? defaultAgency,
     });
   }
 
   // Seferler
   const tripInfo = new Map();
-  for (const t of readCsv(`${dir}/trips.csv`)) {
+  for (const t of readCsv(gtfsPath(dir, "trips"))) {
     const route = routeIdx.get(t.route_id);
     const mask = serviceMask.get(t.service_id) ?? 0;
     if (route === undefined || mask === 0) continue;
     tripInfo.set(t.trip_id, { route, mask, shape: t.shape_id || null });
   }
 
-  // Hat şekilleri (yalnızca toplu ulaşım setinde var; İETT'de yok)
+  // Hat şekilleri (her beslemede yok; ör. İETT'de yok)
   const feedShapes = new Map();
-  for (const s of readCsv(`${dir}/shapes.csv`, { required: false })) {
+  for (const s of readCsv(gtfsPath(dir, "shapes"), { required: false })) {
     const list = feedShapes.get(s.shape_id) ?? feedShapes.set(s.shape_id, []).get(s.shape_id);
     list.push({ seq: Number(s.shape_pt_sequence), lat: Number(s.shape_pt_lat), lng: Number(s.shape_pt_lon) });
   }
@@ -244,7 +307,7 @@ function addFeed(feed) {
 
   // Sefer frekansları (toplu ulaşım setinde)
   const freqs = new Map();
-  for (const f of readCsv(`${dir}/frequencies.csv`, { required: false })) {
+  for (const f of readCsv(gtfsPath(dir, "frequencies"), { required: false })) {
     const list = freqs.get(f.trip_id) ?? [];
     const start = parseTime(f.start_time);
     let end = parseTime(f.end_time);
@@ -254,10 +317,8 @@ function addFeed(feed) {
     freqs.set(f.trip_id, list);
   }
 
-  // Durak saatleri: sefer bazında grupla. İETT'nin portaldaki CSV'si kesik
-  // (seferlerin ~%14'ü); tam veri ayrı zip içinde, varsa onu kullan.
-  const fullStopTimes = `${RAW}/${feed}-zip/stop_times.txt`;
-  const stopTimesPath = existsSync(fullStopTimes) ? fullStopTimes : `${dir}/stop_times.csv`;
+  // Durak saatleri: sefer bazında grupla (yapılandırmadaki dosya varsa o)
+  const stopTimesPath = stopTimes && existsSync(stopTimes) ? stopTimes : gtfsPath(dir, "stop_times");
   console.log(`  durak saatleri: ${stopTimesPath}`);
   const byTrip = new Map();
   eachRow(stopTimesPath, (f, c) => {
@@ -396,9 +457,9 @@ function buildFootpaths() {
 
 // ---------- Çalıştır ----------
 
-for (const feed of ["transit", "iett"]) {
-  if (existsSync(`${RAW}/${feed}`)) addFeed(feed);
-  else console.warn(`[${feed}] klasörü yok, atlanıyor`);
+for (const feed of CONFIG.feeds) {
+  if (existsSync(feed.dir)) addFeed(feed);
+  else console.warn(`[${feed.name}] klasörü yok (${feed.dir}), atlanıyor`);
 }
 
 if (stops.length > 0xffff) throw new Error("Durak sayısı Uint16 sınırını aşıyor");
@@ -520,13 +581,13 @@ for (const [name, arr] of Object.entries(arrays)) {
 }
 
 mkdirSync(OUT, { recursive: true });
-writeFileSync(`${OUT}/istanbul.bin`, bin);
+writeFileSync(`${OUT}/${CITY}.bin`, bin);
 writeFileSync(
-  `${OUT}/istanbul.meta.json`,
+  `${OUT}/${CITY}.meta.json`,
   JSON.stringify({
     version: FORMAT_VERSION,
     builtAt: new Date().toISOString(),
-    source: "İBB Açık Veri Portalı (data.ibb.gov.tr): İETT GTFS, Toplu Ulaşım GTFS",
+    source: CONFIG.source,
     layout,
     stops: {
       name: stops.map((s) => s.name),
@@ -536,4 +597,4 @@ writeFileSync(
     routes,
   }),
 );
-console.log(`Yazıldı: ${OUT}/istanbul.bin (${(bin.length / 1e6).toFixed(1)} MB), istanbul.meta.json`);
+console.log(`Yazıldı: ${OUT}/${CITY}.bin (${(bin.length / 1e6).toFixed(1)} MB), ${CITY}.meta.json`);

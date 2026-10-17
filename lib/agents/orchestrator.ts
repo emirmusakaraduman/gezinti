@@ -67,8 +67,7 @@ export async function planTrip(req: TripRequest): Promise<TripPlan> {
     if (transitLegs.some((l) => l.transit)) {
       warnings.push({
         level: "bilgi",
-        message:
-          "Toplu taşıma, İBB'nin GTFS sefer verisiyle planlandı. Sefer saatleri değişmiş olabilir; yola çıkmadan kontrol et.",
+        message: `${city.name} toplu taşıması, belediyenin açık GTFS sefer verisiyle planlandı. Sefer saatleri değişmiş olabilir; yola çıkmadan kontrol et.`,
       });
     }
     if (transitLegs.some((l) => !l.transit)) {

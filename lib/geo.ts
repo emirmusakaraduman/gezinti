@@ -68,8 +68,10 @@ export function toMinutes(hhmm: string): number {
 }
 
 export function toHHMM(minutes: number): string {
-  const h = Math.floor(minutes / 60) % 24;
-  const m = Math.round(minutes % 60);
+  // Önce yuvarla: aksi halde 659,6 dk "10:60" olur
+  const total = Math.round(minutes);
+  const h = Math.floor(total / 60) % 24;
+  const m = total % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 

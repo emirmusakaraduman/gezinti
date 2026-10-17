@@ -172,7 +172,8 @@ async function refineJourney(journey: TransitJourney): Promise<TransitJourney> {
         const walk = await osrmRoute("foot", { lat: aLat, lng: aLng }, { lat: bLat, lng: bLng });
         return walk ? { ...step, geometry: walk.geometry, geometryExact: true } : step;
       }
-      if (step.vehicle === "otobus") {
+      // Verideki hat şekli zaten gerçekse (ör. ESHOT) OSRM'e sorma
+      if (step.vehicle === "otobus" && !step.geometryExact) {
         const matched = await osrmMatch("car", line);
         return matched ? { ...step, geometry: matched, geometryExact: true } : step;
       }
