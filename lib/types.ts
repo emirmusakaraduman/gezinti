@@ -185,6 +185,8 @@ export interface Leg {
   geometry: [number, number][] | null;
   /** Toplu taşıma ayağı GTFS ile planlandıysa adım adım yolculuk */
   transit?: TransitStep[];
+  /** Kullanılan hatların tarifesinin son geçerlilik tarihi (YYYY-AA-GG); veri eskiyse uyarı için */
+  validTo?: string;
 }
 
 export type MealKind = "kahvalti" | "ogle" | "aksam" | "ara";

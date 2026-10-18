@@ -96,6 +96,13 @@ describe("TransitRouter.plan", () => {
     expect(new TransitRouter(syn.binPath, syn.metaPath).plan(FROM, TO, TEN, TUESDAY)!.synthetic).toBe(true);
   });
 
+  it("yolculuk, binilen hatların tarife bitiş tarihini taşır", () => {
+    const { binPath, metaPath } = writeFixture(STOPS, [direct("10:45")], { validTo: { A: "2024-12-31" } });
+    const j = new TransitRouter(binPath, metaPath).plan(FROM, TO, TEN, TUESDAY)!;
+    expect(j.validTo).toBe("2024-12-31");
+    expect(router([direct("10:45")]).plan(FROM, TO, TEN, TUESDAY)!.validTo).toBeUndefined();
+  });
+
   it("adım saatleri tutarlı: hiçbir adım öncekinin bitişinden önce başlamaz", () => {
     const j = router([direct("10:45"), firstLeg, secondLeg("10:10")]).plan(FROM, TO, TEN, TUESDAY)!;
     const mins = (t: string) => toMinutes(t);

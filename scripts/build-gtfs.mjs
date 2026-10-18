@@ -219,9 +219,14 @@ function addFeed({ name: feed, dir, stopTimes, onlyRoutes, synthetic }) {
   }
   console.log(`  duraklar: ${stops.length - stopsBefore} (bozuk koordinatlı ${dropped} atıldı)`);
 
-  // Takvim → haftanın günü maskesi (bit 0 = Pazar, JS getDay ile aynı)
+  // Takvim → haftanın günü maskesi (bit 0 = Pazar, JS getDay ile aynı).
+  // Yönlendirici yalnızca haftanın gününe baktığı için tarih aralığı elenmez;
+  // bunun yerine beslemenin son geçerlilik tarihi hatlara yazılır (validTo) ve
+  // plan, tarifesi süresi dolmuş bir hat kullanıyorsa uyarır.
+  let feedEnd = "";
   const serviceMask = new Map();
   for (const c of readCsv(gtfsPath(dir, "calendar"), { required: false })) {
+    if (c.end_date > feedEnd) feedEnd = c.end_date;
     let mask = 0;
     DAY_FIELDS.forEach((d, i) => {
       if (c[d] === "1") mask |= 1 << i;
@@ -231,6 +236,7 @@ function addFeed({ name: feed, dir, stopTimes, onlyRoutes, synthetic }) {
   // Takvimde olmayıp yalnızca calendar_dates ile tanımlı servisler: eklenen
   // tarihlerin haftanın günlerini birleştir
   for (const d of readCsv(gtfsPath(dir, "calendar_dates"), { required: false })) {
+    if (d.exception_type === "1" && d.date > feedEnd) feedEnd = d.date;
     if (d.exception_type !== "1" || serviceMask.get(d.service_id)) continue;
     const dow = new Date(`${d.date.slice(0, 4)}-${d.date.slice(4, 6)}-${d.date.slice(6, 8)}T12:00:00Z`).getUTCDay();
     serviceMask.set(d.service_id, (serviceMask.get(d.service_id) ?? 0) | (1 << dow));
@@ -254,6 +260,7 @@ function addFeed({ name: feed, dir, stopTimes, onlyRoutes, synthetic }) {
       agency: agencies.get(r.agency_id) ?? defaultAgency,
       // Gerçek tarife değil, tahmini sefer sıklığından türetilmiş
       ...(synthetic ? { synthetic: true } : {}),
+      ...(feedEnd.length === 8 ? { validTo: `${feedEnd.slice(0, 4)}-${feedEnd.slice(4, 6)}-${feedEnd.slice(6, 8)}` } : {}),
     });
   }
 

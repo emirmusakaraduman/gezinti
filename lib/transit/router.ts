@@ -48,6 +48,8 @@ export interface TransitJourney {
   rides: number;
   /** Yolculukta gerçek tarife olmayan (tahmini sıklıktan türetilmiş) bir hat var */
   synthetic: boolean;
+  /** Binilen hatların beslemelerinden en erken biten tarife tarihi (YYYY-AA-GG) */
+  validTo?: string;
 }
 
 interface Meta {
@@ -58,7 +60,7 @@ interface Meta {
   synthetic?: boolean;
   layout:Record<string, { type: string; offset: number; length: number }>;
   stops: { name: string[]; lat: number[]; lng: number[] };
-  routes: { name: string; longName: string; type: number; agency: string; synthetic?: boolean }[];
+  routes: { name: string; longName: string; type: number; agency: string; synthetic?: boolean; validTo?: string }[];
 }
 
 const ROUTE_TYPE: Record<number, Vehicle> = {
@@ -295,6 +297,7 @@ export class TransitRouter {
     let s = lastStop;
     let rides = 0;
     let synthetic = this.synthetic;
+    let validTo: string | undefined;
     for (let guard = 0; guard < 50; guard++) {
       if (inConn[s] >= 0) {
         const exit = inConn[s];
@@ -319,6 +322,7 @@ export class TransitRouter {
         });
         rides++;
         synthetic ||= route.synthetic ?? false;
+        if (route.validTo && (!validTo || route.validTo < validTo)) validTo = route.validTo;
         s = boardStop;
       } else if (inFoot[s] >= 0) {
         const prev = inFoot[s];
@@ -352,6 +356,7 @@ export class TransitRouter {
       distanceKm: steps.reduce((sum, st) => sum + lineLengthKm(st.geometry), 0),
       rides,
       synthetic,
+      validTo,
     };
   }
 

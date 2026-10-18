@@ -221,6 +221,7 @@ function transitLeg(
     estimated: synthetic,
     geometry: journey.geometry,
     transit: journey.steps.map((s) => ({ ...s, from: rename(s.from), to: rename(s.to) })),
+    validTo: journey.validTo,
   };
 }
 

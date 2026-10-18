@@ -26,7 +26,7 @@ const sec = (hhmm: string) => {
   return h * 3600 + m * 60;
 };
 
-export function writeFixture(stops: FixtureStop[], trips: FixtureTrip[], opts: { synthetic?: boolean; syntheticRoutes?: string[] } = {}) {
+export function writeFixture(stops: FixtureStop[], trips: FixtureTrip[], opts: { synthetic?: boolean; syntheticRoutes?: string[]; validTo?: Record<string, string> } = {}) {
   const routeNames = [...new Set(trips.map((t) => t.route))];
   const conns: number[][] = [];
   const patStart = [0];
@@ -93,6 +93,7 @@ export function writeFixture(stops: FixtureStop[], trips: FixtureTrip[], opts: {
         type: 3,
         agency: "",
         ...(opts.syntheticRoutes?.includes(name) ? { synthetic: true } : {}),
+        ...(opts.validTo?.[name] ? { validTo: opts.validTo[name] } : {}),
       })),
     }),
   );

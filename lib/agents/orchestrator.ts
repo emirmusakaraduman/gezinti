@@ -115,6 +115,16 @@ function finalize(
       message: `${city.name} planında kullanılan bazı hatların (OpenStreetMap'ten türetilmiş) sefer saatleri tahminidir; gerçek tarife değildir.`,
     });
   }
+  // Tarifesi gezi gününden önce bitmiş hat: yayımlanan veri güncel değil
+  const stale = days.flatMap((d) => d.legs.filter((l) => l.validTo && l.validTo < d.date));
+  if (stale.length) {
+    const until = stale.map((l) => l.validTo!).sort()[0];
+    const [y, m, d] = until.split("-");
+    warnings.push({
+      level: "bilgi",
+      message: `${city.name}: planda kullanılan bazı hatların yayımlanmış tarifesi ${d}.${m}.${y} tarihinde bitiyor (kaynaktaki veri güncel değil); gerçek sefer saatleri farklı olabilir.`,
+    });
+  }
   if (transitLegs.some((l) => !l.transit)) {
     warnings.push({
       level: "bilgi",
