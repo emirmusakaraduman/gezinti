@@ -35,6 +35,36 @@ const CITIES = {
 
 const DWELL_S = 30;
 
+/**
+ * İlişkinin raylı yol parçalarını (sıralı way üyeleri) tek çizgide birleştirir.
+ * Parça uçları eşleşmiyorsa (boşluk) düz çizgiyle bağlanır. Peron/durak
+ * yolları (rolü boş olmayanlar) dahil edilmez. Dönen: [{lat, lon}]
+ */
+function chainWays(relation) {
+  const ways = (relation?.members ?? []).filter(
+    (m) => m.type === "way" && m.geometry?.length >= 2 && !/platform|stop/.test(m.role),
+  );
+  const line = [];
+  for (const way of ways) {
+    let pts = way.geometry;
+    if (line.length) {
+      const end = line.at(-1);
+      // Yön: sondaki noktaya yakın uç öne gelsin
+      if (haversineM(end, pts[0]) > haversineM(end, pts.at(-1))) pts = [...pts].reverse();
+    }
+    line.push(...pts);
+  }
+  // Art arda aynı noktaları ve geri dönüşlü tekrarları ayıkla
+  return line.filter((p, i) => i === 0 || p.lat !== line[i - 1].lat || p.lon !== line[i - 1].lon);
+}
+
+/** Çizgi durak sırasının tersine akıyorsa çevirir */
+function orientTo(line, seq) {
+  if (line.length < 2) return line;
+  const nearest = (pt) => line.reduce((best, p, i) => (haversineM(p, pt) < haversineM(line[best], pt) ? i : best), 0);
+  return nearest(seq[0]) > nearest(seq.at(-1)) ? [...line].reverse() : line;
+}
+
 function haversineM(a, b) {
   const R = 6371000;
   const rad = (d) => (d * Math.PI) / 180;
@@ -81,6 +111,12 @@ async function overpass(q, tries = 5) {
 }
 const data = await overpass(query);
 
+// Hat geometrisi: ilişkilerin raylı yol (way) üyeleri, koordinatlarıyla
+const geomData = await overpass(`[out:json][timeout:120];
+relation["route"~"^(subway|light_rail|train)$"]["ref"~"^(${refs})$"](${s},${w},${n},${e});
+out geom;`);
+const geomByRelation = new Map(geomData.elements.filter((x) => x.type === "relation").map((r) => [r.id, r]));
+
 const nodes = new Map(data.elements.filter((x) => x.type === "node").map((x) => [x.id, x]));
 const relations = data.elements.filter((x) => x.type === "relation" && cfg.lines[x.tags.ref]);
 
@@ -109,7 +145,8 @@ for (const rel of relations) {
     stops.set(nd.id, { name, lat: nd.lat, lon: nd.lon });
     return { stop: nd.id, offset: t };
   });
-  trips.push({ id: `osm${rel.id}`, route: rel.tags.ref, headsign: rel.tags.to ?? "", times });
+  const shape = orientTo(chainWays(geomByRelation.get(rel.id)), seq);
+  trips.push({ id: `osm${rel.id}`, route: rel.tags.ref, headsign: rel.tags.to ?? "", times, shape });
   console.log(`  ${line.name}: ${rel.tags.from ?? "?"} → ${rel.tags.to ?? "?"}, ${seq.length} durak, ${Math.round(t / 60)} dk`);
 }
 
@@ -127,7 +164,14 @@ writeFileSync(
   csv([["route_id", "agency_id", "route_short_name", "route_long_name", "route_type"], ...Object.entries(cfg.lines).map(([ref, l]) => [ref, "1", l.name, l.name, l.type])]),
 );
 writeFileSync(`${dir}/stops.txt`, csv([["stop_id", "stop_name", "stop_lat", "stop_lon"], ...[...stops].map(([id, st]) => [id, st.name, st.lat, st.lon])]));
-writeFileSync(`${dir}/trips.txt`, csv([["route_id", "service_id", "trip_id", "trip_headsign"], ...trips.map((t) => [t.route, "ALL", t.id, t.headsign])]));
+writeFileSync(`${dir}/trips.txt`, csv([["route_id", "service_id", "trip_id", "trip_headsign", "shape_id"], ...trips.map((t) => [t.route, "ALL", t.id, t.headsign, t.shape.length >= 2 ? t.id : ""])]));
+writeFileSync(
+  `${dir}/shapes.txt`,
+  csv([
+    ["shape_id", "shape_pt_lat", "shape_pt_lon", "shape_pt_sequence"],
+    ...trips.filter((t) => t.shape.length >= 2).flatMap((t) => t.shape.map((p, i) => [t.id, p.lat, p.lon, i + 1])),
+  ]),
+);
 writeFileSync(
   `${dir}/stop_times.txt`,
   csv([
