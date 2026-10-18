@@ -60,14 +60,14 @@ function routeGeoJSON(days: DayPlan[]): GeoJSON.FeatureCollection<GeoJSON.LineSt
 function markerElement(label: string, color: string): HTMLElement {
   const el = document.createElement("div");
   el.textContent = label;
-  el.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px system-ui,sans-serif;text-align:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);cursor:pointer`;
+  el.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(15,42,74,.35);cursor:pointer`;
   return el;
 }
 
 function popupElement(title: string, lines: string[]): HTMLElement {
   // textContent ile kur; mekan adları HTML olarak yorumlanmasın
   const root = document.createElement("div");
-  root.style.cssText = "font:13px/1.4 system-ui,sans-serif;color:#18181b";
+  root.style.cssText = "font:13px/1.45 var(--font-body),system-ui,sans-serif;color:#0f2a4a";
   const h = document.createElement("strong");
   h.textContent = title;
   root.append(h);
@@ -198,26 +198,36 @@ export default function PlanMap({ days, center }: { days: DayPlan[]; center: { l
     }
   }, [ready, days, selected]);
 
-  const tab = (active: boolean) =>
-    `rounded-full border px-3 py-1 text-sm ${
-      active ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900" : "border-zinc-300 dark:border-zinc-700"
+  const pill = (active: boolean) =>
+    `flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium shadow-card transition-colors ${
+      active ? "bg-ink text-bg" : "bg-surface text-ink hover:bg-accent-soft"
     }`;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
-      <div className="flex flex-wrap items-center gap-2 p-3">
-        <button type="button" className={tab(selected === "all")} onClick={() => setSelected("all")}>
+    <div className="relative overflow-hidden rounded-3xl border border-line shadow-card">
+      <div ref={containerRef} className="h-[min(440px,55vh)] w-full bg-surface-2" />
+      <div className="absolute top-3 left-3 z-[1] flex flex-wrap gap-1.5" role="group" aria-label="Gün filtresi">
+        <button type="button" aria-pressed={selected === "all"} className={pill(selected === "all")} onClick={() => setSelected("all")}>
           Tümü
         </button>
         {days.map((d) => (
-          <button key={d.day} type="button" className={tab(selected === d.day)} onClick={() => setSelected(d.day)}>
-            <span className="mr-1.5 inline-block h-2.5 w-2.5 rounded-full" style={{ background: dayColor(d.day) }} />
+          <button key={d.day} type="button" aria-pressed={selected === d.day} className={pill(selected === d.day)} onClick={() => setSelected(d.day)}>
+            <span className="h-2.5 w-2.5 rounded-full" style={{ background: dayColor(d.day) }} />
             {d.day}. gün
           </button>
         ))}
-        <span className="ml-auto text-xs text-zinc-500">Düz: araç · Noktalı: yürüme · Kesikli: yaklaşık güzergah</span>
       </div>
-      <div ref={containerRef} className="h-[420px] w-full" />
+      <ul className="absolute right-3 bottom-7 z-[1] space-y-1 rounded-xl bg-surface/95 px-3 py-2 text-xs text-muted shadow-card backdrop-blur">
+        <li className="flex items-center gap-2">
+          <span className="h-0 w-6 border-t-[3px] border-ink/70" /> Araç yolu
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="h-0 w-6 border-t-[3px] border-dotted border-ink/70" /> Yürüme
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="h-0 w-6 border-t-[3px] border-dashed border-ink/70" /> Yaklaşık güzergah
+        </li>
+      </ul>
     </div>
   );
 }

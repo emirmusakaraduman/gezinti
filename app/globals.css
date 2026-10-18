@@ -1,26 +1,157 @@
 @import "tailwindcss";
 
+/*
+ * Renkler İznik çinisinden: lacivert mürekkep, turkuaz vurgu, mercan yalnızca
+ * dikkat gerektiren yerlerde. Zemin soğuk bir porselen; kâğıt gibi sıcak değil.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #f1f5f8;
+  --surface: #ffffff;
+  --surface-2: #f6f9fb;
+  --ink: #0f2a4a;
+  --muted: #5b6f85;
+  --line: #d9e2ea;
+  --accent: #0a8f9c;
+  --accent-strong: #067783;
+  --accent-soft: #dcf2f4;
+  --coral: #e5483a;
+  --coral-soft: #fde8e5;
+  --amber: #b87400;
+  --amber-soft: #fdf0d3;
+  --info: #2a5db0;
+  --info-soft: #e4edfb;
+  --shadow: 0 1px 2px rgb(15 42 74 / 0.06), 0 8px 24px -12px rgb(15 42 74 / 0.18);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #09172a;
+    --surface: #102239;
+    --surface-2: #0c1d32;
+    --ink: #e6eef6;
+    --muted: #8da2b8;
+    --line: #23384f;
+    --accent: #3cc4cf;
+    --accent-strong: #6fd8e0;
+    --accent-soft: #0f3a44;
+    --coral: #ff7a6b;
+    --coral-soft: #3b1d22;
+    --amber: #f0b340;
+    --amber-soft: #382b10;
+    --info: #7fa8f0;
+    --info-soft: #14284a;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
   }
 }
 
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --shadow-card: var(--shadow);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* Saatler ve tutarlar hizalı dursun */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Klavye odağı her etkileşimli öğede görünür */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/*
+ * Plan geldiğinde tek bir hareket: gün hatları yukarıdan aşağı çizilir,
+ * bütçe çubuğu dolar. Başka giriş animasyonu yok.
+ */
+@keyframes rail-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes meter-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.rail {
+  transform-origin: top;
+  animation: rail-draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.meter-seg {
+  transform-origin: left;
+  animation: meter-fill 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--line) 25%, var(--surface-2) 50%, var(--line) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rail,
+  .meter-seg,
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* MapLibre: kontroller ve atıf temaya uysun */
+.maplibregl-ctrl-group {
+  border-radius: 10px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.maplibregl-popup-content {
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  box-shadow: var(--shadow) !important;
 }

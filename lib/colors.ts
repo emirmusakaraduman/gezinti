@@ -1,4 +1,4 @@
-/** Gün renkleri (sırayla döner); harita ve liste aynı rengi kullanır */
-export const DAY_COLORS = ["#059669", "#2563eb", "#d97706", "#db2777", "#7c3aed", "#0891b2", "#dc2626"];
+/** Gün renkleri (sırayla döner); harita ve liste aynı rengi kullanır. İznik paletiyle uyumlu, birbirinden ayırt edilir. */
+export const DAY_COLORS = ["#0a8f9c", "#2f5bea", "#e5483a", "#8a5cf6", "#d98e00", "#0f8b5f", "#c2365d"];
 
 export const dayColor = (day: number) => DAY_COLORS[(day - 1) % DAY_COLORS.length];
