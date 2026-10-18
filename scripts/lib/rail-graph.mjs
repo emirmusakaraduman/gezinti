@@ -47,11 +47,32 @@ export function createRailGraph(ways) {
       prev = cur;
     }
   }
-  return { nodes, adj, grid };
+  // Bağlı bileşenler: bağlantısız ray çiftleri arasında yol aramak boşuna
+  const comp = new Int32Array(nodes.length).fill(-1);
+  let nComp = 0;
+  for (let i = 0; i < nodes.length; i++) {
+    if (comp[i] >= 0) continue;
+    const stack = [i];
+    comp[i] = nComp;
+    while (stack.length) {
+      for (const [v] of adj[stack.pop()]) {
+        if (comp[v] < 0) {
+          comp[v] = nComp;
+          stack.push(v);
+        }
+      }
+    }
+    nComp++;
+  }
+  return { nodes, adj, grid, comp };
 }
 
-/** Noktaya maxM içindeki en yakın ağ düğümleri (yakından uzağa, en fazla limit) */
-export function snapCandidates(g, p, maxM, limit = 8) {
+/**
+ * Noktaya maxM içindeki en yakın ağ düğümleri (yakından uzağa, en fazla limit).
+ * Her bağlı bileşenden en fazla perComp düğüm alınır; yoksa yoğun bir hattın
+ * (ör. çift hatlı tramvay) düğümleri yandaki banliyö hattını bastırır.
+ */
+export function snapCandidates(g, p, maxM, limit = 12, perComp = 2) {
   const cy = Math.floor(p.lat / CELL);
   const cx = Math.floor(p.lng / CELL);
   const found = [];
@@ -63,7 +84,16 @@ export function snapCandidates(g, p, maxM, limit = 8) {
       }
     }
   }
-  return found.sort((a, b) => a[0] - b[0]).slice(0, limit).map(([, i]) => i);
+  const taken = new Map();
+  const out = [];
+  for (const [, i] of found.sort((a, b) => a[0] - b[0])) {
+    const n = taken.get(g.comp[i]) ?? 0;
+    if (n >= perComp) continue;
+    taken.set(g.comp[i], n + 1);
+    out.push(i);
+    if (out.length >= limit) break;
+  }
+  return out;
 }
 
 /** Noktaya en yakın ağ düğümü; maxM içinde yoksa -1 */
@@ -146,6 +176,7 @@ export function railLine(g, stopPoints, { snapM = 300, detour = 2.5, slackM = 10
     let path = null;
     for (const a of cands[k]) {
       for (const b of cands[k + 1]) {
+        if (g.comp[a] !== g.comp[b]) continue;
         path = shortestPath(g, a, b, cap);
         if (path) break;
       }
