@@ -1,14 +1,15 @@
 // Resmi GTFS'i olmayan şehirler için OpenStreetMap'teki raylı sistem
 // hatlarından (PTv2 route ilişkileri) GTFS biçiminde sentetik tarife üretir.
 //
-//   node scripts/build-osm-rail.mjs ankara
+//   node scripts/build-osm-rail.mjs ankara        # raylı sistem
+//   node scripts/build-osm-rail.mjs ankara bus    # otobüs hatları (EGO)
 //
 // İstasyon sırası ve konumları OSM'den gelir. Sefer saatleri gerçek tarife
 // DEĞİLDİR: istasyonlar arası süre mesafeden (ortalama hız + durak bekleme),
 // sefer sıklığı hat başına tahmini bir değerden türetilir. Derleme bu veriyi
 // "sentetik" işaretler; planlar bu ayakları tahmini gösterir.
 //
-// Çıktı: data/gtfs/raw/<şehir>-osm-rail/*.txt (git dışında);
+// Çıktı: data/gtfs/raw/<şehir>-osm-rail|osm-bus/*.txt (git dışında);
 // ardından: node scripts/build-gtfs.mjs <şehir>
 import { mkdirSync, writeFileSync } from "node:fs";
 
@@ -30,6 +31,8 @@ const CITIES = {
       B1: { name: "Başkentray", type: 2, headwayMin: 15, kmh: 40 },
     },
     service: { start: "06:00:00", end: "24:00:00" },
+    // Her otobüs hattı için tek, tahmini değer (gerçek sıklık bilinmiyor)
+    bus: { headwayMin: 20, kmh: 20, dwellS: 20, service: { start: "06:00:00", end: "23:00:00" } },
   },
 };
 
@@ -87,13 +90,24 @@ if (!cfg) {
   process.exit(1);
 }
 
+const BUS = process.argv[3] === "bus";
+if (BUS && !cfg.bus) {
+  console.error(`${cityId} için otobüs yapılandırması yok`);
+  process.exit(1);
+}
+
 const [s, w, n, e] = cfg.bbox;
 const refs = Object.keys(cfg.lines).join("|");
-const query = `[out:json][timeout:120];
-relation["route"~"^(subway|light_rail|train)$"]["ref"~"^(${refs})$"](${s},${w},${n},${e});
+// Raylı: yalnızca tanımlı hatlar. Otobüs: ref'i olan tüm otobüs ilişkileri.
+const relFilter = BUS
+  ? `relation["route"="bus"]["ref"](${s},${w},${n},${e})`
+  : `relation["route"~"^(subway|light_rail|train)$"]["ref"~"^(${refs})$"](${s},${w},${n},${e})`;
+const query = `[out:json][timeout:180];
+${relFilter};
 out body;
 node(r);
 out body;`;
+const service = BUS ? cfg.bus.service : cfg.service;
 
 // Overpass zaman zaman 429/502/504 döner; artan beklemeyle yeniden dene
 async function overpass(q, tries = 5) {
@@ -111,19 +125,41 @@ async function overpass(q, tries = 5) {
 }
 const data = await overpass(query);
 
-// Hat geometrisi: ilişkilerin raylı yol (way) üyeleri, koordinatlarıyla
-const geomData = await overpass(`[out:json][timeout:120];
-relation["route"~"^(subway|light_rail|train)$"]["ref"~"^(${refs})$"](${s},${w},${n},${e});
-out geom;`);
-const geomByRelation = new Map(geomData.elements.filter((x) => x.type === "relation").map((r) => [r.id, r]));
+// Raylı hat geometrisi: ilişkilerin yol (way) üyeleri, koordinatlarıyla.
+// Otobüs çizgisini rota ajanı yol ağına oturtarak çizer; şekil gerekmez.
+const geomByRelation = BUS
+  ? new Map()
+  : new Map(
+      (await overpass(`[out:json][timeout:120];
+${relFilter};
+out geom;`)).elements
+        .filter((x) => x.type === "relation")
+        .map((r) => [r.id, r]),
+    );
 
 const nodes = new Map(data.elements.filter((x) => x.type === "node").map((x) => [x.id, x]));
-const relations = data.elements.filter((x) => x.type === "relation" && cfg.lines[x.tags.ref]);
+const relations = data.elements.filter((x) => x.type === "relation" && (BUS || cfg.lines[x.tags.ref]));
+
+/** İlişkinin hattı: rayda yapılandırmadan, otobüste ilişkinin kendisinden */
+const lines = new Map(); // route_id → { name, longName, type, headwayMin, kmh, dwellS }
+function lineOf(rel) {
+  if (!BUS) {
+    const l = cfg.lines[rel.tags.ref];
+    lines.set(rel.tags.ref, { ...l, longName: l.name, dwellS: DWELL_S });
+    return rel.tags.ref;
+  }
+  const id = `bus${rel.id}`;
+  const from = rel.tags.from ?? "?";
+  const to = rel.tags.to ?? "?";
+  lines.set(id, { name: rel.tags.ref, longName: `${rel.tags.ref}: ${from} - ${to}`, type: 3, ...cfg.bus });
+  return id;
+}
 
 const stops = new Map(); // node id → { name, lat, lon }
 const trips = [];
 for (const rel of relations) {
-  const line = cfg.lines[rel.tags.ref];
+  const routeId = lineOf(rel);
+  const line = lines.get(routeId);
   // PTv2: durak konumları "stop" rolünde; yoksa peron düğümleri
   const pick = (re) => rel.members.filter((m) => m.type === "node" && re.test(m.role) && nodes.has(m.ref)).map((m) => nodes.get(m.ref));
   let seq = pick(/^stop/);
@@ -139,29 +175,30 @@ for (const rel of relations) {
   const times = seq.map((nd, i) => {
     if (i > 0) {
       const m = haversineM(seq[i - 1], nd);
-      t += Math.max(60, Math.round(m / ((line.kmh * 1000) / 3600)) + DWELL_S);
+      t += Math.max(60, Math.round(m / ((line.kmh * 1000) / 3600)) + line.dwellS);
     }
     const name = nd.tags?.name ?? `${line.name} durağı`;
     stops.set(nd.id, { name, lat: nd.lat, lon: nd.lon });
     return { stop: nd.id, offset: t };
   });
   const shape = orientTo(chainWays(geomByRelation.get(rel.id)), seq);
-  trips.push({ id: `osm${rel.id}`, route: rel.tags.ref, headsign: rel.tags.to ?? "", times, shape });
-  console.log(`  ${line.name}: ${rel.tags.from ?? "?"} → ${rel.tags.to ?? "?"}, ${seq.length} durak, ${Math.round(t / 60)} dk`);
+  trips.push({ id: `osm${rel.id}`, route: routeId, headsign: rel.tags.to ?? "", times, shape });
+  if (!BUS) console.log(`  ${line.name}: ${rel.tags.from ?? "?"} → ${rel.tags.to ?? "?"}, ${seq.length} durak, ${Math.round(t / 60)} dk`);
 }
 
 const startSec = (() => {
-  const [h, m, sec] = cfg.service.start.split(":").map(Number);
+  const [h, m, sec] = service.start.split(":").map(Number);
   return h * 3600 + m * 60 + sec;
 })();
 
-const dir = `data/gtfs/raw/${cityId}-osm-rail`;
+const dir = `data/gtfs/raw/${cityId}-osm-${BUS ? "bus" : "rail"}`;
+if (BUS) console.log(`  ${relations.length} otobüs ilişkisi, ${trips.length} sefer şablonu`);
 mkdirSync(dir, { recursive: true });
-writeFileSync(`${dir}/agency.txt`, csv([["agency_id", "agency_name", "agency_url", "agency_timezone"], ["1", "Raylı sistem (OSM, sentetik tarife)", "https://www.openstreetmap.org", "Europe/Istanbul"]]));
+writeFileSync(`${dir}/agency.txt`, csv([["agency_id", "agency_name", "agency_url", "agency_timezone"], ["1", `${BUS ? "Otobüs" : "Raylı sistem"} (OSM, sentetik tarife)`, "https://www.openstreetmap.org", "Europe/Istanbul"]]));
 writeFileSync(`${dir}/calendar.txt`, csv([["service_id", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "start_date", "end_date"], ["ALL", 1, 1, 1, 1, 1, 1, 1, "20260101", "20301231"]]));
 writeFileSync(
   `${dir}/routes.txt`,
-  csv([["route_id", "agency_id", "route_short_name", "route_long_name", "route_type"], ...Object.entries(cfg.lines).map(([ref, l]) => [ref, "1", l.name, l.name, l.type])]),
+  csv([["route_id", "agency_id", "route_short_name", "route_long_name", "route_type"], ...[...lines].filter(([id]) => trips.some((t) => t.route === id)).map(([id, l]) => [id, "1", l.name, l.longName, l.type])]),
 );
 writeFileSync(`${dir}/stops.txt`, csv([["stop_id", "stop_name", "stop_lat", "stop_lon"], ...[...stops].map(([id, st]) => [id, st.name, st.lat, st.lon])]));
 writeFileSync(`${dir}/trips.txt`, csv([["route_id", "service_id", "trip_id", "trip_headsign", "shape_id"], ...trips.map((t) => [t.route, "ALL", t.id, t.headsign, t.shape.length >= 2 ? t.id : ""])]));
@@ -183,7 +220,7 @@ writeFileSync(
   `${dir}/frequencies.txt`,
   csv([
     ["trip_id", "start_time", "end_time", "headway_secs"],
-    ...trips.map((t) => [t.id, cfg.service.start, cfg.service.end, cfg.lines[t.route].headwayMin * 60]),
+    ...trips.map((t) => [t.id, service.start, service.end, lines.get(t.route).headwayMin * 60]),
   ]),
 );
 console.log(`Yazıldı: ${dir} (${trips.length} sefer şablonu, ${stops.size} durak)`);
