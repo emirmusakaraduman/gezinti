@@ -15,6 +15,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { createRailGraph, railLine } from "./lib/rail-graph.mjs";
 import { decode, fixMojibake, parseCoord, parseTime } from "./lib/text.mjs";
 
 const RAW = "data/gtfs/raw";
@@ -183,6 +184,7 @@ const stopIndex = new Map(); // "feed:stop_id" → index
 const routes = []; // { name, longName, type, agency }
 const patterns = []; // durak index dizileri
 const patternIndex = new Map(); // "route|s1,s2,..." → index
+const patternRoute = []; // kalıp → hat index'i
 const patternShape = []; // kalıp → şekil index'i (-1: şekil yok)
 const shapes = []; // şekil → [[lat, lng], ...]
 const shapeIndex = new Map(); // "feed:shape_id" → index
@@ -320,6 +322,7 @@ function addFeed({ name: feed, dir, stopTimes }) {
       pattern = patterns.length;
       patternIndex.set(patKey, pattern);
       patterns.push(stopSeq);
+      patternRoute.push(route);
       patternShape.push(shapeFor(shape));
     } else if (patternShape[pattern] === -1) {
       patternShape[pattern] = shapeFor(shape);
@@ -446,6 +449,35 @@ conns.length = 0;
 const foot = buildFootpaths();
 console.log(`\nToplam: ${stops.length} durak, ${routes.length} hat, ${trips.length} sefer, ${n} bağlantı, ${foot.to.length} aktarma`);
 
+// Şekli olmayan (ya da yalnızca durak noktalarından oluşan) raylı kalıplara,
+// OSM ray ağı üzerinde en kısa yoldan gerçek hat çizgisi ver
+// (scripts/fetch-rail-geometry.mjs ile indirilir)
+const RAIL_TYPES = new Set([0, 1, 2, 7]);
+const railBuilt = new Set(); // ağdan kurulan şekilli kalıplar (durak-hat sapması daha geniş)
+const railwaysPath = `${RAW}/${CITY}-osm-railways.json`;
+if (existsSync(railwaysPath)) {
+  const graph = createRailGraph(JSON.parse(readFileSync(railwaysPath, "utf8")));
+  let tried = 0;
+  let built = 0;
+  const cache = new Map(); // aynı durak dizisi başka hatta da geçer
+  patterns.forEach((stopSeq, p) => {
+    if (!RAIL_TYPES.has(routes[patternRoute[p]].type)) return;
+    const sh = patternShape[p];
+    // Yeterince yoğun şekil zaten gerçek hat çizgisidir (router'daki orana eşit)
+    if (sh >= 0 && shapes[sh].length >= 2 * stopSeq.length) return;
+    tried++;
+    const key = stopSeq.join(",");
+    if (!cache.has(key)) cache.set(key, railLine(graph, stopSeq.map((i) => stops[i])));
+    const line = cache.get(key);
+    if (!line) return;
+    patternShape[p] = shapes.length;
+    shapes.push(line);
+    railBuilt.add(p);
+    built++;
+  });
+  console.log(`OSM ray ağından çizgi: ${built}/${tried} raylı kalıp`);
+}
+
 // Kalıp CSR
 const patStart = new Int32Array(patterns.length + 1);
 const patStops = new Int32Array(patterns.reduce((s, p) => s + p.length, 0));
@@ -479,7 +511,7 @@ patterns.forEach((stopSeq, p) => {
   const sh = patternShape[p];
   if (sh < 0) return;
   const pts = shapes[sh];
-  const idx = projectStops(stopSeq, pts);
+  const idx = projectStops(stopSeq, pts, railBuilt.has(p) ? 300 : 150);
   if (!idx) return;
   idx.forEach((v, k) => (patStopShapePt[patStart[p] + k] = shapeStart[sh] + v));
   shapedPatterns++;
@@ -490,9 +522,9 @@ console.log(
 
 /**
  * Durakları sırayı koruyarak şekil üzerindeki en yakın noktaya eşler.
- * Bir durak şekle 150 m'den uzaksa şekil bu kalıba uymuyor sayılır.
+ * Bir durak şekle maxM'den uzaksa şekil bu kalıba uymuyor sayılır.
  */
-function projectStops(stopSeq, pts) {
+function projectStops(stopSeq, pts, maxM = 150) {
   const out = [];
   let from = 0;
   for (let k = 0; k < stopSeq.length; k++) {
@@ -509,7 +541,7 @@ function projectStops(stopSeq, pts) {
       // Yakın bir nokta bulduysak ve uzaklaşıyorsak dur (dönüşlü hatlar)
       if (bestD < 60 && d > bestD + 400) break;
     }
-    if (best < 0 || bestD > 150) return null;
+    if (best < 0 || bestD > maxM) return null;
     out.push(best);
     from = best;
   }
