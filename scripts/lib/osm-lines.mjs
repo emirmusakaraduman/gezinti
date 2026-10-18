@@ -1,14 +1,6 @@
 // OSM hat ilişkilerinden çizgi kurma ve durak dizisini çizgiye oturtma.
 // Ağ erişimi yok; fetch-bus-geometry.mjs, build-osm-rail.mjs ve build-gtfs.mjs kullanır.
-
-export function haversineM(a, b) {
-  const R = 6371000;
-  const rad = (d) => (d * Math.PI) / 180;
-  const h =
-    Math.sin(rad(b.lat - a.lat) / 2) ** 2 +
-    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lon - a.lon) / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
-}
+import { haversineM } from "./common.mjs";
 
 /**
  * İlişkinin yol parçalarını (sıralı way üyeleri, `out geom` çıktısı) tek çizgide

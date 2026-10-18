@@ -9,8 +9,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { haversineM, overpass, sleep } from "./lib/common.mjs";
 
-const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
 const THRESHOLD_M = 150;
 const CITIES = ["istanbul", "izmir", "ankara"];
 
@@ -22,15 +22,6 @@ const fold = (s) =>
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
-
-function haversineM(a, b) {
-  const R = 6371000;
-  const rad = (d) => (d * Math.PI) / 180;
-  const h =
-    Math.sin(rad(b.lat - a.lat) / 2) ** 2 +
-    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lng - a.lng) / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
-}
 
 /** city.ts içindeki kurator kayıtları: { id, name, lat, lng } */
 export function parseCurated(source) {
@@ -69,19 +60,6 @@ export function nameMatches(a, b) {
   return common >= Math.ceil(Math.min(wa.length, wb.size) / 2) && common > 0;
 }
 
-async function overpass(q, tries = 5) {
-  for (let i = 1; ; i++) {
-    const res = await fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      headers: { "User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded" },
-      body: `data=${encodeURIComponent(q)}`,
-    });
-    if (res.ok) return res.json();
-    if (i >= tries || ![429, 502, 503, 504].includes(res.status)) throw new Error(`Overpass ${res.status}`);
-    await new Promise((r) => setTimeout(r, 5000 * i));
-  }
-}
-
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   let flagged = 0;
   for (const city of CITIES) {
@@ -108,7 +86,7 @@ out center tags;`);
         `${ok ? "ok  " : "!!  "} ${p.name.padEnd(34)} ` +
           (best ? `${best.d} m  → OSM "${best.name}" (${best.lat.toFixed(5)}, ${best.lng.toFixed(5)}) ${best.kind}` : "OSM'de eşleşme yok"),
       );
-      await new Promise((r) => setTimeout(r, 1000));
+      await sleep(1000);
     }
   }
   console.log(`\n${flagged} mekan kontrol gerektiriyor`);

@@ -1,6 +1,8 @@
 // EGO "Hareket Saatleri" sayfasını ayrıştırır ve GTFS dosyalarına çevirir.
 // Ağ erişimi yok; scripts/fetch-ego.mjs kullanır, testlenebilir.
 
+import { haversineM } from "./common.mjs";
+
 const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
 
 export function decodeEntities(s) {
@@ -64,15 +66,6 @@ export function parseLinePage(html, code) {
     partial: { wd: wd.partial, sat: sat.partial, sun: sun.partial },
     stops,
   };
-}
-
-function haversineM(a, b) {
-  const R = 6371000;
-  const rad = (d) => (d * Math.PI) / 180;
-  const h =
-    Math.sin(rad(b.lat - a.lat) / 2) ** 2 +
-    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lng - a.lng) / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
 }
 
 const hms = (sec) =>

@@ -21,9 +21,9 @@
 // Çıktı: data/gtfs/raw/ankara-ego/*.txt (otobüs), ankara-ego-rail/*.txt (git dışında);
 // ardından: node scripts/build-gtfs.mjs ankara
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { sleep, USER_AGENT } from "./lib/common.mjs";
 import { buildEgoGtfs, nameLocator, parseLinePage, parseLineOptions, stationKey } from "./lib/ego.mjs";
 
-const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
 const BASE = "https://www.ego.gov.tr";
 const CACHE = ".cache/ego";
 const OUT = "data/gtfs/raw/ankara-ego";
@@ -32,7 +32,6 @@ const DELAY_MS = 1200;
 const OFFLINE = process.argv.includes("--offline");
 const BBOX = [39.6, 32.3, 40.2, 33.2];
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 mkdirSync(CACHE, { recursive: true });
 
 /** field: hat_no1 (otobüs), hat_no2 (metro), hat_no3 (Ankaray) */

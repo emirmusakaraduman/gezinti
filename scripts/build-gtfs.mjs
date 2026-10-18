@@ -15,6 +15,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { haversineM } from "./lib/common.mjs";
 import { bestFittingLine } from "./lib/osm-lines.mjs";
 import { createRailGraph, railLine } from "./lib/rail-graph.mjs";
 import { decode, fixMojibake, parseCoord, parseTime } from "./lib/text.mjs";
@@ -29,12 +30,23 @@ export const FORMAT_VERSION = 2;
  * Bir beslemenin stopTimes alanı, varsayılan stop_times dosyası yerine
  * kullanılacak dosyayı verir (yoksa varsayılana düşülür).
  */
+/**
+ * Güncel Metro İstanbul verisi (scripts/fetch-metroistanbul.mjs) varsa, İBB'nin süresi
+ * dolmuş GTFS'indeki aynı adlı Metro İstanbul hatları atlanır.
+ */
+const METRO_DIR = `${RAW}/istanbul-metro-ibb`;
+const replacedMetro = existsSync(`${METRO_DIR}/replaces.json`)
+  ? new Set(JSON.parse(readFileSync(`${METRO_DIR}/replaces.json`, "utf8")))
+  : new Set();
+const skipReplacedMetro = ({ name, agency }) => /Metro İstanbul/i.test(agency) && replacedMetro.has(name);
+
 const CITIES = {
   istanbul: {
     bbox: { minLat: 40.7, maxLat: 41.7, minLng: 27.9, maxLng: 29.95 },
     source: "İBB Açık Veri Portalı (data.ibb.gov.tr): İETT GTFS, Toplu Ulaşım GTFS",
     feeds: [
-      { name: "transit", dir: `${RAW}/transit` },
+      { name: "transit", dir: `${RAW}/transit`, skipRoute: skipReplacedMetro },
+      ...(replacedMetro.size ? [{ name: "metro-ibb", dir: METRO_DIR }] : []),
       // İETT'nin portaldaki stop_times.csv'si kesik (seferlerin ~%14'ü);
       // tam veri ayrı zip içinde
       { name: "iett", dir: `${RAW}/iett`, stopTimes: `${RAW}/iett-zip/stop_times.txt` },
@@ -176,16 +188,6 @@ function readCsv(path, { required = true } = {}) {
 
 const DAY_FIELDS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
-function haversineM(a, b) {
-  const R = 6371000;
-  const toRad = (d) => (d * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
-}
-
 // ---------- Ortak tablolar ----------
 
 const stops = []; // { name, lat, lng }
@@ -201,7 +203,7 @@ const trips = []; // { route, pattern }
 // Bağlantılar düz dizilerde: [depStop, arrStop, depTime, arrTime, trip, dayMask]
 const conns = [];
 
-function addFeed({ name: feed, dir, stopTimes, onlyRoutes, synthetic }) {
+function addFeed({ name: feed, dir, stopTimes, onlyRoutes, synthetic, skipRoute }) {
   console.log(`\n[${feed}] okunuyor…`);
 
   // Duraklar
@@ -252,6 +254,7 @@ function addFeed({ name: feed, dir, stopTimes, onlyRoutes, synthetic }) {
   for (const r of readCsv(gtfsPath(dir, "routes"))) {
     if (EXCLUDED_ROUTE_TYPES.has(Number(r.route_type))) continue;
     if (onlyRoutes && !onlyRoutes.includes(r.route_id)) continue;
+    if (skipRoute?.({ name: fixMojibake(r.route_short_name || r.route_long_name), agency: agencies.get(r.agency_id) ?? defaultAgency })) continue;
     routeIdx.set(r.route_id, routes.length);
     routes.push({
       name: fixMojibake(r.route_short_name || r.route_long_name),

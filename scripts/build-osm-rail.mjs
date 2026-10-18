@@ -12,9 +12,8 @@
 // Çıktı: data/gtfs/raw/<şehir>-osm-rail|osm-bus/*.txt (git dışında);
 // ardından: node scripts/build-gtfs.mjs <şehir>
 import { mkdirSync, writeFileSync } from "node:fs";
+import { haversineM, overpass } from "./lib/common.mjs";
 import { chainWays } from "./lib/osm-lines.mjs";
-
-const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
 
 /**
  * Hatlar: OSM route ilişkisinin ref'i → görünen ad, GTFS route_type,
@@ -44,15 +43,6 @@ function orientTo(line, seq) {
   if (line.length < 2) return line;
   const nearest = (pt) => line.reduce((best, p, i) => (haversineM(p, pt) < haversineM(line[best], pt) ? i : best), 0);
   return nearest(seq[0]) > nearest(seq.at(-1)) ? [...line].reverse() : line;
-}
-
-function haversineM(a, b) {
-  const R = 6371000;
-  const rad = (d) => (d * Math.PI) / 180;
-  const h =
-    Math.sin(rad(b.lat - a.lat) / 2) ** 2 +
-    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lon - a.lon) / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
 }
 
 const hms = (sec) =>
@@ -87,20 +77,6 @@ node(r);
 out body;`;
 const service = BUS ? cfg.bus.service : cfg.service;
 
-// Overpass zaman zaman 429/502/504 döner; artan beklemeyle yeniden dene
-async function overpass(q, tries = 5) {
-  for (let i = 1; ; i++) {
-    const res = await fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      headers: { "User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded" },
-      body: `data=${encodeURIComponent(q)}`,
-    });
-    if (res.ok) return res.json();
-    if (i >= tries || ![429, 502, 503, 504].includes(res.status)) throw new Error(`Overpass ${res.status}`);
-    console.warn(`  Overpass ${res.status}, ${5 * i} sn sonra yeniden deneniyor`);
-    await new Promise((r) => setTimeout(r, 5000 * i));
-  }
-}
 const data = await overpass(query);
 
 // Raylı hat geometrisi: ilişkilerin yol (way) üyeleri, koordinatlarıyla.

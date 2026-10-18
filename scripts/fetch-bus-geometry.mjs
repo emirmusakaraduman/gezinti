@@ -9,9 +9,9 @@
 // Çıktı: data/gtfs/raw/<şehir>-osm-buslines.json
 //   [{ ref, name, line: [lat, lng, lat, lng, …] }]  (1e-5 derece ≈ 1 m)
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { overpass, sleep } from "./lib/common.mjs";
 import { chainWays } from "./lib/osm-lines.mjs";
 
-const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
 // build-gtfs.mjs'teki bbox'larla aynı
 const BBOX = {
   istanbul: [40.7, 27.9, 41.7, 29.95],
@@ -23,22 +23,7 @@ const MAX_JUMP_M = 250;
 const DELAY_MS = 2000;
 const CACHE = ".cache/buslines";
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-async function overpass(q, tries = 6) {
-  for (let i = 1; ; i++) {
-    const res = await fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      headers: { "User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded" },
-      body: `data=${encodeURIComponent(q)}`,
-    });
-    if (res.ok) return res.json();
-    if (i >= tries || ![429, 502, 503, 504].includes(res.status)) throw new Error(`Overpass ${res.status}`);
-    console.warn(`  Overpass ${res.status}, ${10 * i} sn sonra yeniden deneniyor`);
-    await sleep(10000 * i);
-  }
-}
 
 const city = process.argv[2];
 if (!BBOX[city]) {

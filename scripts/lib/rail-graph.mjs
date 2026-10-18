@@ -1,15 +1,7 @@
 // OSM ray yollarından yönsüz bir ağ kurar ve duraklar arası en kısa ray
 // yolunu bulur (A*). build-gtfs.mjs, şekli olmayan raylı kalıplara gerçek hat
 // çizgisi vermek için kullanır.
-
-export function haversineM(a, b) {
-  const R = 6371000;
-  const rad = (d) => (d * Math.PI) / 180;
-  const h =
-    Math.sin(rad(b.lat - a.lat) / 2) ** 2 +
-    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lng - a.lng) / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
-}
+import { haversineM } from "./common.mjs";
 
 const CELL = 0.005;
 const cellKey = (lat, lng) => `${Math.floor(lat / CELL)}:${Math.floor(lng / CELL)}`;

@@ -7,8 +7,7 @@
 //
 // Çıktı: data/gtfs/raw/<şehir>-osm-railways.json  ([[lat, lng, lat, lng, …], …])
 import { mkdirSync, writeFileSync } from "node:fs";
-
-const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
+import { overpass } from "./lib/common.mjs";
 
 // build-gtfs.mjs'teki bbox'larla aynı
 const BBOX = {
@@ -16,20 +15,6 @@ const BBOX = {
   izmir: [37.7, 26.1, 39.5, 28.6],
   ankara: [39.6, 32.3, 40.2, 33.2],
 };
-
-async function overpass(q, tries = 5) {
-  for (let i = 1; ; i++) {
-    const res = await fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      headers: { "User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded" },
-      body: `data=${encodeURIComponent(q)}`,
-    });
-    if (res.ok) return res.json();
-    if (i >= tries || ![429, 502, 503, 504].includes(res.status)) throw new Error(`Overpass ${res.status}`);
-    console.warn(`  Overpass ${res.status}, ${5 * i} sn sonra yeniden deneniyor`);
-    await new Promise((r) => setTimeout(r, 5000 * i));
-  }
-}
 
 const cities = process.argv.slice(2);
 if (!cities.length || cities.some((c) => !BBOX[c])) {
