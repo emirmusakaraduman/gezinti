@@ -372,6 +372,73 @@ function insertMeal(order: Place[], meal: Place, kind: Exclude<MealKind, "kahval
 }
 
 /**
+ * Kapanış saatini aşan ziyaret süresi toplamı (dk). Validator'ın "kapanıyor,
+ * ziyaret süresi yetmeyebilir" uyarısıyla aynı ölçüt: ayrılış > kapanış.
+ * Gece yarısından sonra kapananlar (kapanış < açılış) her zaman yetişilir.
+ */
+function closingOvershoot(order: Place[], arrivals: number[]): number {
+  let total = 0;
+  order.forEach((p, i) => {
+    if (!p.hours) return;
+    const close = toMinutes(p.hours.close);
+    if (close < toMinutes(p.hours.open)) return;
+    total += Math.max(0, arrivals[i] + p.durationMin - close);
+  });
+  return total;
+}
+
+/**
+ * Kapanışa yetişmeyen yerleri öne alır: baştaki (kahvaltı) ve sondaki (akşam
+ * yemeği) sabit kalır, aradaki durakların tek taşıma/yer değiştirmeleri denenir.
+ * Kapanış aşımı azaldıkça (ya da aynı aşımda yol + bekleme azaldıkça) kabul edilir.
+ * Aşım yoksa sıralamaya dokunmaz.
+ */
+function respectClosings(order: Place[], head: number, tail: number, travel: TravelMin, roles: Map<string, MealKind>): Place[] {
+  const score = (o: Place[]) => {
+    const { arrivals, waitMin } = simulateArrivals(o, travel, roles);
+    let move = 0;
+    for (let i = 1; i < o.length; i++) move += travel(o[i - 1], o[i]);
+    return { overshoot: closingOvershoot(o, arrivals), cost: move + waitMin };
+  };
+  let best = order;
+  let bestScore = score(best);
+  if (bestScore.overshoot === 0) return order;
+
+  const end = order.length - tail;
+  for (let round = 0; round < 10 && bestScore.overshoot > 0; round++) {
+    let next: Place[] | null = null;
+    let nextScore = bestScore;
+    const consider = (candidate: Place[]) => {
+      const sc = score(candidate);
+      if (sc.overshoot < nextScore.overshoot || (sc.overshoot === nextScore.overshoot && sc.cost < nextScore.cost - 1e-9)) {
+        next = candidate;
+        nextScore = sc;
+      }
+    };
+    for (let i = head; i < end; i++) {
+      // i'deki durağı başka bir konuma taşı
+      for (let j = head; j < end; j++) {
+        if (i === j) continue;
+        const moved = [...best];
+        const [p] = moved.splice(i, 1);
+        moved.splice(j, 0, p);
+        consider(moved);
+      }
+      // ya da j ile yer değiştir
+      for (let j = i + 1; j < end; j++) {
+        const swapped = [...best];
+        [swapped[i], swapped[j]] = [swapped[j], swapped[i]];
+        consider(swapped);
+      }
+    }
+    if (!next) break;
+    best = next;
+    bestScore = nextScore;
+  }
+  return best;
+}
+
+/**
  * Günü sırala: kahvaltı başta, gezilecek yerler en kısa turla, öğle ve ara
  * öğünler saat hedeflerine göre araya, akşam yemeği sona.
  */
@@ -381,7 +448,9 @@ export function orderDay(places: Place[], travel: TravelMin, roles: Map<string, 
   const ofKind = (k: MealKind) => places.filter((p) => roles.get(p.id) === k);
   for (const meal of ofKind("ogle")) order = insertMeal(order, meal, "ogle", breakfasts.length + 1, travel, roles);
   for (const meal of ofKind("ara")) order = insertMeal(order, meal, "ara", breakfasts.length + 1, travel, roles);
-  return [...order, ...ofKind("aksam")];
+  const dinners = ofKind("aksam");
+  // Akşam yemeği sona eklendikten sonra, kapanışa yetişmeyen yerleri öne al
+  return respectClosings([...order, ...dinners], breakfasts.length, dinners.length, travel, roles);
 }
 
 export async function buildDay(

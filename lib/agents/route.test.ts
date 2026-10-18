@@ -73,6 +73,42 @@ describe("orderDay", () => {
   });
 });
 
+describe("orderDay: kapanış saati", () => {
+  const withHours = (name: string, lng: number, close: string, durationMin = 60) =>
+    place({ name, lng, durationMin, hours: { open: "09:00", close, closedDays: [] } });
+  const a = withHours("Açık A", 29.0, "20:00");
+  const b = withHours("Açık B", 29.01, "20:00");
+  const c = withHours("Açık C", 29.02, "20:00");
+  // En uzak nokta: en kısa tur sona koyar, ama 11:00'de kapanıyor
+  const early = withHours("Erken kapanan", 29.03, "11:00");
+
+  it("en kısa tur kapanışı kaçırıyorsa erken kapanan yeri öne alır", () => {
+    const places = [a, b, c, early];
+    const roles = assignMeals(places);
+    const order = orderDay(places, travel, roles);
+    // Hiçbir durağın ayrılışı kapanışı geçmemeli
+    const at = arrivals(order, roles);
+    for (const p of order) {
+      expect(at.get(p.id)! + p.durationMin).toBeLessThanOrEqual(toMinutes(p.hours!.close));
+    }
+    expect(order.indexOf(early)).toBeLessThanOrEqual(1);
+  });
+
+  it("kapanış sorunu yoksa en kısa turu bozmaz", () => {
+    const places = [a, b, c];
+    const order = orderDay(places, travel, assignMeals(places));
+    expect(order.map((p) => p.id)).toEqual([a.id, b.id, c.id]);
+  });
+
+  it("kahvaltıyı başta, akşam yemeğini sonda tutar", () => {
+    const places = [a, b, early, breakfast, lunch, dinner];
+    const roles = assignMeals(places);
+    const order = orderDay(places, travel, roles);
+    expect(order[0].id).toBe(breakfast.id);
+    expect(order.at(-1)!.id).toBe(dinner.id);
+  });
+});
+
 describe("estimateLeg", () => {
   const c = city([]);
   const a = place({ lat: 41.0, lng: 29.0 });
