@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { buildEgoGtfs, decodeEntities, parseLineOptions, parseLinePage } from "./ego.mjs";
+import { buildEgoGtfs, decodeEntities, parseLineOptions, parseLinePage, stationKey } from "./ego.mjs";
 
 const page = readFileSync(new URL("../../test/ego-line.fixture.html", import.meta.url), "utf8");
 
@@ -75,5 +75,46 @@ describe("buildEgoGtfs", () => {
   it("saati olmayan veya durakları yetersiz hattı atlar", () => {
     const { files } = buildEgoGtfs([{ ...line, times: { wd: [], sat: [], sun: [] } }, { ...line, code: "8" }], new Map([["1", osm.get("1")]]));
     expect(files["routes.txt"].trim().split("\n")).toHaveLength(1);
+  });
+});
+
+describe("raylı hat: ara istasyondan başlayan seferler", () => {
+  const html = `<table><tr><td class="key">Hat No</td><td class="sep">:</td><td>M1-D</td></tr></table>
+<table class="hs-table"><tbody><tr>
+<td class="hs-times">06:00 -<br />06:10 -<br />06:00 ULUS METRO İSTASYONUNDAN BAŞLAYACAK<br />06:20 -<br /></td>
+<td class="hs-times"></td><td class="hs-times"></td></tr></tbody></table>
+<table class="route-table"><tbody>
+<tr><td>1</td><td>M33</td><td>KORU İSTASYONU</td><td>-</td></tr>
+<tr><td>2</td><td>M3</td><td>ULUS İSTASYONU</td><td>-</td></tr>
+<tr><td>3</td><td>M12</td><td>BATIKENT İSTASYONU</td><td>-</td></tr>
+</tbody></table>`;
+  const line = parseLinePage(html, "M1-D");
+
+  it("notlu saati ayrı tutar, düz saatlere katmaz", () => {
+    expect(line.times.wd).toEqual([6 * 3600, 6 * 3600 + 600, 6 * 3600 + 1200]);
+    expect(line.partial.wd).toEqual([{ sec: 6 * 3600, from: "ULUS METRO İSTASYONU" }]);
+    expect(line.stops.map((s) => s.no)).toEqual(["M33", "M3", "M12"]);
+  });
+
+  it("seferi o istasyondan başlatır; rota adından yön ekini atar", () => {
+    const pos = new Map([
+      ["M33", { lat: 39.88, lng: 32.7 }],
+      ["M3", { lat: 39.94, lng: 32.85 }],
+      ["M12", { lat: 39.97, lng: 32.73 }],
+    ]);
+    const { files } = buildEgoGtfs([{ ...line, type: 1 }], pos);
+    const rows = files["stop_times.txt"].trim().split("\n").slice(1);
+    const fromUlus = rows.filter((r) => r.startsWith("M1-D-WD-21600-1,"));
+    expect(fromUlus.map((r) => r.split(",")[3])).toEqual(["M3", "M12"]);
+    expect(fromUlus[0].split(",")[1]).toBe("06:00:00");
+    expect(files["routes.txt"]).toContain("M1-D,1,M1,M1: ");
+  });
+});
+
+describe("stationKey", () => {
+  it("istasyon/metro sözcüklerini ve tek haneli peron numarasını atar", () => {
+    expect(stationKey("ŞEHİTLER İSTASYONU 1")).toBe("sehitler");
+    expect(stationKey("ÜMİTKÖY METRO İSTASYONU")).toBe("umitkoy");
+    expect(stationKey("Ümitköy")).toBe("umitkoy");
   });
 });

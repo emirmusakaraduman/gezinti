@@ -3,7 +3,7 @@
 // noktalarından oluşan) raylı kalıpların çizgisini bu ağ üzerinde en kısa yolla
 // kurar.
 //
-//   node scripts/fetch-rail-geometry.mjs istanbul izmir
+//   node scripts/fetch-rail-geometry.mjs istanbul izmir ankara
 //
 // Çıktı: data/gtfs/raw/<şehir>-osm-railways.json  ([[lat, lng, lat, lng, …], …])
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -14,6 +14,7 @@ const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakarad
 const BBOX = {
   istanbul: [40.7, 27.9, 41.7, 29.95],
   izmir: [37.7, 26.1, 39.5, 28.6],
+  ankara: [39.6, 32.3, 40.2, 33.2],
 };
 
 async function overpass(q, tries = 5) {

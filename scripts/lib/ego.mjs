@@ -15,9 +15,9 @@ export function decodeEntities(s) {
 
 const clean = (s) => decodeEntities(s.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
 
-/** Ana sayfadaki otobüs hat seçeneklerinin kodları (ör. "105-1") */
-export function parseLineOptions(html) {
-  const select = html.match(/<select[^>]*id="hat_liste_otobus"[^>]*>([\s\S]*?)<\/select>/);
+/** Ana sayfadaki hat seçeneklerinin kodları (ör. "105-1"); id: hat_liste_otobus | _metro | _ankaray */
+export function parseLineOptions(html, id = "hat_liste_otobus") {
+  const select = html.match(new RegExp(`<select[^>]*id="${id}"[^>]*>([\\s\\S]*?)</select>`));
   if (!select) return [];
   return [...select[1].matchAll(/<option value="([^"]+)"/g)].map((m) => m[1]).filter((v) => v !== "0");
 }
@@ -30,17 +30,25 @@ export function parseLinePage(html, code) {
   }
   const num = (s) => Number(String(s ?? "").match(/[\d.,]+/)?.[0].replace(",", "."));
 
-  const cells = [...html.matchAll(/<td class="hs-times">([\s\S]*?)<\/td>/g)].map((m) =>
-    [...m[1].matchAll(/\b(\d{1,2}):(\d{2})\b/g)]
-      .map((t) => Number(t[1]) * 3600 + Number(t[2]) * 60)
-      .filter((v, i, a) => a.indexOf(v) === i)
-      .sort((a, b) => a - b),
-  );
-  const [wd = [], sat = [], sun = []] = cells;
-
+  // Hücre: "06:10 - 06:20 - 06:00 ULUS METRO İSTASYONUNDAN BAŞLAYACAK 06:30 - …".
+  // Notlu saatler hattın ortasındaki bir istasyondan başlayan seferlerdir.
+  const cells = [...html.matchAll(/<td class="hs-times">([\s\S]*?)<\/td>/g)].map((m) => {
+    const plain = [];
+    const partial = [];
+    const text = clean(m[1].replace(/<br\s*\/?>/gi, " "));
+    for (const t of text.matchAll(/(\d{1,2}):(\d{2})([^\d]*)/g)) {
+      const sec = Number(t[1]) * 3600 + Number(t[2]) * 60;
+      const note = t[3].match(/^\s*-?\s*(.*?)N?D[AE]N\s+BA[ŞS]LAYACAK/i);
+      if (/BA[ŞS]LAYACAK/i.test(t[3]) && note?.[1]) partial.push({ sec, from: note[1] });
+      else plain.push(sec);
+    }
+    const uniq = (a) => a.filter((v, i) => a.indexOf(v) === i).sort((x, y) => x - y);
+    return { plain: uniq(plain), partial };
+  });
+  const [wd = { plain: [], partial: [] }, sat = { plain: [], partial: [] }, sun = { plain: [], partial: [] }] = cells;
   const table = html.match(/<table[^>]*route-table[^>]*>([\s\S]*?)<\/table>/)?.[1] ?? "";
   const stops = [];
-  for (const row of table.matchAll(/<tr>\s*<td>[\s\S]*?<\/td>\s*<td>(\d+)<\/td>\s*<td>([\s\S]*?)<\/td>/g)) {
+  for (const row of table.matchAll(/<tr>\s*<td>[\s\S]*?<\/td>\s*<td>([A-Za-z]*\d+)<\/td>\s*<td>([\s\S]*?)<\/td>/g)) {
     stops.push({ no: row[1], name: clean(row[2]) });
   }
   if (stops.length < 2) return null;
@@ -52,7 +60,8 @@ export function parseLinePage(html, code) {
     to: kv["Varış Yeri"] ?? "",
     km: num(kv["Mesafesi"]) || null,
     durationMin: num(kv["Süresi"]) || null,
-    times: { wd, sat, sun },
+    times: { wd: wd.plain, sat: sat.plain, sun: sun.plain },
+    partial: { wd: wd.partial, sat: sat.partial, sun: sun.partial },
     stops,
   };
 }
@@ -72,6 +81,19 @@ const hms = (sec) =>
 const csvRow = (r) => r.map((v) => (/[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v)).join(",");
 const csv = (rows) => rows.map(csvRow).join("\n") + "\n";
 
+/** Ad karşılaştırması için: küçük harf, aksansız, "istasyonu/metro" gibi sözcükler atılmış */
+export function stationKey(name) {
+  return name
+    .toLocaleLowerCase("tr")
+    .replace(/ı/g, "i")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter((w) => w && !["istasyonu", "istasyon", "metro", "ist", "durak", "gar"].includes(w) && !/^\d$/.test(w))
+    .join(" ");
+}
+
 /** Hat yoksa/bilinmiyorsa kullanılan ortalama otobüs hızı (km/s) */
 const FALLBACK_KMH = 20;
 
@@ -83,15 +105,17 @@ const SERVICES = [
 
 /**
  * @param lines parseLinePage çıktıları
- * @param osmStops Map<EGO durak no, {lat, lng}>
+ * @param locate Map<EGO durak no, {lat, lng}> ya da (durak) => {lat, lng} | undefined
  * @returns {{ files: Record<string, string>, report: string }}
  */
-export function buildEgoGtfs(lines, osmStops) {
+export function buildEgoGtfs(lines, locate) {
+  const find = locate instanceof Map ? (s) => locate.get(s.no) : locate;
   const stops = new Map(); // no → { name, lat, lng }
   const routes = [];
   const trips = [];
   const stopTimes = ["trip_id,arrival_time,departure_time,stop_id,stop_sequence"];
   let skipped = 0;
+  let partialSkipped = 0;
   let stopsTotal = 0;
   let stopsMatched = 0;
 
@@ -99,13 +123,14 @@ export function buildEgoGtfs(lines, osmStops) {
     const seq = [];
     for (const s of line.stops) {
       stopsTotal++;
-      const pos = osmStops.get(s.no);
+      const pos = find(s);
       if (!pos) continue;
       stopsMatched++;
       if (seq.at(-1)?.no === s.no) continue;
       seq.push({ no: s.no, name: s.name, ...pos });
     }
-    const hasTimes = SERVICES.some(([key]) => line.times[key].length);
+    const partial = line.partial ?? { wd: [], sat: [], sun: [] };
+    const hasTimes = SERVICES.some(([key]) => line.times[key].length || partial[key].length);
     if (seq.length < 2 || !hasTimes) {
       skipped++;
       continue;
@@ -122,16 +147,33 @@ export function buildEgoGtfs(lines, osmStops) {
     for (let i = 1; i < offsets.length; i++) offsets[i] = Math.max(offsets[i], offsets[i - 1] + 20);
 
     for (const s of seq) stops.set(s.no, { name: s.name, lat: s.lat, lng: s.lng });
-    routes.push([line.code, "1", line.code, `${line.code}: ${line.name}`, 3]);
+    // Raylıda -D/-G yön ekidir; gösterilen hat adı "M1" olsun
+    const short = line.type === 1 ? line.code.replace(/-[DG]$/, "") : line.code;
+    routes.push([line.code, "1", short, `${short}: ${line.name}`, line.type ?? 3]);
+
+    // Hattın ortasındaki bir istasyondan başlayan seferler için başlangıç indeksi
+    const startIndex = (from) => {
+      const key = stationKey(from);
+      return seq.findIndex((x) => {
+        const k = stationKey(x.name);
+        return k === key || (key.length >= 4 && (k.startsWith(key) || key.startsWith(k)));
+      });
+    };
+    const emit = (sid, dep, first) => {
+      const id = `${line.code}-${sid}-${dep}${first ? `-${first}` : ""}`;
+      trips.push([line.code, sid, id, line.to]);
+      for (let i = first; i < seq.length; i++) {
+        const t = hms(dep + offsets[i] - offsets[first]);
+        stopTimes.push(csvRow([id, t, t, seq[i].no, i - first + 1]));
+      }
+    };
 
     for (const [key, sid] of SERVICES) {
-      for (const dep of line.times[key]) {
-        const id = `${line.code}-${sid}-${dep}`;
-        trips.push([line.code, sid, id, line.to]);
-        seq.forEach((s, i) => {
-          const t = hms(dep + offsets[i]);
-          stopTimes.push(csvRow([id, t, t, s.no, i + 1]));
-        });
+      for (const dep of line.times[key]) emit(sid, dep, 0);
+      for (const p of partial[key]) {
+        const first = startIndex(p.from);
+        if (first < 0 || first >= seq.length - 1) partialSkipped++;
+        else emit(sid, p.sec, first);
       }
     }
   }
@@ -155,6 +197,7 @@ export function buildEgoGtfs(lines, osmStops) {
   };
   const report =
     `Yazıldı: ${routes.length} hat (${skipped} atlandı: durak/saat eksik), ${trips.length} sefer, ${stops.size} durak.\n` +
-    `Durak eşleşmesi: ${stopsMatched}/${stopsTotal} (%${Math.round((100 * stopsMatched) / Math.max(1, stopsTotal))}) OSM'de bulundu.`;
+    `${partialSkipped ? `Ara istasyondan başlayan ${partialSkipped} sefer eşleşmediği için atlandı.
+` : ""}Durak eşleşmesi: ${stopsMatched}/${stopsTotal} (%${Math.round((100 * stopsMatched) / Math.max(1, stopsTotal))}) OSM'de bulundu.`;
   return { files, report };
 }

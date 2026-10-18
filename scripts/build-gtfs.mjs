@@ -53,8 +53,13 @@ const CITIES = {
     synthetic: true,
     // Otobüs: EGO'nun yayımladığı kalkış saatleri (scripts/fetch-ego.mjs);
     // çekilmemişse OSM'den sentetik tarifeye düşülür
+    // Raylı: EGO'nun gerçek saatleri varsa onlar; OSM sentetik tarife yalnızca
+    // EGO'da olmayan Başkentray (B1) için kalır
     feeds: [
-      { name: "osm-rail", dir: `${RAW}/ankara-osm-rail` },
+      existsSync(`${RAW}/ankara-ego-rail`)
+        ? { name: "osm-rail", dir: `${RAW}/ankara-osm-rail`, onlyRoutes: ["B1"] }
+        : { name: "osm-rail", dir: `${RAW}/ankara-osm-rail` },
+      ...(existsSync(`${RAW}/ankara-ego-rail`) ? [{ name: "ego-rail", dir: `${RAW}/ankara-ego-rail` }] : []),
       existsSync(`${RAW}/ankara-ego`)
         ? { name: "ego", dir: `${RAW}/ankara-ego` }
         : { name: "osm-bus", dir: `${RAW}/ankara-osm-bus` },
@@ -196,7 +201,7 @@ const trips = []; // { route, pattern }
 // Bağlantılar düz dizilerde: [depStop, arrStop, depTime, arrTime, trip, dayMask]
 const conns = [];
 
-function addFeed({ name: feed, dir, stopTimes }) {
+function addFeed({ name: feed, dir, stopTimes, onlyRoutes }) {
   console.log(`\n[${feed}] okunuyor…`);
 
   // Duraklar
@@ -240,6 +245,7 @@ function addFeed({ name: feed, dir, stopTimes }) {
   const routeIdx = new Map();
   for (const r of readCsv(gtfsPath(dir, "routes"))) {
     if (EXCLUDED_ROUTE_TYPES.has(Number(r.route_type))) continue;
+    if (onlyRoutes && !onlyRoutes.includes(r.route_id)) continue;
     routeIdx.set(r.route_id, routes.length);
     routes.push({
       name: fixMojibake(r.route_short_name || r.route_long_name),
