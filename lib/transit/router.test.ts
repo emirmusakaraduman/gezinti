@@ -88,6 +88,14 @@ describe("TransitRouter.plan", () => {
     expect(new TransitRouter(binPath, metaPath).synthetic).toBe(true);
   });
 
+  it("yolculuğun sentetik işareti, yalnızca binilen hatlara bağlıdır", () => {
+    // Binilmeyen bir hat sentetik olsa da yolculuk gerçek tarifeli sayılır
+    const real = writeFixture(STOPS, [direct("10:45")], { syntheticRoutes: ["başka"] });
+    expect(new TransitRouter(real.binPath, real.metaPath).plan(FROM, TO, TEN, TUESDAY)!.synthetic).toBe(false);
+    const syn = writeFixture(STOPS, [direct("10:45")], { syntheticRoutes: ["A"] });
+    expect(new TransitRouter(syn.binPath, syn.metaPath).plan(FROM, TO, TEN, TUESDAY)!.synthetic).toBe(true);
+  });
+
   it("adım saatleri tutarlı: hiçbir adım öncekinin bitişinden önce başlamaz", () => {
     const j = router([direct("10:45"), firstLeg, secondLeg("10:10")]).plan(FROM, TO, TEN, TUESDAY)!;
     const mins = (t: string) => toMinutes(t);

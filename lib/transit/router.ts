@@ -46,6 +46,8 @@ export interface TransitJourney {
   distanceKm: number;
   /** Araca biniş sayısı (ücret için) */
   rides: number;
+  /** Yolculukta gerçek tarife olmayan (tahmini sıklıktan türetilmiş) bir hat var */
+  synthetic: boolean;
 }
 
 interface Meta {
@@ -56,7 +58,7 @@ interface Meta {
   synthetic?: boolean;
   layout:Record<string, { type: string; offset: number; length: number }>;
   stops: { name: string[]; lat: number[]; lng: number[] };
-  routes: { name: string; longName: string; type: number; agency: string }[];
+  routes: { name: string; longName: string; type: number; agency: string; synthetic?: boolean }[];
 }
 
 const ROUTE_TYPE: Record<number, Vehicle> = {
@@ -124,7 +126,7 @@ export class TransitRouter {
     };
   }
 
-  /** Saatler gerçek tarife değil, tahmini sefer sıklığından türetilmiş */
+  /** Tüm beslemenin saatleri gerçek tarife değil (hat bazında değil, tüm şehir) */
   get synthetic(): boolean {
     return this.meta.synthetic ?? false;
   }
@@ -292,6 +294,7 @@ export class TransitRouter {
 
     let s = lastStop;
     let rides = 0;
+    let synthetic = this.synthetic;
     for (let guard = 0; guard < 50; guard++) {
       if (inConn[s] >= 0) {
         const exit = inConn[s];
@@ -315,6 +318,7 @@ export class TransitRouter {
           geometryExact: slice.exact,
         });
         rides++;
+        synthetic ||= route.synthetic ?? false;
         s = boardStop;
       } else if (inFoot[s] >= 0) {
         const prev = inFoot[s];
@@ -347,6 +351,7 @@ export class TransitRouter {
       geometry: steps.flatMap((st) => st.geometry),
       distanceKm: steps.reduce((sum, st) => sum + lineLengthKm(st.geometry), 0),
       rides,
+      synthetic,
     };
   }
 

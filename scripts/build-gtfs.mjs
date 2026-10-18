@@ -51,19 +51,18 @@ const CITIES = {
   ankara: {
     bbox: { minLat: 39.6, maxLat: 40.2, minLng: 32.3, maxLng: 33.2 },
     source: "EGO hareket saatleri (otobüs; ara durak saatleri tahmini), OpenStreetMap raylı sistem (sentetik tarife)",
-    synthetic: true,
     // Otobüs: EGO'nun yayımladığı kalkış saatleri (scripts/fetch-ego.mjs);
     // çekilmemişse OSM'den sentetik tarifeye düşülür
     // Raylı: EGO'nun gerçek saatleri varsa onlar; OSM sentetik tarife yalnızca
     // EGO'da olmayan Başkentray (B1) için kalır
     feeds: [
       existsSync(`${RAW}/ankara-ego-rail`)
-        ? { name: "osm-rail", dir: `${RAW}/ankara-osm-rail`, onlyRoutes: ["B1"] }
-        : { name: "osm-rail", dir: `${RAW}/ankara-osm-rail` },
+        ? { name: "osm-rail", dir: `${RAW}/ankara-osm-rail`, onlyRoutes: ["B1"], synthetic: true }
+        : { name: "osm-rail", dir: `${RAW}/ankara-osm-rail`, synthetic: true },
       ...(existsSync(`${RAW}/ankara-ego-rail`) ? [{ name: "ego-rail", dir: `${RAW}/ankara-ego-rail` }] : []),
       existsSync(`${RAW}/ankara-ego`)
         ? { name: "ego", dir: `${RAW}/ankara-ego` }
-        : { name: "osm-bus", dir: `${RAW}/ankara-osm-bus` },
+        : { name: "osm-bus", dir: `${RAW}/ankara-osm-bus`, synthetic: true },
     ],
   },
 };
@@ -202,7 +201,7 @@ const trips = []; // { route, pattern }
 // Bağlantılar düz dizilerde: [depStop, arrStop, depTime, arrTime, trip, dayMask]
 const conns = [];
 
-function addFeed({ name: feed, dir, stopTimes, onlyRoutes }) {
+function addFeed({ name: feed, dir, stopTimes, onlyRoutes, synthetic }) {
   console.log(`\n[${feed}] okunuyor…`);
 
   // Duraklar
@@ -253,6 +252,8 @@ function addFeed({ name: feed, dir, stopTimes, onlyRoutes }) {
       longName: fixMojibake(r.route_long_name),
       type: Number(r.route_type),
       agency: agencies.get(r.agency_id) ?? defaultAgency,
+      // Gerçek tarife değil, tahmini sefer sıklığından türetilmiş
+      ...(synthetic ? { synthetic: true } : {}),
     });
   }
 
@@ -633,7 +634,7 @@ writeFileSync(
     version: FORMAT_VERSION,
     builtAt: new Date().toISOString(),
     source: CONFIG.source,
-    // Gerçek tarife değil (sefer sıklığından türetilmiş); yönlendirici ayakları tahmini sayar
+    // Tüm besleme sentetikse true; hat bazında işaret routes[].synthetic'te
     synthetic: CONFIG.synthetic ?? false,
     layout,
     stops: {

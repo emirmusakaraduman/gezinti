@@ -414,7 +414,7 @@ export async function buildDay(
       if (router && legs[i - 1].mode === "toplu_tasima") {
         const journey = router.plan(prev, place, clock * 60, weekday(date));
         legs[i - 1] = journey
-          ? transitLeg(prev, place, await refineJourney(journey), clock, city, travelers, router.synthetic)
+          ? transitLeg(prev, place, await refineJourney(journey), clock, city, travelers, journey.synthetic)
           : await walkInstead(prev, place, legs[i - 1]);
       }
       clock += legs[i - 1].durationMin;
