@@ -49,11 +49,15 @@ const CITIES = {
   // tarifeyle (scripts/build-osm-rail.mjs [bus]). Saatler tahmini.
   ankara: {
     bbox: { minLat: 39.6, maxLat: 40.2, minLng: 32.3, maxLng: 33.2 },
-    source: "OpenStreetMap raylı sistem ve otobüs hatları; sentetik tarife (tahmini sefer sıklığı)",
+    source: "EGO hareket saatleri (otobüs; ara durak saatleri tahmini), OpenStreetMap raylı sistem (sentetik tarife)",
     synthetic: true,
+    // Otobüs: EGO'nun yayımladığı kalkış saatleri (scripts/fetch-ego.mjs);
+    // çekilmemişse OSM'den sentetik tarifeye düşülür
     feeds: [
       { name: "osm-rail", dir: `${RAW}/ankara-osm-rail` },
-      { name: "osm-bus", dir: `${RAW}/ankara-osm-bus` },
+      existsSync(`${RAW}/ankara-ego`)
+        ? { name: "ego", dir: `${RAW}/ankara-ego` }
+        : { name: "osm-bus", dir: `${RAW}/ankara-osm-bus` },
     ],
   },
 };
