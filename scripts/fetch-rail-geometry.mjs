@@ -38,9 +38,10 @@ if (!cities.length || cities.some((c) => !BBOX[c])) {
 
 for (const city of cities) {
   const [s, w, n, e] = BBOX[city];
-  // Servis/depo yolları ve terk edilmiş hatlar hariç
+  // Depo/yan hatlar hariç; crossover (çift hattı birbirine bağlayan geçişler)
+  // kalmalı, yoksa iki yöndeki ray ağı birbirinden kopuk çıkar
   const data = await overpass(`[out:json][timeout:240];
-way["railway"~"^(subway|light_rail|tram|rail|funicular)$"]["service"!~"."]["usage"!="industrial"](${s},${w},${n},${e});
+way["railway"~"^(subway|light_rail|tram|rail|funicular)$"]["service"!~"^(yard|siding|spur|driveway)$"]["usage"!="industrial"](${s},${w},${n},${e});
 out geom qt;`);
   const ways = data.elements
     .filter((x) => x.type === "way" && x.geometry?.length >= 2)
