@@ -44,6 +44,14 @@ const CITIES = {
     source: "İzmir BB Açık Veri Portalı (acikveri.bizizmir.com): ESHOT, Metro, Tramvay, İZBAN GTFS",
     feeds: ["eshot", "metro", "tram", "izban"].map((name) => ({ name, dir: `${RAW}/izmir/${name}` })),
   },
+  // Ankara'nın açık GTFS'i yok: raylı sistem OSM'den sentetik tarifeyle
+  // (scripts/build-osm-rail.mjs). Saatler tahmini; otobüsler dahil değil.
+  ankara: {
+    bbox: { minLat: 39.6, maxLat: 40.2, minLng: 32.3, maxLng: 33.2 },
+    source: "OpenStreetMap raylı sistem hatları; sentetik tarife (tahmini sefer sıklığı)",
+    synthetic: true,
+    feeds: [{ name: "osm-rail", dir: `${RAW}/ankara-osm-rail` }],
+  },
 };
 
 // Şehir verilmezse verisi olan her şehri ayrı süreçte derle (durum karışmasın)
@@ -544,6 +552,8 @@ writeFileSync(
     version: FORMAT_VERSION,
     builtAt: new Date().toISOString(),
     source: CONFIG.source,
+    // Gerçek tarife değil (sefer sıklığından türetilmiş); yönlendirici ayakları tahmini sayar
+    synthetic: CONFIG.synthetic ?? false,
     layout,
     stops: {
       name: stops.map((s) => s.name),

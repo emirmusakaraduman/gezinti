@@ -82,6 +82,12 @@ describe("TransitRouter.plan", () => {
     expect(router([direct("10:45")]).plan(FROM, near, TEN, TUESDAY)).toBeNull();
   });
 
+  it("sentetik tarife işaretini taşır (ör. Ankara, OSM)", () => {
+    expect(router([direct("10:45")]).synthetic).toBe(false);
+    const { binPath, metaPath } = writeFixture(STOPS, [direct("10:45")], { synthetic: true });
+    expect(new TransitRouter(binPath, metaPath).synthetic).toBe(true);
+  });
+
   it("adım saatleri tutarlı: hiçbir adım öncekinin bitişinden önce başlamaz", () => {
     const j = router([direct("10:45"), firstLeg, secondLeg("10:10")]).plan(FROM, TO, TEN, TUESDAY)!;
     const mins = (t: string) => toMinutes(t);

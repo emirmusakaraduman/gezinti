@@ -102,10 +102,17 @@ function finalize(
     ...issues.map(({ level, message }) => ({ level, message })),
   ];
   const transitLegs = days.flatMap((d) => d.legs).filter((l) => l.mode === "toplu_tasima");
-  if (transitLegs.some((l) => l.transit)) {
+  if (transitLegs.some((l) => l.transit && !l.estimated)) {
     warnings.push({
       level: "bilgi",
       message: `${city.name} toplu taşıması, belediyenin açık GTFS sefer verisiyle planlandı. Sefer saatleri değişmiş olabilir; yola çıkmadan kontrol et.`,
+    });
+  }
+  // Sentetik tarife (ör. Ankara): güzergahlar gerçek, saatler tahmini
+  if (transitLegs.some((l) => l.transit && l.estimated)) {
+    warnings.push({
+      level: "bilgi",
+      message: `${city.name} raylı sistemi OpenStreetMap'teki hatlarla ve tahmini sefer sıklığıyla planlandı; saatler gerçek tarife değildir. Otobüs hatları dahil değil.`,
     });
   }
   if (transitLegs.some((l) => !l.transit)) {

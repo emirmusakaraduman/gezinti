@@ -48,8 +48,12 @@ const WALK_MAX_KM = 1.5;
 const CAR_TRAFFIC_FACTOR = 1.5;
 /** Bu kuş uçuşu mesafenin üstünde yürüme rotası hiç sorulmaz */
 const WALK_PROBE_KM = 1.6;
-/** Toplu taşıma bulunamazsa en fazla bu kadar yürüme önerilir */
-const MAX_WALK_INSTEAD_MIN = 45;
+/**
+ * Toplu taşıma bulunamazsa en fazla bu kadar yürüme önerilir. Daha uzunsa
+ * tahmini toplu taşımaya düşülür (ör. Ankara'da otobüs verisi yok; 40+ dk
+ * yürüyüş gerçekçi değil)
+ */
+const MAX_WALK_INSTEAD_MIN = 30;
 
 export const DAY_START = "09:30";
 /** Bundan uzun beklemeler planda "serbest zaman" olarak gösterilir */
@@ -201,6 +205,8 @@ function transitLeg(
   departMin: number,
   city: City,
   travelers: number,
+  /** Sentetik tarife (gerçek sefer saatleri değil) */
+  synthetic: boolean,
 ): Leg {
   const rename = (name: string) =>
     name === "Başlangıç noktası" ? from.name : name === "Varış noktası" ? to.name : name;
@@ -212,7 +218,7 @@ function transitLeg(
     durationMin: Math.ceil(journey.arriveSec / 60 - departMin),
     // Her biniş tam bilet; İstanbulkart aktarma indirimi hesaba katılmıyor
     cost: scaleRange(city.transitFare, travelers * journey.rides),
-    estimated: false,
+    estimated: synthetic,
     geometry: journey.geometry,
     transit: journey.steps.map((s) => ({ ...s, from: rename(s.from), to: rename(s.to) })),
   };
@@ -408,7 +414,7 @@ export async function buildDay(
       if (router && legs[i - 1].mode === "toplu_tasima") {
         const journey = router.plan(prev, place, clock * 60, weekday(date));
         legs[i - 1] = journey
-          ? transitLeg(prev, place, await refineJourney(journey), clock, city, travelers)
+          ? transitLeg(prev, place, await refineJourney(journey), clock, city, travelers, router.synthetic)
           : await walkInstead(prev, place, legs[i - 1]);
       }
       clock += legs[i - 1].durationMin;

@@ -26,7 +26,7 @@ const sec = (hhmm: string) => {
   return h * 3600 + m * 60;
 };
 
-export function writeFixture(stops: FixtureStop[], trips: FixtureTrip[]) {
+export function writeFixture(stops: FixtureStop[], trips: FixtureTrip[], opts: { synthetic?: boolean } = {}) {
   const routeNames = [...new Set(trips.map((t) => t.route))];
   const conns: number[][] = [];
   const patStart = [0];
@@ -84,6 +84,7 @@ export function writeFixture(stops: FixtureStop[], trips: FixtureTrip[]) {
       version: 2,
       builtAt: "test",
       source: "test",
+      synthetic: opts.synthetic ?? false,
       layout,
       stops: { name: stops.map((s) => s.name), lat: stops.map((s) => s.lat), lng: stops.map((s) => s.lng) },
       routes: routeNames.map((name) => ({ name, longName: name, type: 3, agency: "" })),

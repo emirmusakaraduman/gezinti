@@ -52,7 +52,9 @@ interface Meta {
   version: number;
   builtAt: string;
   source: string;
-  layout: Record<string, { type: string; offset: number; length: number }>;
+  /** Gerçek tarife değil, sefer sıklığından türetilmiş (ör. Ankara, OSM) */
+  synthetic?: boolean;
+  layout:Record<string, { type: string; offset: number; length: number }>;
   stops: { name: string[]; lat: number[]; lng: number[] };
   routes: { name: string; longName: string; type: number; agency: string }[];
 }
@@ -113,7 +115,18 @@ export class TransitRouter {
   }
 
   get info() {
-    return { builtAt: this.meta.builtAt, source: this.meta.source, stops: this.nStops, connections: this.nConns };
+    return {
+      builtAt: this.meta.builtAt,
+      source: this.meta.source,
+      synthetic: this.synthetic,
+      stops: this.nStops,
+      connections: this.nConns,
+    };
+  }
+
+  /** Saatler gerçek tarife değil, tahmini sefer sıklığından türetilmiş */
+  get synthetic(): boolean {
+    return this.meta.synthetic ?? false;
   }
 
   private cellKey(lat: number, lng: number) {
