@@ -375,6 +375,8 @@ function PlanView({
   );
 }
 
+const DAY_NAMES = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+
 const MEAL_LABEL: Record<MealKind, string> = {
   kahvalti: "Kahvaltı",
   ogle: "Öğle yemeği",
@@ -419,6 +421,14 @@ function PlaceBadges({ place }: { place: Place }) {
         </span>
       )}
       {place.ticketNote && <span className="mr-1.5 text-xs text-zinc-500">{place.ticketNote}</span>}
+      {place.hours && (
+        <span className="mr-1.5 text-xs text-zinc-500" title={place.hoursNote}>
+          {place.hours.open}–{place.hours.close}
+          {place.hours.closedDays.length > 0 &&
+            ` · ${place.hours.closedDays.map((d) => DAY_NAMES[d]).join(", ")} kapalı`}
+          {place.hoursNote && " ⓘ"}
+        </span>
+      )}
       {place.source === "kurator" && !place.distinction && (
         <span className={`${badge} bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200`}>
           Köklü mekan

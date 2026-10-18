@@ -108,9 +108,19 @@ function expandDays(spec) {
   return days;
 }
 
+const TIME = String.raw`\d{1,2}:\d{2}`;
+const RANGES = new RegExp(String.raw`^(${TIME}-${TIME}(?:\s*,\s*${TIME}-${TIME})*)$`);
+const toMin = (t) => {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+};
+
 /**
- * OSM opening_hours'ın sık görülen basit biçimlerini çevirir
- * ("Mo-Su 09:00-19:00", "Tu-Su 09:00-17:00; Mo off"). Karmaşıksa null.
+ * OSM opening_hours'ın sık görülen biçimlerini çevirir: "Mo-Su 09:00-19:00",
+ * "Tu-Su 09:00-17:00; Mo off", tek haneli saat ("9:00"), bir günde birden çok
+ * aralık ("08:30-12:15, 14:00-18:30": en erken açılış, en geç kapanış alınır)
+ * ve gün listesinde resmi tatil ("Mo-Su,PH"). Mevsimlik ya da anlaşılmayan
+ * biçimlerde null döner (yanlış kapalı gün üretmektense bilinmiyor demek).
  */
 export function parseOpeningHours(raw) {
   if (!raw) return null;
@@ -120,14 +130,22 @@ export function parseOpeningHours(raw) {
   let end = -Infinity;
   for (const rule of raw.split(";").map((r) => r.trim()).filter(Boolean)) {
     if (/^PH\b/.test(rule) || /\boff$/.test(rule)) continue;
-    const m = rule.match(/^([A-Za-z,\- ]+)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/) ?? rule.match(/^()(\d{2}:\d{2})-(\d{2}:\d{2})$/);
-    if (!m) return null;
-    const days = m[1] ? expandDays(m[1].replace(/\s/g, "")) : new Set([0, 1, 2, 3, 4, 5, 6]);
+    const firstDigit = rule.search(/\d/);
+    if (firstDigit < 0) return null; // saat yok ("Mo-Su")
+    const dayPart = rule.slice(0, firstDigit).trim();
+    const timePart = rule.slice(firstDigit).trim();
+    if (!RANGES.test(timePart)) return null;
+    // Resmi tatil gün listesinden çıkarılır; geriye gün kalmalı
+    const daySpec = dayPart.replace(/\s/g, "").split(",").filter((d) => d && d !== "PH").join(",");
+    if (dayPart && !daySpec) return null;
+    const days = daySpec ? expandDays(daySpec) : new Set([0, 1, 2, 3, 4, 5, 6]);
     if (!days) return null;
     days.forEach((d) => open.add(d));
-    const [s, e] = [m[2], m[3]].map((t) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3)));
-    start = Math.min(start, s);
-    end = Math.max(end, e === 0 ? 24 * 60 - 1 : e);
+    for (const range of timePart.split(",")) {
+      const [s, e] = range.trim().split("-").map(toMin);
+      start = Math.min(start, s);
+      end = Math.max(end, e === 0 ? 24 * 60 - 1 : e);
+    }
   }
   if (!open.size) return null;
   const hhmm = (t) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;

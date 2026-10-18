@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-18T14:14:30.117Z",
+ "generatedAt": "2026-10-18T14:23:09.801Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -18,7 +18,12 @@
     "lastVerified": null
    },
    "muzekart": true,
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "17:30",
+    "closedDays": []
+   },
+   "hoursNote": "Tahmini saat (bakanlık müzelerinin kış düzeni); ziyaretten önce kontrol edin",
    "tags": [
     "archaeological_site",
     "attraction"
@@ -161,7 +166,12 @@
     "lastVerified": null
    },
    "muzekart": true,
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "17:30",
+    "closedDays": []
+   },
+   "hoursNote": "Tahmini saat (bakanlık müzelerinin kış düzeni); ziyaretten önce kontrol edin",
    "tags": [
     "ruins",
     "museum"
@@ -216,7 +226,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -302,7 +317,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "attraction",
     "place_of_worship"
@@ -364,7 +384,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -392,7 +417,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -448,7 +478,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -566,7 +601,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -622,7 +662,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -650,7 +695,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -706,7 +756,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -797,7 +852,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -825,7 +885,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],

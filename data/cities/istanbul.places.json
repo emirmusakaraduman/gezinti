@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-18T14:14:29.776Z",
+ "generatedAt": "2026-10-18T14:23:09.479Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -22,6 +22,7 @@
     "close": "19:30",
     "closedDays": []
    },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "church",
     "attraction",
@@ -51,7 +52,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "08:30",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "mosque",
     "attraction",
@@ -90,6 +96,7 @@
      2
     ]
    },
+   "hoursNote": "Kış döneminde (13 Ekim'den itibaren) gişeler 17:00'de kapanır",
    "tags": [
     "museum"
    ],
@@ -118,7 +125,14 @@
     "lastVerified": "2026-10-18"
    },
    "ticketNote": "Millî Saraylar: Selamlık, Harem ve Resim Müzesi",
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "17:30",
+    "closedDays": [
+     1
+    ]
+   },
+   "hoursNote": "Kış döneminde (13 Ekim'den itibaren) gişeler 17:00'de kapanır",
    "tags": [
     "park"
    ],
@@ -146,7 +160,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -270,7 +289,13 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "19:00",
+    "closedDays": [
+     0
+    ]
+   },
    "tags": [
     "district",
     "attraction",
@@ -330,7 +355,11 @@
     "lastVerified": null
    },
    "ticketNote": "Tekne ücreti ayrıca",
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "21:00",
+    "closedDays": []
+   },
    "tags": [
     "attraction"
    ],
@@ -358,7 +387,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -391,6 +425,7 @@
     "close": "18:00",
     "closedDays": []
    },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "church",
     "place_of_worship"
@@ -419,7 +454,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "attraction",
     "place_of_worship"
@@ -476,7 +516,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -505,7 +550,14 @@
     "lastVerified": "2026-10-18"
    },
    "ticketNote": "Millî Saraylar",
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "17:30",
+    "closedDays": [
+     3
+    ]
+   },
+   "hoursNote": "Kış döneminde (13 Ekim'den itibaren) gişeler 17:00'de kapanır",
    "tags": [
     "attraction"
    ],
@@ -592,11 +644,12 @@
    "ticketNote": "Millî Saraylar",
    "hours": {
     "open": "09:00",
-    "close": "18:00",
+    "close": "17:30",
     "closedDays": [
      1
     ]
    },
+   "hoursNote": "Kış döneminde (13 Ekim'den itibaren) gişeler 17:00'de kapanır",
    "tags": [
     "museum"
    ],
@@ -713,7 +766,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -741,7 +799,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -769,7 +832,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -891,7 +959,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -948,7 +1021,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "yes",
     "attraction",
@@ -978,7 +1056,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -1067,7 +1150,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "church",
     "attraction",
@@ -1097,7 +1185,12 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "18:30",
+    "closedDays": []
+   },
+   "hoursNote": "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara",
    "tags": [
     "place_of_worship"
    ],
@@ -1267,7 +1360,12 @@
     "lastVerified": null
    },
    "ticketNote": "Seyir terası",
-   "hours": null,
+   "hours": {
+    "open": "10:00",
+    "close": "22:00",
+    "closedDays": []
+   },
+   "hoursNote": "Pazartesi kapalı olabilir; kaynaklar çelişiyor",
    "tags": [
     "attraction"
    ],
@@ -1376,11 +1474,12 @@
    "ticketNote": "Millî Saraylar",
    "hours": {
     "open": "09:00",
-    "close": "17:00",
+    "close": "17:30",
     "closedDays": [
      1
     ]
    },
+   "hoursNote": "Kış döneminde (13 Ekim'den itibaren) gişeler 17:00'de kapanır",
    "tags": [
     "museum"
    ],
@@ -1662,7 +1761,14 @@
     "lastVerified": "2026-10-18"
    },
    "ticketNote": "Millî Saraylar",
-   "hours": null,
+   "hours": {
+    "open": "09:00",
+    "close": "17:30",
+    "closedDays": [
+     1
+    ]
+   },
+   "hoursNote": "Kış döneminde (13 Ekim'den itibaren) gişeler 17:00'de kapanır",
    "tags": [
     "museum"
    ],

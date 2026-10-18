@@ -335,6 +335,43 @@ const TICKETS = {
   Q28136272: { price: [50, 200] },
 };
 
+/**
+ * Doğrulanmış ziyaret saatleri ve kapalı günler (0 = Pazar). OSM'deki
+ * saatin önüne geçer. Millî Saraylar: resmi düzenleme ve rehberler
+ * tutarlı (Topkapı Salı, Yıldız Çarşamba, diğerleri Pazartesi kapalı).
+ */
+const MS_NOTE = "Kış döneminde (13 Ekim'den itibaren) gişeler 17:00'de kapanır";
+const HOURS = {
+  Q170495: { open: "09:00", close: "18:00", closedDays: [2], note: MS_NOTE },
+  Q274141: { open: "09:00", close: "17:30", closedDays: [1], note: MS_NOTE },
+  Q911734: { open: "09:00", close: "17:30", closedDays: [3], note: MS_NOTE },
+  Q794349: { open: "09:00", close: "17:30", closedDays: [1], note: MS_NOTE },
+  Q1755906: { open: "09:00", close: "17:30", closedDays: [1], note: MS_NOTE },
+  Q2330055: { open: "09:00", close: "17:30", closedDays: [1], note: MS_NOTE },
+  Q848397: { open: "09:00", close: "21:00", closedDays: [] },
+  Q28657490: { open: "10:00", close: "22:00", closedDays: [], note: "Pazartesi kapalı olabilir; kaynaklar çelişiyor" },
+};
+
+/** Saat bilgisi olmayan yerler için varsayılanlar (kaynağı belli olsun diye notlu) */
+const WORSHIP_HOURS = { open: "09:00", close: "18:30", closedDays: [] };
+const WORSHIP_NOTE = "Namaz vakitlerinde turist ziyaretine kapalı; Cuma öğle namazında uzun ara";
+const MINISTRY_HOURS = { open: "09:00", close: "17:30", closedDays: [] };
+const MINISTRY_NOTE = "Tahmini saat (bakanlık müzelerinin kış düzeni); ziyaretten önce kontrol edin";
+
+/** Saat ve not: doğrulanmış tablo > OSM > türe göre varsayılan */
+function hoursFor(x) {
+  const fixed = HOURS[x.qid];
+  if (fixed) {
+    const { note, ...hours } = fixed;
+    return { hours, note };
+  }
+  const osm = parseOpeningHours(x.tags.opening_hours);
+  if (x.tags.amenity === "place_of_worship") return { hours: osm ?? WORSHIP_HOURS, note: WORSHIP_NOTE };
+  if (osm) return { hours: osm };
+  if (TICKETS[x.qid]?.muzekart) return { hours: MINISTRY_HOURS, note: MINISTRY_NOTE };
+  return { hours: null };
+}
+
 /** Fiyatların doğrulandığı tarih (kesin olanlar için) */
 const TICKETS_VERIFIED = "2026-10-18";
 
@@ -496,6 +533,7 @@ out center tags;`;
   return chosen.map((x, rank) => {
     const name = RENAME[x.qid] ?? x.ent.labels?.tr?.value ?? x.tags["name:tr"] ?? x.tags.name;
     const desc = x.ent.descriptions?.tr?.value ?? x.ent.descriptions?.en?.value ?? "";
+    const { hours, note: hoursNote } = hoursFor(x);
     return {
       id: `${cfg.prefix}-${slug(name)}`,
       name,
@@ -514,7 +552,8 @@ out center tags;`;
       price: price(x.category, x.tags, x.qid),
       ...(TICKETS[x.qid]?.muzekart ? { muzekart: true } : {}),
       ...(TICKETS[x.qid]?.note ? { ticketNote: TICKETS[x.qid].note } : {}),
-      hours: parseOpeningHours(x.tags.opening_hours),
+      hours,
+      ...(hoursNote ? { hoursNote } : {}),
       tags: [x.tags.historic, x.tags.tourism, x.tags.leisure, x.tags.amenity].filter(Boolean),
       osmId: x.osmId,
       wikidata: x.qid,

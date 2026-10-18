@@ -87,9 +87,28 @@ describe("parseOpeningHours", () => {
     expect(parseOpeningHours("24/7")).toBeNull();
   });
 
+  it("tek haneli saat (Kapalıçarşı)", () => {
+    expect(parseOpeningHours("Mo-Sa 9:00-19:00")).toEqual({ open: "09:00", close: "19:00", closedDays: [0] });
+  });
+
+  it("günde birden çok aralık: en erken açılış, en geç kapanış (cami namaz araları)", () => {
+    expect(parseOpeningHours("Mo-Su 08:30-12:15, 14:00-16:45, 17:45-18:30")).toEqual({
+      open: "08:30",
+      close: "18:30",
+      closedDays: [],
+    });
+    expect(parseOpeningHours("Mo-Fr 09:00-12:00,13:00-18:00")?.closedDays).toEqual([0, 6]);
+  });
+
+  it("gün listesindeki resmi tatili yok sayar", () => {
+    expect(parseOpeningHours("Mo-Su,PH 08:00-18:00")).toEqual({ open: "08:00", close: "18:00", closedDays: [] });
+  });
+
   it("anlayamadığı biçimde null döner (yanlış kapalı gün üretmez)", () => {
-    expect(parseOpeningHours("Mo-Fr 09:00-12:00,13:00-18:00")).toBeNull();
+    expect(parseOpeningHours("Mo-Su")).toBeNull();
+    expect(parseOpeningHours("Tu-Fr Summer 08:30-19:00; Tu-Fr Winter 08:30-17:00")).toBeNull();
     expect(parseOpeningHours("sunrise-sunset")).toBeNull();
+    expect(parseOpeningHours("PH")).toBeNull();
   });
 });
 

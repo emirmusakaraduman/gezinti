@@ -57,6 +57,8 @@ export const PlaceSchema = z.object({
   muzekart: z.boolean().optional(),
   /** Bilet hakkında kısa not (ör. "Tekne ücreti ayrıca") */
   ticketNote: z.string().optional(),
+  /** Ziyaret saatleri hakkında not (ör. namaz araları, tahmini saat) */
+  hoursNote: z.string().optional(),
   /**
    * "populer": OSM + Wikipedia popülerliğiyle seçildi;
    * "kurator": elle derlenmiş tavsiye (OSM'de doğrulanmış olabilir)
