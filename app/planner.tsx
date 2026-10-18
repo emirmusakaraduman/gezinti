@@ -5,7 +5,9 @@ import { useState } from "react";
 import { dayColor } from "@/lib/colors";
 import { formatRange } from "@/lib/geo";
 import type {
+  MealKind,
   Place,
+  PlanEdit,
   PlaceCategory,
   PlanWarning,
   TransitStep,
@@ -64,8 +66,10 @@ export default function Planner({ cities }: { cities: { id: string; name: string
   const [plan, setPlan] = useState<TripPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  /** Düzenlenmekte olan durağın kimliği */
+  const [editing, setEditing] = useState<string | null>(null);
 
-  const update = <K extends keyof TripRequest>(key: K, value: TripRequest[K]) =>
+  const update =<K extends keyof TripRequest>(key: K, value: TripRequest[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
 
   const toggleInterest = (id: PlaceCategory) =>
@@ -76,24 +80,49 @@ export default function Planner({ cities }: { cities: { id: string; name: string
         : [...form.interests, id],
     );
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  async function postPlan(body: unknown) {
     setError(null);
     try {
       const res = await fetch("/api/plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, startDate: form.startDate || today() }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Bir hata oluştu");
       setPlan(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Bir hata oluştu");
-    } finally {
-      setLoading(false);
     }
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    await postPlan({ ...form, startDate: form.startDate || today() });
+    setLoading(false);
+  }
+
+  /** Mevcut planda tek bir durağı çıkar ya da benzeriyle değiştir */
+  async function editStop(action: PlanEdit["action"], day: number, placeId: string) {
+    if (!plan) return;
+    setEditing(placeId);
+    const notes = Object.fromEntries(
+      plan.days.flatMap((d) => d.stops.filter((s) => s.note).map((s) => [s.place.id, s.note!])),
+    );
+    await postPlan({
+      ...plan.request,
+      edit: {
+        days: plan.days.map((d) => d.stops.map((s) => s.place.id)),
+        action,
+        placeId,
+        day,
+        notes,
+        summary: plan.summary,
+        plannedBy: plan.plannedBy,
+      },
+    });
+    setEditing(null);
   }
 
   const input =
@@ -176,12 +205,20 @@ export default function Planner({ cities }: { cities: { id: string; name: string
       </form>
 
       {error && <p className="text-red-600">{error}</p>}
-      {plan && <PlanView plan={plan} />}
+      {plan && <PlanView plan={plan} onEdit={editStop} editing={editing} />}
     </div>
   );
 }
 
-function PlanView({ plan }: { plan: TripPlan }) {
+function PlanView({
+  plan,
+  onEdit,
+  editing,
+}: {
+  plan: TripPlan;
+  onEdit: (action: PlanEdit["action"], day: number, placeId: string) => void;
+  editing: string | null;
+}) {
   const { budget } = plan;
   const pct = Math.min(100, Math.round(budget.usageRatio * 100));
   const barColor =
@@ -196,6 +233,11 @@ function PlanView({ plan }: { plan: TripPlan }) {
           Planlayan: {plan.plannedBy === "claude" ? "Claude" : "sezgisel yöntem"}
           {plan.revisions > 0 && ` · ${plan.revisions} kez revize edildi`}
         </p>
+        {plan.editMessage && (
+          <p className="mt-3 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100">
+            {plan.editMessage}
+          </p>
+        )}
       </div>
 
       <div className="rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800">
@@ -242,6 +284,11 @@ function PlanView({ plan }: { plan: TripPlan }) {
               const leg = i > 0 ? day.legs[i - 1] : null;
               return (
                 <li key={stop.place.id}>
+                  {stop.freeTimeMin && (
+                    <p className="mb-2 ml-[5.75rem] text-xs italic text-zinc-500">
+                      Serbest zaman · {formatDuration(stop.freeTimeMin)}
+                    </p>
+                  )}
                   {leg && (
                     <div className="mb-2 ml-[5.75rem] text-xs text-zinc-500">
                       <p>
@@ -262,6 +309,11 @@ function PlanView({ plan }: { plan: TripPlan }) {
                     <span className="w-11 shrink-0 pt-0.5 font-mono text-sm text-zinc-500">{stop.arrival}</span>
                     <div>
                       <p className="font-medium">
+                        {stop.meal && (
+                          <span className="mr-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+                            {MEAL_LABEL[stop.meal]}
+                          </span>
+                        )}
                         {stop.place.name}{" "}
                         <span className="text-sm font-normal text-zinc-500">
                           · {formatRange(stop.place.price)}
@@ -274,6 +326,24 @@ function PlanView({ plan }: { plan: TripPlan }) {
                         <p className="text-sm">Mutlaka dene: {stop.place.mustTry}</p>
                       )}
                       {stop.note && <p className="text-sm text-emerald-700 dark:text-emerald-400">İpucu: {stop.note}</p>}
+                      <div className="mt-1 flex gap-3 text-xs">
+                        <button
+                          type="button"
+                          disabled={editing !== null}
+                          onClick={() => onEdit("degistir", day.day, stop.place.id)}
+                          className="text-sky-700 hover:underline disabled:opacity-40 dark:text-sky-400"
+                        >
+                          {editing === stop.place.id ? "Güncelleniyor…" : "Değiştir"}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={editing !== null}
+                          onClick={() => onEdit("cikar", day.day, stop.place.id)}
+                          className="text-red-700 hover:underline disabled:opacity-40 dark:text-red-400"
+                        >
+                          Çıkar
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -286,7 +356,20 @@ function PlanView({ plan }: { plan: TripPlan }) {
   );
 }
 
-const DISTINCTION_LABEL: Record<NonNullable<Place["distinction"]>["kind"], string> = {
+const MEAL_LABEL: Record<MealKind, string> = {
+  kahvalti: "Kahvaltı",
+  ogle: "Öğle yemeği",
+  aksam: "Akşam yemeği",
+  ara: "Ara öğün",
+};
+
+function formatDuration(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h ? `${h} sa${m ? ` ${m} dk` : ""}` : `${m} dk`;
+}
+
+const DISTINCTION_LABEL:Record<NonNullable<Place["distinction"]>["kind"], string> = {
   "michelin-2-yildiz": "★★ Michelin",
   "michelin-yildiz": "★ Michelin",
   "michelin-bib": "Michelin Bib Gourmand",

@@ -25,6 +25,7 @@ import type {
   DayPlan,
   Leg,
   LegMode,
+  MealKind,
   Place,
   Stop,
   TransportMode,
@@ -49,6 +50,8 @@ const WALK_PROBE_KM = 1.6;
 const MAX_WALK_INSTEAD_MIN = 45;
 
 export const DAY_START = "09:30";
+/** Bundan uzun beklemeler planda "serbest zaman" olarak gösterilir */
+const FREE_TIME_MIN = 20;
 
 export function estimateLeg(
   from: Place,
@@ -278,28 +281,99 @@ function orderSights(sights: Place[]): Place[] {
   return order;
 }
 
-/** Yemek durağını rotayı en az uzatacak yere yerleştir. */
-function insertMeal(order: Place[], meal: Place, minIndex: number): Place[] {
-  let bestIdx = order.length;
+// ---------- Öğün zamanlaması ----------
+
+/** Öğün türlerinin saat hedefleri (dakika). earliest'tan önce başlanmaz. */
+const MEAL_WINDOW: Record<Exclude<MealKind, "kahvalti">, { earliest: number; target: number; latest: number }> = {
+  ogle: { earliest: toMinutes("11:45"), target: toMinutes("12:45"), latest: toMinutes("14:00") },
+  ara: { earliest: toMinutes("14:30"), target: toMinutes("15:45"), latest: toMinutes("17:30") },
+  aksam: { earliest: toMinutes("18:30"), target: toMinutes("19:00"), latest: toMinutes("21:00") },
+};
+
+/**
+ * Yeme-içme duraklarına öğün türü ver: kahvaltılıklar sabah, ilk yemek öğle,
+ * ikinci yemek akşam; kafe ve tatlıcılar ara öğün.
+ */
+export function assignMeals(places: Place[]): Map<string, MealKind> {
+  const roles = new Map<string, MealKind>();
+  let meals = 0;
+  for (const p of places) {
+    if (!isMeal(p)) continue;
+    if (isBreakfast(p)) roles.set(p.id, "kahvalti");
+    else if (p.category === "kafe") roles.set(p.id, "ara");
+    else roles.set(p.id, meals++ === 0 ? "ogle" : "aksam");
+  }
+  return roles;
+}
+
+type TravelMin = (a: Place, b: Place) => number;
+
+/**
+ * Sırayla gezilince her durağa varış saati (tahmini yol süreleriyle) ve
+ * toplam bekleme (açılış ya da öğün saatini bekleyerek boşa geçen süre)
+ */
+function simulateArrivals(
+  order: Place[],
+  travel: TravelMin,
+  roles: Map<string, MealKind>,
+): { arrivals: number[]; waitMin: number } {
+  const arrivals: number[] = [];
+  let clock = toMinutes(DAY_START);
+  let waitMin = 0;
+  order.forEach((p, i) => {
+    if (i > 0) clock += travel(order[i - 1], p);
+    const start = Math.max(clock, earliestStart(p, roles.get(p.id)));
+    waitMin += start - clock;
+    clock = start;
+    arrivals.push(clock);
+    clock += p.durationMin;
+  });
+  return { arrivals, waitMin };
+}
+
+/** Bir durağa en erken ne zaman başlanabilir (açılış saati, öğün penceresi) */
+function earliestStart(p: Place, meal: MealKind | undefined): number {
+  const open = p.hours ? toMinutes(p.hours.open) : 0;
+  const window = meal && meal !== "kahvalti" ? MEAL_WINDOW[meal].earliest : 0;
+  return Math.max(open, window);
+}
+
+/**
+ * Öğünü, "yol uzaması + hedef saatten sapma" toplamı en küçük olacak yere
+ * yerleştir. Pencere dışına taşmak ağır cezalı.
+ */
+function insertMeal(order: Place[], meal: Place, kind: Exclude<MealKind, "kahvalti">, minIndex: number, travel: TravelMin, roles: Map<string, MealKind>): Place[] {
+  const w = MEAL_WINDOW[kind];
+  const baseLen = tourLength(order);
+  let best = order.length;
   let bestCost = Infinity;
   for (let i = Math.min(minIndex, order.length); i <= order.length; i++) {
     const candidate = [...order.slice(0, i), meal, ...order.slice(i)];
-    const cost = tourLength(candidate);
+    const { arrivals, waitMin } = simulateArrivals(candidate, travel, roles);
+    const arrival = arrivals[i];
+    const detourMin = ((tourLength(candidate) - baseLen) / 4.5) * 60;
+    const outside = Math.max(0, w.earliest - arrival) + Math.max(0, arrival - w.latest);
+    // Bekleme de cezalı: öğün saatini beklemek için gezileri ertelemesin
+    const cost = detourMin + Math.abs(arrival - w.target) * 0.5 + outside * 5 + waitMin;
     if (cost < bestCost) {
       bestCost = cost;
-      bestIdx = i;
+      best = i;
     }
   }
-  return [...order.slice(0, bestIdx), meal, ...order.slice(bestIdx)];
+  return [...order.slice(0, best), meal, ...order.slice(best)];
 }
 
-export function orderDay(places: Place[]): Place[] {
-  const breakfasts = places.filter(isBreakfast);
-  const meals = places.filter((p) => isMeal(p) && !isBreakfast(p));
-  let order = orderSights(places.filter((p) => !isMeal(p)));
-  // Öğle/akşam yemeği ilk duraktan sonra gelsin
-  for (const meal of meals) order = insertMeal(order, meal, 1);
-  return [...breakfasts, ...order];
+/**
+ * Günü sırala: kahvaltı başta, gezilecek yerler en kısa turla, öğle ve ara
+ * öğünler saat hedeflerine göre araya, akşam yemeği sona.
+ */
+export function orderDay(places: Place[], travel: TravelMin, roles: Map<string, MealKind>): Place[] {
+  const breakfasts = places.filter((p) => roles.get(p.id) === "kahvalti");
+  let order = [...breakfasts, ...orderSights(places.filter((p) => !isMeal(p)))];
+  const ofKind = (k: MealKind) => places.filter((p) => roles.get(p.id) === k);
+  for (const meal of ofKind("ogle")) order = insertMeal(order, meal, "ogle", breakfasts.length + 1, travel, roles);
+  for (const meal of ofKind("ara")) order = insertMeal(order, meal, "ara", breakfasts.length + 1, travel, roles);
+  return [...order, ...ofKind("aksam")];
 }
 
 export async function buildDay(
@@ -311,7 +385,10 @@ export async function buildDay(
   travelers: number,
   notes: Map<string, string>,
 ): Promise<DayPlan> {
-  const ordered = orderDay(places);
+  const roles = assignMeals(places);
+  // Sıralama için kaba yol süresi; gerçek süreler aşağıda OSRM/GTFS ile
+  const travel: TravelMin = (a, b) => estimateLeg(a, b, transport, city, travelers).durationMin;
+  const ordered = orderDay(places, travel, roles);
   const date = addDays(startDate, dayIndex);
   // Saatten bağımsız ayakları paralel sor (OSRM istemcisi eşzamanlılığı sınırlar)
   const legs: Leg[] = await Promise.all(
@@ -335,8 +412,10 @@ export async function buildDay(
       }
       clock += legs[i - 1].durationMin;
     }
-    // Mekan henüz açılmadıysa bekle
-    if (place.hours) clock = Math.max(clock, toMinutes(place.hours.open));
+    // Mekan henüz açılmadıysa ya da öğün saati gelmediyse bekle
+    const meal = roles.get(place.id);
+    const ready = clock;
+    clock = Math.max(clock, earliestStart(place, meal));
     const arrival = clock;
     clock += place.durationMin;
     stops.push({
@@ -344,6 +423,8 @@ export async function buildDay(
       arrival: toHHMM(arrival),
       departure: toHHMM(clock),
       note: notes.get(place.id),
+      ...(meal ? { meal } : {}),
+      ...(arrival - ready >= FREE_TIME_MIN ? { freeTimeMin: arrival - ready } : {}),
     });
   }
 

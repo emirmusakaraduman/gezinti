@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T03:22:38.026Z",
+ "generatedAt": "2026-10-18T13:41:21.948Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -934,6 +934,7 @@
    },
    "hours": null,
    "tags": [
+    "kahvalti",
     "restaurant"
    ],
    "mustTry": "Boyoz ve haşlanmış yumurta",

@@ -171,7 +171,7 @@ const DISTINCTION_SCORE: Record<NonNullable<Place["distinction"]>["kind"], numbe
   "michelin-bib": 7.5,
   "michelin-tavsiye": 6.8,
 };
-const popularity = (p: Place) =>
+export const popularity = (p: Place) =>
   p.popularity?.score ?? (p.distinction ? DISTINCTION_SCORE[p.distinction.kind] : CURATED_POPULARITY);
 
 /** 1 popülerlik puanı (×60) ≈ 1,5 km */
@@ -205,13 +205,19 @@ function selectHeuristic(
   // Üst uçla seçim, ilk öğünden sonra günlük payı tüketiyordu.
   const cost = (p: Place) => ((p.price.min + p.price.max) / 2) * req.travelers;
 
-  /** Listeden o gün açık ve bütçeye sığan ilk `count` mekanı çıkar */
-  const take = (list: Place[], count: number, dow: number, spent: { v: number }) => {
+  /** Listeden o gün açık, bütçeye sığan (ve koşula uyan) ilk `count` mekanı çıkar */
+  const take = (
+    list: Place[],
+    count: number,
+    dow: number,
+    spent: { v: number },
+    accept: (p: Place) => boolean = () => true,
+  ) => {
     const picked: Place[] = [];
     for (let i = 0; i < list.length && picked.length < count; ) {
       const p = list[i];
       const open = !p.hours?.closedDays.includes(dow);
-      if (open && spent.v + cost(p) <= dailyAllowance) {
+      if (accept(p) && open && spent.v + cost(p) <= dailyAllowance) {
         spent.v += cost(p);
         picked.push(...list.splice(i, 1));
       } else {
@@ -225,8 +231,9 @@ function selectHeuristic(
   for (let d = 0; d < req.days; d++) {
     const dow = weekday(addDays(req.startDate, d));
     const spent = { v: 0 };
-    // Yemek her gün olsun: önce bütçeye sığan en çok tavsiye edilen öğünü ayır
-    const firstMeal = take(meals, 1, dow, spent);
+    // Yemek her gün olsun: önce bütçeye sığan en çok tavsiye edilen öğle
+    // yemeğini ayır (kafe/tatlıcı değil; onlar ara öğün sayılır)
+    const firstMeal = take(meals, 1, dow, spent, (p) => p.category === "yemek");
     const [seed] = take(sights, 1, dow, spent);
     if (!seed) {
       meals.push(...firstMeal);

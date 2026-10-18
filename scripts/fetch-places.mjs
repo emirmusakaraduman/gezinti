@@ -143,7 +143,7 @@ const FOOD = {
   ],
   izmir: [
     // OSM'de "dostlar firini" olarak kayıtlı (ı/i)
-    { pattern: "Dostlar F[ıi]r[ıi]n[ıi]", name: "Dostlar Fırını", near: [38.4369, 27.143], category: "kafe", price: yemek(80, 200), mustTry: "Boyoz ve haşlanmış yumurta", description: "Alsancak'ın en bilinen boyozcusu." },
+    { pattern: "Dostlar F[ıi]r[ıi]n[ıi]", name: "Dostlar Fırını", near: [38.4369, 27.143], tags: ["kahvalti"], category: "kafe", price: yemek(80, 200), mustTry: "Boyoz ve haşlanmış yumurta", description: "Alsancak'ın en bilinen boyozcusu." },
     { pattern: "Reyhan", near: [38.4352, 27.1446], category: "kafe", price: yemek(200, 450), mustTry: "Pasta ve şam tatlısı", description: "İzmir'in köklü pastanesi." },
     { pattern: "Sevinç", near: [38.4355, 27.1428], category: "kafe", price: yemek(150, 400), mustTry: "Pasta ve kurabiye", description: "Alsancak'ta 1945'ten beri pastane." },
     { pattern: "Tavacı Recep", near: [38.4362, 27.1438], category: "yemek", price: yemek(500, 1000), mustTry: "Tavada et ve kuzu", description: "Tava kebabıyla bilinen köklü lokanta; 2025 Michelin Bib Gourmand.", distinction: { kind: "michelin-bib", year: 2025 } },
@@ -626,7 +626,8 @@ out center tags;`;
       durationMin: f.category === "kafe" ? 30 : 60,
       price: { ...f.price, confidence: "tahmini", lastVerified: null },
       hours: parseOpeningHours(el.tags.opening_hours),
-      tags: [el.tags.cuisine, el.tags.amenity ?? el.tags.shop].filter(Boolean),
+      // "kahvalti" etiketi planlayıcıda güne başta yerleştirir
+      tags: [...(f.tags ?? []), el.tags.cuisine, el.tags.amenity ?? el.tags.shop].filter(Boolean),
       mustTry: f.mustTry,
       osmId: `${el.type}/${el.id}`,
       source: "kurator",

@@ -113,6 +113,26 @@ export const TripRequestSchema = z.object({
 });
 export type TripRequest = z.infer<typeof TripRequestSchema>;
 
+/**
+ * Mevcut bir planda tek bir durağı çıkarma ya da değiştirme isteği. Planın
+ * geri kalanı (günlere dağılmış mekan kimlikleri) olduğu gibi korunur.
+ */
+export const PlanEditSchema = z.object({
+  /** Mevcut plan: days[i] = i+1. günün mekan kimlikleri */
+  days: z.array(z.array(z.string()).max(20)).min(1).max(7),
+  action: z.enum(["cikar", "degistir"]),
+  placeId: z.string(),
+  /** 1'den başlayan gün numarası */
+  day: z.number().int().min(1),
+  /** Önceki plandan korunacak bilgiler */
+  notes: z.record(z.string(), z.string().max(500)).optional(),
+  summary: z.string().max(2000).optional(),
+  plannedBy: z.enum(["claude", "sezgisel"]).optional(),
+});
+export type PlanEdit = z.infer<typeof PlanEditSchema>;
+
+export const PlanRequestSchema = TripRequestSchema.extend({ edit: PlanEditSchema.optional() });
+
 // ---------- Plan çıktısı ----------
 
 export type LegMode = "yurume" | "toplu_tasima" | "araba";
@@ -159,11 +179,17 @@ export interface Leg {
   transit?: TransitStep[];
 }
 
+export type MealKind = "kahvalti" | "ogle" | "aksam" | "ara";
+
 export interface Stop {
   place: Place;
   arrival: string; // "HH:MM"
   departure: string;
   note?: string;
+  /** Yeme-içme durağının öğün türü */
+  meal?: MealKind;
+  /** Varıştan önce beklenen süre (akşam yemeği saati, açılış saati) */
+  freeTimeMin?: number;
 }
 
 export interface DayPlan {
@@ -210,4 +236,6 @@ export interface TripPlan {
   plannedBy: "claude" | "sezgisel";
   /** Bütçe için kaç tur revizyon yapıldı */
   revisions: number;
+  /** Plan bir düzenlemeyle güncellendiyse ne yapıldığı */
+  editMessage?: string;
 }
