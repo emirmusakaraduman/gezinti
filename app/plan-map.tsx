@@ -19,7 +19,8 @@ const OSM_STYLE: StyleSpecification = {
         '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> katkıcıları',
     },
   },
-  layers: [{ id: "osm", type: "raster", source: "osm" }],
+  // Zemin harita siyah-beyaz; renkli yalnızca rota çizgileri ve gün işaretçileri
+  layers: [{ id: "osm", type: "raster", source: "osm", paint: { "raster-saturation": -1, "raster-contrast": 0.15 } }],
 };
 
 const ROUTE_SOURCE = "route";
@@ -66,7 +67,7 @@ function markerElement(label: string, color: string, delayMs: number): HTMLEleme
   const inner = document.createElement("div");
   inner.className = "marker-in";
   inner.textContent = label;
-  inner.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(34,30,74,.4);cursor:pointer;animation-delay:${delayMs}ms`;
+  inner.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.5);cursor:pointer;animation-delay:${delayMs}ms`;
   outer.append(inner);
   return outer;
 }
@@ -74,7 +75,7 @@ function markerElement(label: string, color: string, delayMs: number): HTMLEleme
 function popupElement(title: string, lines: string[]): HTMLElement {
   // textContent ile kur; mekan adları HTML olarak yorumlanmasın
   const root = document.createElement("div");
-  root.style.cssText = "font:13px/1.45 var(--font-body),system-ui,sans-serif;color:#221e4a";
+  root.style.cssText = "font:13px/1.45 var(--font-body),system-ui,sans-serif;color:#000";
   const h = document.createElement("strong");
   h.textContent = title;
   root.append(h);

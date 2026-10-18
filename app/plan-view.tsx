@@ -98,7 +98,7 @@ export default function PlanView({
   return (
     <section className="space-y-8">
       <header>
-        <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{plan.cityName} planın</h2>
+        <h2 className="font-display text-4xl sm:text-5xl">{plan.cityName} planın</h2>
         <p className="mt-2 max-w-2xl text-muted">{plan.summary}</p>
         <ul className="mt-4 flex flex-wrap gap-2 text-sm">
           <Chip>{plan.days.length} gün</Chip>
@@ -108,7 +108,7 @@ export default function PlanView({
           {plan.revisions > 0 && <Chip>{plan.revisions} kez revize edildi</Chip>}
         </ul>
         {plan.editMessage && (
-          <p className="mt-4 rounded-xl border border-accent bg-accent-soft px-4 py-2.5 text-sm text-accent-strong">
+          <p className="mt-4 rounded-xl border-2 border-line bg-warm px-4 py-2.5 text-sm font-bold text-black">
             {plan.editMessage}
           </p>
         )}
@@ -137,8 +137,8 @@ export default function PlanView({
 function Chip({ children, tone }: { children: ReactNode; tone?: "accent" }) {
   return (
     <li
-      className={`rounded-full px-3 py-1 ${
-        tone === "accent" ? "bg-accent-soft text-accent-strong" : "border border-line bg-surface text-muted"
+      className={`rounded-full px-3 py-1 font-bold ${
+        tone === "accent" ? "border-2 border-line bg-warm text-black" : "border-2 border-line bg-surface"
       }`}
     >
       {children}
@@ -151,29 +151,27 @@ function Chip({ children, tone }: { children: ReactNode; tone?: "accent" }) {
 function BudgetCard({ budget }: { budget: BudgetSummary }) {
   const status = STATUS[budget.status];
   const parts = [
-    { label: "Aktiviteler", value: budget.breakdown.activities, color: "var(--accent)" },
-    { label: "Yemek", value: budget.breakdown.food, color: "var(--info)" },
-    { label: "Ulaşım", value: budget.breakdown.transport, color: "var(--amber)" },
-    { label: "Otopark", value: budget.breakdown.parking, color: "var(--muted)" },
+    { label: "Aktiviteler", value: budget.breakdown.activities, color: "var(--g1)" },
+    { label: "Yemek", value: budget.breakdown.food, color: "var(--g2)" },
+    { label: "Ulaşım", value: budget.breakdown.transport, color: "var(--g3)" },
+    { label: "Otopark", value: budget.breakdown.parking, color: "var(--warm)" },
   ];
   const sum = parts.reduce((s, p) => s + p.value.max, 0) || 1;
   // Çubuk bütçenin tamamını gösterir; dolu kısım üst tahminin bütçeye oranı
   const usage = Math.min(1, budget.usageRatio);
 
   return (
-    <div className="rounded-3xl border border-line bg-surface p-5 shadow-card">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm text-muted">Tahmini harcama</p>
-          <p className="font-display tnum text-2xl leading-tight font-bold">
-            <CountRange min={budget.total.min} max={budget.total.max} />
-          </p>
-        </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-medium ${status.tone}`}>{status.label}</span>
+    <div className="rounded-3xl border-2 border-line bg-surface p-5 shadow-card">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-muted">Tahmini harcama</p>
+        <span className={`rounded-full border-2 border-current px-3 py-1 text-xs font-bold ${status.tone}`}>{status.label}</span>
       </div>
+      <p className="font-display tnum mt-1 text-4xl leading-tight whitespace-nowrap">
+        <CountRange min={budget.total.min} max={budget.total.max} />
+      </p>
 
       <div
-        className="mt-4 flex h-3 overflow-hidden rounded-full bg-surface-2 ring-1 ring-line"
+        className="mt-4 flex h-4 overflow-hidden rounded-full bg-surface-2 ring-2 ring-line"
         role="img"
         aria-label={`Bütçenin yüzde ${Math.round(budget.usageRatio * 100)} kadarı kullanılıyor`}
       >
@@ -224,7 +222,7 @@ function Warnings({ warnings }: { warnings: PlanWarning[] }) {
   const important = warnings.some((w) => w.level !== "bilgi");
   const attention = warnings.filter((w) => w.level !== "bilgi").length;
   return (
-    <details open={important} className="group rounded-2xl border border-line bg-surface shadow-card">
+    <details open={important} className="group rounded-2xl border-2 border-line bg-surface shadow-card">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-3.5 font-medium">
         <span>
           Bilmen gerekenler
@@ -266,7 +264,8 @@ function DaySection({
     <article>
       {/* Reveal'a sarılmaz: sticky başlık kendi kapsayıcısında yapışmaz */}
       <header className="sticky top-0 z-10 -mx-2 mb-4 flex items-baseline justify-between gap-3 rounded-2xl bg-bg/90 px-2 py-3 backdrop-blur">
-        <h3 className="font-display flex items-baseline gap-3 text-2xl font-bold">
+        <h3 className="font-display flex items-baseline gap-3 text-3xl">
+          <span aria-hidden="true" className="inline-block h-3.5 w-3.5 self-center rounded-full ring-2 ring-line" style={{ background: color }} />
           {day.day}. gün
           <span className="text-base font-normal text-muted" title={weekday}>
             {fmtDate(day.date)}
@@ -275,8 +274,7 @@ function DaySection({
         <span className="tnum text-sm text-muted">{formatRange(day.cost)}</span>
         <span
           aria-hidden="true"
-          className="underline-grow absolute right-2 -bottom-px left-2 h-0.5 rounded-full"
-          style={{ background: color }}
+          className="underline-grow absolute right-2 -bottom-px left-2 h-1 rounded-full bg-ink"
         />
       </header>
 
@@ -285,12 +283,12 @@ function DaySection({
           <li key={stop.place.id}>
             {i > 0 && (
               <Reveal delay={0}>
-                <LegRow leg={day.legs[i - 1]} color={color} index={i} />
+                <LegRow leg={day.legs[i - 1]} index={i} />
               </Reveal>
             )}
             {stop.freeTimeMin ? (
               <Reveal>
-                <FreeTimeRow minutes={stop.freeTimeMin} color={color} index={i} />
+                <FreeTimeRow minutes={stop.freeTimeMin} index={i} />
               </Reveal>
             ) : null}
             <Reveal delay={80}>
@@ -299,7 +297,6 @@ function DaySection({
                 index={i}
                 last={i === day.stops.length - 1}
                 day={day.day}
-                color={color}
                 muzekart={!!plan.request.hasMuzekart}
                 onEdit={onEdit}
                 editing={editing}
@@ -319,18 +316,18 @@ function Rail({ color, index, from = "top" }: { color: string; index: number; fr
   return (
     <span
       aria-hidden="true"
-      className={`rail absolute left-1/2 w-[3px] -translate-x-1/2 rounded-full ${from === "mid" ? "top-3" : "top-0"} bottom-0`}
+      className={`rail absolute left-1/2 w-1 -translate-x-1/2 rounded-full ${from === "mid" ? "top-3" : "top-0"} bottom-0`}
       style={{ background: color, animationDelay: `${index * 80}ms` }}
     />
   );
 }
 
-function FreeTimeRow({ minutes, color, index }: { minutes: number; color: string; index: number }) {
+function FreeTimeRow({ minutes, index }: { minutes: number; index: number }) {
   return (
     <div className={ROW}>
       <span />
       <span className="relative">
-        <Rail color={color} index={index} />
+        <Rail color="var(--ink)" index={index} />
       </span>
       <p className="flex items-center gap-1.5 py-1.5 text-sm text-muted">
         <ClockIcon /> Serbest zaman, {formatDuration(minutes)}
@@ -344,7 +341,6 @@ function StopRow({
   index,
   last,
   day,
-  color,
   muzekart,
   onEdit,
   editing,
@@ -353,7 +349,6 @@ function StopRow({
   index: number;
   last: boolean;
   day: number;
-  color: string;
   muzekart: boolean;
   onEdit: (action: PlanEdit["action"], day: number, placeId: string) => void;
   editing: string | null;
@@ -364,25 +359,25 @@ function StopRow({
     <div className={ROW}>
       <p className="tnum pt-1 text-right text-sm font-medium text-muted">{stop.arrival}</p>
       <span className="relative flex justify-center">
-        {!last && <Rail color={color} index={index} from="mid" />}
+        {!last && <Rail color="var(--ink)" index={index} from="mid" />}
         <span
-          className="hero-station relative z-[1] mt-0.5 flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold text-white ring-4 ring-bg"
-          style={{ background: color, animationDelay: `${index * 80 + 120}ms` }}
+          className="hero-station relative z-[1] mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-ink text-sm font-extrabold text-bg ring-4 ring-bg"
+          style={{ animationDelay: `${index * 80 + 120}ms` }}
         >
           {index + 1}
         </span>
       </span>
 
       <div className={`${last ? "pb-1" : "pb-4"} min-w-0`}>
-        <div className="lift rounded-2xl border border-line bg-surface p-4 shadow-card">
+        <div className="lift rounded-2xl border-2 border-line bg-surface p-4 shadow-card">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               {stop.meal && (
-                <span className="mb-1 inline-block rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent-strong">
+                <span className="mb-1 inline-block rounded-full border-2 border-line bg-warm px-2.5 py-0.5 text-xs font-bold text-black">
                   {MEAL_LABEL[stop.meal]}
                 </span>
               )}
-              <h4 className="font-display text-lg leading-snug font-semibold">{place.name}</h4>
+              <h4 className="font-display text-xl leading-tight">{place.name}</h4>
             </div>
             <p className="tnum shrink-0 text-right text-sm font-medium">
               {free ? (
@@ -412,7 +407,7 @@ function StopRow({
             </p>
           )}
 
-          <div className="mt-3 flex gap-1 border-t border-line pt-2.5 text-sm">
+          <div className="mt-3 flex gap-1 border-t-2 border-line-soft pt-2.5 text-sm">
             <button
               type="button"
               disabled={editing !== null}
@@ -440,7 +435,7 @@ function StopRow({
 
 const LEG_LABEL = { yurume: "Yürüme", toplu_tasima: "Toplu taşıma", araba: "Araba" };
 
-function LegRow({ leg, color, index }: { leg: Leg; color: string; index: number }) {
+function LegRow({ leg, index }: { leg: Leg; index: number }) {
   const rides = leg.transit?.filter((s) => s.kind === "binis") ?? [];
   const icon =
     leg.mode === "yurume" ? <WalkIcon /> : leg.mode === "araba" ? <CarIcon /> : <VehicleIcon vehicle={rides[0]?.vehicle} />;
@@ -465,7 +460,7 @@ function LegRow({ leg, color, index }: { leg: Leg; color: string; index: number 
     <div className={ROW}>
       <span />
       <span className="relative">
-        <Rail color={color} index={index} />
+        <Rail color="var(--ink)" index={index} />
       </span>
       <div className="pb-3 text-sm text-muted">
         {leg.transit && leg.transit.length > 0 ? (
@@ -520,7 +515,7 @@ function TransitSteps({ steps }: { steps: TransitStep[] }) {
 
 /** Mekanın neden önerildiğini gösteren küçük rozetler */
 function PlaceBadges({ place }: { place: Place }) {
-  const badge = "rounded-full px-2.5 py-0.5 text-xs";
+  const badge = "rounded-full px-2.5 py-0.5 text-xs font-bold";
   return (
     <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1.5">
       {place.distinction && (

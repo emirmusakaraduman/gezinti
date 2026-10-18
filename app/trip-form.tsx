@@ -35,11 +35,11 @@ interface Props {
 
 const fieldLabel = "text-sm font-medium text-ink";
 const control =
-  "w-full rounded-xl border border-line bg-surface-2 px-3.5 py-2.5 text-ink transition-colors hover:border-accent focus:border-accent";
+  "w-full rounded-xl border-2 border-line bg-surface-2 px-3.5 py-2.5 text-ink transition-colors hover:border-accent focus:border-accent";
 
 export default function TripForm({ cities, form, loading, update, toggleInterest, onSubmit }: Props) {
   return (
-    <form onSubmit={onSubmit} className="space-y-7 rounded-3xl border border-line bg-surface p-5 shadow-card sm:p-7">
+    <form onSubmit={onSubmit} className="space-y-7 rounded-3xl border-2 border-line bg-surface p-5 shadow-card sm:p-7">
       {/* Şehir */}
       <fieldset>
         <legend className={fieldLabel}>Şehir</legend>
@@ -53,14 +53,14 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 role="radio"
                 aria-checked={active}
                 onClick={() => update("cityId", c.id)}
-                className={`lift rounded-2xl border p-4 text-left active:scale-[0.985] ${
+                className={`lift rounded-2xl border-2 p-4 text-left active:scale-[0.985] ${
                   active
-                    ? "pop-soft border-accent bg-accent-soft shadow-[inset_0_0_0_1px_var(--accent)]"
-                    : "border-line bg-surface-2 hover:border-accent"
+                    ? "pop-soft border-line bg-ink text-bg shadow-card"
+                    : "border-line bg-surface-2"
                 }`}
               >
-                <span className="font-display block text-lg font-semibold">{c.name}</span>
-                <span className="mt-0.5 block text-sm text-muted">{CITY_BLURB[c.id]}</span>
+                <span className="font-display block text-xl">{c.name}</span>
+                <span className={`mt-0.5 block text-sm font-semibold ${active ? "opacity-70" : "text-muted"}`}>{CITY_BLURB[c.id]}</span>
               </button>
             );
           })}
@@ -119,8 +119,8 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 type="button"
                 onClick={() => update("budget", b)}
                 aria-pressed={form.budget === b}
-                className={`tnum rounded-full px-2.5 py-0.5 text-xs transition-colors active:scale-95 ${
-                  form.budget === b ? "pop-soft bg-ink text-bg" : "bg-surface-2 text-muted hover:text-ink"
+                className={`tnum rounded-full border-2 border-line px-2.5 py-0.5 text-xs font-bold transition-colors active:scale-95 ${
+                  form.budget === b ? "pop-soft bg-ink text-bg" : "bg-surface-2 text-ink hover:bg-accent-soft"
                 }`}
               >
                 {b.toLocaleString("tr-TR")}
@@ -134,7 +134,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
       {/* Ulaşım */}
       <fieldset>
         <legend className={fieldLabel}>Ulaşım</legend>
-        <div role="radiogroup" aria-label="Ulaşım" className="mt-2.5 inline-flex rounded-xl border border-line bg-surface-2 p-1">
+        <div role="radiogroup" aria-label="Ulaşım" className="mt-2.5 inline-flex rounded-xl border-2 border-line bg-surface-2 p-1">
           {(
             [
               ["toplu_tasima", "Toplu taşıma", <BusIcon key="b" />],
@@ -149,8 +149,8 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 role="radio"
                 aria-checked={active}
                 onClick={() => update("transport", id)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors active:scale-95 ${
-                  active ? "pop-soft bg-surface text-ink shadow-card" : "text-muted hover:text-ink"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-colors active:scale-95 ${
+                  active ? "pop-soft bg-ink text-bg" : "text-muted hover:text-ink"
                 }`}
               >
                 <span className="text-base">{icon}</span>
@@ -173,10 +173,10 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 type="button"
                 onClick={() => toggleInterest(i.id)}
                 aria-pressed={active}
-                className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors active:scale-95 ${
+                className={`rounded-full border-2 px-3.5 py-1.5 text-sm font-bold transition-colors active:scale-95 ${
                   active
-                    ? "pop-soft border-accent bg-accent text-white"
-                    : "border-line bg-surface-2 text-ink hover:border-accent"
+                    ? "pop-soft border-line bg-ink text-bg"
+                    : "border-line bg-surface-2 text-ink hover:bg-accent-soft"
                 }`}
               >
                 {i.label}
@@ -191,7 +191,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
 
       {/* Müzekart ve not */}
       <div className="grid gap-5 sm:grid-cols-2">
-        <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-line bg-surface-2 p-4">
+        <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-line bg-surface-2 p-4">
           <Switch checked={form.hasMuzekart ?? false} onChange={(v) => update("hasMuzekart", v)} />
           <span>
             <span className="block text-sm font-medium">Müzekart&apos;ım var</span>
@@ -209,12 +209,12 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
         </label>
       </div>
 
-      <div className="flex flex-col items-start gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col items-start gap-3 border-t-2 border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted">Giriş ücretleri T.C. vatandaşı tarifesidir.</p>
         <button
           type="submit"
           disabled={loading || form.interests.length === 0}
-          className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-ink px-6 py-3 font-medium text-bg transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-10px_var(--ink)] active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+          className="inline-flex items-center justify-center gap-2.5 rounded-xl border-2 border-line bg-ink px-7 py-3 text-base font-extrabold text-bg transition-all hover:-translate-y-0.5 hover:shadow-card active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
           {loading ? (
             <>
@@ -250,7 +250,7 @@ function Stepper({
   onChange: (v: number) => void;
 }) {
   const btn =
-    "flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface-2 text-lg text-ink transition-all hover:border-accent active:scale-90 disabled:opacity-35 disabled:hover:border-line";
+    "flex h-10 w-10 items-center justify-center rounded-xl border-2 border-line bg-surface-2 text-lg text-ink transition-all hover:border-accent active:scale-90 disabled:opacity-35 disabled:hover:border-line";
   return (
     <div role="group" aria-label={label}>
       <span className={fieldLabel}>{label}</span>
@@ -259,7 +259,7 @@ function Stepper({
           <MinusIcon />
         </button>
         <span className="tnum min-w-16 text-center">
-          <span key={value} className="bump font-display text-xl font-semibold">
+          <span key={value} className="bump font-display text-2xl">
             {value}
           </span>{" "}
           <span className="text-sm text-muted">{unit}</span>
@@ -284,7 +284,7 @@ function Switch({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       />
       <span
         aria-hidden="true"
-        className="relative mt-0.5 h-6 w-11 shrink-0 rounded-full bg-line transition-colors peer-checked:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent after:absolute after:top-0.5 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"
+        className="relative mt-0.5 h-6 w-11 shrink-0 rounded-full bg-line-soft ring-2 ring-line transition-colors peer-checked:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent after:absolute after:top-0.5 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-surface after:ring-2 after:ring-line after:transition-transform peer-checked:after:translate-x-5"
       />
     </>
   );

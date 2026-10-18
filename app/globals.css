@@ -1,54 +1,61 @@
 @import "tailwindcss";
 
 /*
- * "Akşam Boğazı": lavanta tonlu beyaz zemin, derin çivit mürekkep, çivit-mor
- * vurgu. Kehribar (gün batımı) ikincil vurgu, gül uyarı, yeşil yalnızca
- * "rahat" gibi olumlu durumlar için. Hepsi aynı mor-mavi aileden türediği için
- * yan yana uyumlu kalır.
+ * Siyah-beyaz: saf siyah mürekkep, beyaz zemin, kalın çerçeveler ve sert gölgeler.
+ * Renk yalnızca anlam taşıdığı yerde küçük dozda: gün çizgileri/haritası, bütçe
+ * durumu ve uyarılar. --warm tek "parlak" vurgu (sarı işaretleyici).
  */
 :root {
-  --bg: #f5f3fb;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f8f6fd;
-  --ink: #221e4a;
-  --muted: #655f8d;
-  --line: #e1dcf0;
-  --accent: #5646d9;
-  --accent-strong: #4332c4;
-  --accent-soft: #ece9fd;
-  --coral: #e1456b;
-  --coral-soft: #fde7ed;
-  --amber: #b86a00;
-  --amber-soft: #fdefd3;
-  --info: #2c78c4;
-  --info-soft: #e3effb;
-  --ok: #17895f;
-  --ok-soft: #ddf4ea;
-  --shadow: 0 1px 2px rgb(34 30 74 / 0.06), 0 8px 24px -12px rgb(34 30 74 / 0.2);
-  --shadow-lift: 0 14px 32px -14px rgb(67 50 196 / 0.45);
+  --surface-2: #f3f3f3;
+  --ink: #000000;
+  --muted: #5a5a5a;
+  --line: #000000;
+  --line-soft: #d6d6d6;
+  --accent: #000000;
+  --accent-strong: #000000;
+  --accent-soft: #ececec;
+  --warm: #ffd60a;
+  --coral: #d10000;
+  --coral-soft: #ffe3e3;
+  --amber: #8a5200;
+  --amber-soft: #ffefc2;
+  --info: #000000;
+  --info-soft: #ececec;
+  --ok: #0a7a3c;
+  --ok-soft: #dcf3e5;
+  --g1: #000000;
+  --g2: #6b6b6b;
+  --g3: #b9b9b9;
+  --shadow: 3px 3px 0 0 var(--ink);
+  --shadow-lift: 6px 6px 0 0 var(--ink);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #120e2a;
-    --surface: #1c1740;
-    --surface-2: #161236;
-    --ink: #ece9ff;
-    --muted: #a39dcd;
-    --line: #2e2862;
-    --accent: #9b8cff;
-    --accent-strong: #bfb5ff;
-    --accent-soft: #2b2362;
-    --coral: #ff7d9b;
-    --coral-soft: #3d1c34;
-    --amber: #ffc25c;
-    --amber-soft: #3a2b14;
-    --info: #74b8ff;
-    --info-soft: #14284d;
-    --ok: #5fd9a8;
-    --ok-soft: #123a33;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
-    --shadow-lift: 0 14px 32px -14px rgb(155 140 255 / 0.5);
+    --bg: #000000;
+    --surface: #0d0d0d;
+    --surface-2: #181818;
+    --ink: #ffffff;
+    --muted: #a9a9a9;
+    --line: #ffffff;
+    --line-soft: #333333;
+    --accent: #ffffff;
+    --accent-strong: #ffffff;
+    --accent-soft: #232323;
+    --warm: #ffd60a;
+    --coral: #ff6b6b;
+    --coral-soft: #3a1414;
+    --amber: #ffc857;
+    --amber-soft: #382a0c;
+    --info: #ffffff;
+    --info-soft: #232323;
+    --ok: #5fdc93;
+    --ok-soft: #10331f;
+    --g1: #ffffff;
+    --g2: #9a9a9a;
+    --g3: #555555;
   }
 }
 
@@ -59,11 +66,13 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
   --color-coral: var(--coral);
   --color-coral-soft: var(--coral-soft);
+  --color-warm: var(--warm);
   --color-amber: var(--amber);
   --color-amber-soft: var(--amber-soft);
   --color-info: var(--info);
@@ -85,6 +94,17 @@ body {
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.55;
+  font-weight: 500;
+}
+
+/* Başlıklar ağır ve sıkı; etiketler ve vurgular kalın */
+.font-display {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.font-medium {
+  font-weight: 700;
 }
 
 /* Saatler ve tutarlar hizalı dursun */
@@ -234,7 +254,7 @@ body {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--line) 25%, var(--surface-2) 50%, var(--line) 75%);
+  background: linear-gradient(90deg, var(--line-soft) 25%, var(--surface-2) 50%, var(--line-soft) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }
@@ -297,7 +317,7 @@ body {
   animation: underline 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
-/* Üzerine gelince kalkan kartlar */
+/* Üzerine gelince sert gölgesi büyüyen kartlar */
 .lift {
   transition:
     transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
@@ -306,9 +326,8 @@ body {
 }
 
 .lift:hover {
-  transform: translateY(-3px);
+  transform: translate(-3px, -3px);
   box-shadow: var(--shadow-lift);
-  border-color: var(--accent);
 }
 
 /* Yolculuk adımları açılırken yumuşakça iner */

@@ -5,8 +5,8 @@ export default function Home() {
   return (
     <>
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 pt-6 sm:px-6">
-        <span className="font-display text-xl font-bold tracking-tight">Gezinti</span>
-        <span className="rounded-full border border-line bg-surface px-3 py-1 text-xs text-muted">
+        <span className="font-display text-2xl">Gezinti</span>
+        <span className="rounded-full border-2 border-line bg-surface px-3 py-1 text-xs font-bold">
           İstanbul, İzmir ve Ankara
         </span>
       </header>
@@ -14,10 +14,10 @@ export default function Home() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-20 sm:px-6">
         <section className="relative pt-10 pb-8 sm:pt-14">
           <RouteMotif />
-          <h1 className="rise font-display max-w-2xl text-4xl leading-[1.05] font-bold tracking-tight sm:text-6xl">
+          <h1 className="rise font-display max-w-3xl text-5xl leading-[0.98] sm:text-7xl">
             Bütçene uygun şehir gezisi, saat saat.
           </h1>
-          <p className="rise mt-4 max-w-xl text-lg text-muted" style={{ animationDelay: "150ms" }}>
+          <p className="rise mt-5 max-w-xl text-lg font-semibold text-muted" style={{ animationDelay: "150ms" }}>
             Şehrini, gün sayını ve bütçeni seç. Mekanları, yemekleri ve toplu taşıma rotasını
             gerçek sefer saatleriyle planlayalım.
           </p>
@@ -48,7 +48,7 @@ function RouteMotif() {
   return (
     <svg
       viewBox="0 0 320 120"
-      className="pointer-events-none absolute top-6 right-0 hidden h-28 w-80 text-accent lg:block"
+      className="pointer-events-none absolute top-6 right-0 hidden h-28 w-80 text-ink lg:block"
       fill="none"
       aria-hidden="true"
     >
@@ -73,7 +73,7 @@ function RouteMotif() {
           strokeWidth="5"
         />
       ))}
-      <circle className="hero-vehicle" r="6" cx="0" cy="0" fill="var(--coral)" />
+      <circle className="hero-vehicle" r="6" cx="0" cy="0" fill="var(--warm)" stroke="var(--ink)" strokeWidth="2.5" />
     </svg>
   );
 }

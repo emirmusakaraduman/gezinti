@@ -137,7 +137,7 @@ function LoadingStages() {
 
   return (
     <div role="status" aria-label="Plan hazırlanıyor">
-      <div className="rounded-3xl border border-line bg-surface p-5 shadow-card sm:p-6">
+      <div className="rounded-3xl border-2 border-line bg-surface p-5 shadow-card sm:p-6">
         <ol className="flex items-start">
           {STAGES.map((st, i) => {
             const done = i < stage;
@@ -145,7 +145,7 @@ function LoadingStages() {
             return (
               <li key={st.label} className="relative flex-1">
                 {i > 0 && (
-                  <span className="absolute top-3 right-1/2 left-[-50%] h-0.5 bg-line" aria-hidden="true">
+                  <span className="absolute top-3 right-1/2 left-[-50%] h-1 bg-line-soft" aria-hidden="true">
                     <span
                       className="block h-full origin-left bg-accent transition-transform duration-700"
                       style={{ transform: `scaleX(${i <= stage ? 1 : 0})` }}
@@ -154,8 +154,8 @@ function LoadingStages() {
                 )}
                 <span
                   className={`relative z-[1] mx-auto flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-500 ${
-                    done || current ? "bg-accent text-white" : "bg-line text-muted"
-                  } ${current ? "pop-soft ring-4 ring-accent-soft" : ""}`}
+                    done || current ? "bg-ink text-bg" : "bg-line-soft text-muted"
+                  } ${current ? "pop-soft ring-4 ring-line-soft" : ""}`}
                 >
                   {done ? <CheckIcon className="text-sm" /> : i + 1}
                 </span>

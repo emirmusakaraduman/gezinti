@@ -1,7 +1,7 @@
 /**
- * Gün renkleri (sırayla döner); harita ve liste aynı rengi kullanır. "Akşam Boğazı"
- * paletinden: hepsi beyaz yazıyla okunur, birbirinden ayırt edilir.
+ * Gün renkleri (sırayla döner): yalnızca harita çizgileri ve gün noktalarında kullanılır.
+ * Arayüz siyah-beyazdır; gün ayrımı için canlı, açık ve koyu zeminde okunan tonlar.
  */
-export const DAY_COLORS = ["#5646d9", "#d97706", "#e1456b", "#17895f", "#2c78c4", "#a24bd0", "#6b6a8f"];
+export const DAY_COLORS = ["#e11d48", "#2563eb", "#059669", "#d97706", "#7c3aed", "#0891b2", "#db2777"];
 
 export const dayColor = (day: number) => DAY_COLORS[(day - 1) % DAY_COLORS.length];
