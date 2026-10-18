@@ -74,6 +74,34 @@ describe("summarizeBudget", () => {
   });
 });
 
+describe("Müzekart", () => {
+  const covered = (price: number) => place({ category: "muze", price: range(price), muzekart: true });
+
+  it("kartı olana Müzekart geçen yerler ücretsiz", () => {
+    const s = summarizeBudget([day([covered(500), museum(100, 100)])], city([]), request({ hasMuzekart: true, budget: 10_000 }));
+    expect(s.breakdown.activities).toMatchObject({ min: 100, max: 100 });
+    expect(s.muzekart).toBeUndefined();
+  });
+
+  it("biletler kartın fiyatını aşıyorsa kişi sayısıyla tasarrufu önerir", () => {
+    // Kişi başı 500 + 150 = 650 TL, kart 200 TL → kişi başı 450, 2 kişi 900 TL
+    const s = summarizeBudget([day([covered(500), covered(150)])], city([]), request({ travelers: 2, budget: 10_000 }));
+    expect(s.muzekart?.saves).toMatchObject({ min: 900, max: 900 });
+    expect(s.muzekart?.places).toHaveLength(2);
+    expect(budgetWarnings(s).some((w) => w.message.includes("Müzekart alırsan"))).toBe(true);
+  });
+
+  it("biletler kartın fiyatını aşmıyorsa önermez", () => {
+    const s = summarizeBudget([day([covered(150)])], city([]), request({ budget: 10_000 }));
+    expect(s.muzekart).toBeUndefined();
+  });
+
+  it("alt sınır kartı aşmıyorsa (belirsizse) önermez", () => {
+    const uncertain = place({ category: "muze", price: range(100, 400), muzekart: true });
+    expect(summarizeBudget([day([uncertain])], city([]), request({ budget: 10_000 })).muzekart).toBeUndefined();
+  });
+});
+
 describe("budgetWarnings", () => {
   it("duruma göre uyarı seviyesi verir", () => {
     const at = (min: number, max: number, budget: number) =>

@@ -62,6 +62,7 @@ export default function Planner({ cities }: { cities: { id: string; name: string
     budget: 5000,
     transport: "toplu_tasima",
     interests: ["tarih", "yemek"],
+    hasMuzekart: false,
   });
   const [plan, setPlan] = useState<TripPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -166,6 +167,17 @@ export default function Planner({ cities }: { cities: { id: string; name: string
           </select>
         </label>
 
+        <label className="flex items-center gap-2 text-sm sm:col-span-3">
+          <input
+            type="checkbox"
+            checked={form.hasMuzekart ?? false}
+            onChange={(e) => update("hasMuzekart", e.target.checked)}
+            className="h-4 w-4 accent-emerald-600"
+          />
+          Müzekart&apos;ım var
+          <span className="text-xs text-zinc-500">(Bakanlık müzeleri ücretsiz sayılır)</span>
+        </label>
+
         <fieldset className="sm:col-span-3">
           <legend className="text-sm">İlgi alanları</legend>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -232,6 +244,7 @@ function PlanView({
         <p className="mt-1 text-xs text-zinc-500">
           Planlayan: {plan.plannedBy === "claude" ? "Claude" : "sezgisel yöntem"}
           {plan.revisions > 0 && ` · ${plan.revisions} kez revize edildi`}
+          {" · Giriş ücretleri T.C. vatandaşı tarifesidir"}
         </p>
         {plan.editMessage && (
           <p className="mt-3 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100">
@@ -316,8 +329,14 @@ function PlanView({
                         )}
                         {stop.place.name}{" "}
                         <span className="text-sm font-normal text-zinc-500">
-                          · {formatRange(stop.place.price)}
-                          {stop.place.price.confidence === "tahmini" && stop.place.price.max > 0 && " (tahmini)"}
+                          {plan.request.hasMuzekart && stop.place.muzekart ? (
+                            <> · Müzekart ile ücretsiz</>
+                          ) : (
+                            <>
+                              · {formatRange(stop.place.price)}
+                              {stop.place.price.confidence === "tahmini" && stop.place.price.max > 0 && " (tahmini)"}
+                            </>
+                          )}
                         </span>
                       </p>
                       <PlaceBadges place={stop.place} />
@@ -394,6 +413,12 @@ function PlaceBadges({ place }: { place: Place }) {
           {place.popularity.sitelinks} dilde Wikipedia
         </span>
       )}
+      {place.muzekart && (
+        <span className={`${badge} bg-violet-50 text-violet-800 dark:bg-violet-950 dark:text-violet-200`}>
+          Müzekart geçerli
+        </span>
+      )}
+      {place.ticketNote && <span className="mr-1.5 text-xs text-zinc-500">{place.ticketNote}</span>}
       {place.source === "kurator" && !place.distinction && (
         <span className={`${badge} bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200`}>
           Köklü mekan

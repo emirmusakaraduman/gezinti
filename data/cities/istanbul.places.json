@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T03:23:27.201Z",
+ "generatedAt": "2026-10-18T14:14:29.776Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -76,11 +76,13 @@
    "description": "İstanbul'un Fatih ilçesinde tarihi yapı.",
    "durationMin": 120,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 500,
+    "max": 500,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
+   "ticketNote": "Kombine bilet (saray, Harem, Aya İrini); Müzekart Harem ve Aya İrini'de geçmez",
    "hours": {
     "open": "09:00",
     "close": "18:00",
@@ -110,11 +112,12 @@
    "description": "İstanbul'un Beşiktaş ilçesinde tarihi saray.",
    "durationMin": 120,
    "price": {
-    "min": 150,
-    "max": 700,
-    "confidence": "tahmini",
-    "lastVerified": null
+    "min": 250,
+    "max": 250,
+    "confidence": "net",
+    "lastVerified": "2026-10-18"
    },
+   "ticketNote": "Millî Saraylar: Selamlık, Harem ve Resim Müzesi",
    "hours": null,
    "tags": [
     "park"
@@ -166,11 +169,12 @@
    "description": "İstanbul'un Beyoğlu ilçesinde tarihi kule.",
    "durationMin": 45,
    "price": {
-    "min": 100,
-    "max": 500,
+    "min": 650,
+    "max": 650,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": {
     "open": "09:00",
     "close": "20:30",
@@ -199,11 +203,12 @@
    "description": "İstanbulda bulunan tarihi su deposu.",
    "durationMin": 90,
    "price": {
-    "min": 300,
-    "max": 1300,
-    "confidence": "tahmini",
-    "lastVerified": null
+    "min": 1,
+    "max": 1,
+    "confidence": "net",
+    "lastVerified": "2026-10-18"
    },
+   "ticketNote": "T.C. vatandaşına 1 TL (İBB, 2026)",
    "hours": {
     "open": "09:00",
     "close": "19:00",
@@ -320,10 +325,11 @@
    "durationMin": 45,
    "price": {
     "min": 300,
-    "max": 1200,
+    "max": 1000,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "ticketNote": "Tekne ücreti ayrıca",
    "hours": null,
    "tags": [
     "attraction"
@@ -493,11 +499,12 @@
    "description": "İstanbul'un Beşiktaş ilçesinde tarihi saray.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
-    "confidence": "tahmini",
-    "lastVerified": null
+    "min": 175,
+    "max": 175,
+    "confidence": "net",
+    "lastVerified": "2026-10-18"
    },
+   "ticketNote": "Millî Saraylar",
    "hours": null,
    "tags": [
     "attraction"
@@ -577,11 +584,12 @@
    "description": "İstanbul'un Üsküdar ilçesinde saray.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
-    "confidence": "tahmini",
-    "lastVerified": null
+    "min": 200,
+    "max": 200,
+    "confidence": "net",
+    "lastVerified": "2026-10-18"
    },
+   "ticketNote": "Millî Saraylar",
    "hours": {
     "open": "09:00",
     "close": "18:00",
@@ -640,8 +648,8 @@
    "description": "Beyoğlu, İstanbul, Türkiye'de müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 375,
+    "max": 375,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -845,11 +853,12 @@
    "description": "Türkiye'deki ilk müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 200,
+    "max": 200,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": {
     "open": "09:00",
     "close": "21:00",
@@ -1163,8 +1172,8 @@
    "description": "Fatih'te müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 100,
+    "max": 300,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1257,6 +1266,7 @@
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "ticketNote": "Seyir terası",
    "hours": null,
    "tags": [
     "attraction"
@@ -1358,11 +1368,12 @@
    "description": "İstanbul'un Beykoz ilçesinde tarihi yapı.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
-    "confidence": "tahmini",
-    "lastVerified": null
+    "min": 120,
+    "max": 120,
+    "confidence": "net",
+    "lastVerified": "2026-10-18"
    },
+   "ticketNote": "Millî Saraylar",
    "hours": {
     "open": "09:00",
     "close": "17:00",
@@ -1419,7 +1430,7 @@
    "durationMin": 90,
    "price": {
     "min": 150,
-    "max": 700,
+    "max": 400,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1552,11 +1563,12 @@
    "description": "Şerefiye Sarnıcı, İstanbul’un tarihi yarımada içerisinde bulunan en eski su yapılarından birisidir.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
-    "confidence": "tahmini",
-    "lastVerified": null
+    "min": 1,
+    "max": 1,
+    "confidence": "net",
+    "lastVerified": "2026-10-18"
    },
+   "ticketNote": "T.C. vatandaşına 1 TL (İBB, 2026)",
    "hours": {
     "open": "09:00",
     "close": "18:00",
@@ -1612,8 +1624,8 @@
    "description": "İstanbul'da bir minyatür parkı.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 275,
+    "max": 275,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1644,11 +1656,12 @@
    "description": "İstanbul'un Beşiktaş ilçesinde tarihi yapı.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
-    "confidence": "tahmini",
-    "lastVerified": null
+    "min": 100,
+    "max": 100,
+    "confidence": "net",
+    "lastVerified": "2026-10-18"
    },
+   "ticketNote": "Millî Saraylar",
    "hours": null,
    "tags": [
     "museum"

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-18T13:41:21.948Z",
+ "generatedAt": "2026-10-18T14:14:30.117Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -12,11 +12,12 @@
    "description": "İzmir'de bulunan antik şehir.",
    "durationMin": 90,
    "price": {
-    "min": 0,
+    "min": 100,
     "max": 300,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": null,
    "tags": [
     "archaeological_site",
@@ -70,10 +71,11 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "ticketNote": "Asansöre biniş ücretsiz",
    "hours": null,
    "tags": [
     "attraction"
@@ -154,10 +156,11 @@
    "durationMin": 120,
    "price": {
     "min": 150,
-    "max": 700,
+    "max": 300,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": null,
    "tags": [
     "ruins",
@@ -265,8 +268,8 @@
    "description": "1951 Tang-class submarine.",
    "durationMin": 120,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 100,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -324,10 +327,11 @@
    "durationMin": 90,
    "price": {
     "min": 150,
-    "max": 700,
+    "max": 300,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": {
     "open": "08:30",
     "close": "18:30",
@@ -468,7 +472,7 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 100,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -495,8 +499,8 @@
    "description": "İzmir, Türkiye'de bir müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 100,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -585,8 +589,8 @@
    "description": "İzmir, Türkiye'de bir müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 100,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -725,11 +729,12 @@
    "description": "İzmir, Türkiye'de bir sanat müzesi.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "ticketNote": "Giriş ücretsiz",
    "hours": {
     "open": "10:00",
     "close": "18:00",
@@ -759,8 +764,8 @@
    "description": "Türkiye, İzmir'deki oyuncak müzesi.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 50,
+    "max": 150,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -843,8 +848,8 @@
    "description": "İzmir, Türkiye'de bir müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -871,8 +876,8 @@
    "description": "Bornova'da müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 20,
+    "max": 100,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -899,11 +904,12 @@
    "description": "Karşıyaka'da müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "ticketNote": "Açık hava",
    "hours": null,
    "tags": [
     "museum"

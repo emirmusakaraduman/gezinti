@@ -10,6 +10,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { addDays, haversineKm, weekday } from "@/lib/geo";
+import { ticketPrice } from "@/lib/pricing";
 import type { City, Place, TripRequest } from "@/lib/types";
 
 export const MODEL = "claude-opus-5-5";
@@ -60,25 +61,29 @@ Kurallar:
 - notes alanında seçtiğin önemli yerler için kısa, pratik bir ipucu yaz (ör. "Sabah erken git, kuyruk olur").
 - summary alanında planı 2-3 cümleyle, samimi bir Türkçeyle özetle.`;
 
-function candidatePayload(city: City, exclude: Set<string>) {
+function candidatePayload(city: City, req: TripRequest, exclude: Set<string>) {
   return city.places
     .filter((p) => !exclude.has(p.id))
-    .map((p) => ({
-      id: p.id,
-      name: p.name,
-      category: p.category,
-      district: p.district,
-      lat: p.lat,
-      lng: p.lng,
-      durationMin: p.durationMin,
-      priceTL: { min: p.price.min, max: p.price.max, confidence: p.price.confidence },
-      hours: p.hours,
-      tags: p.tags,
-      mustTry: p.mustTry,
-      source: p.source,
-      popularity: p.popularity?.score,
-      michelin: p.distinction ? `${p.distinction.kind} (${p.distinction.year})` : undefined,
-    }));
+    .map((p) => {
+      const t = ticketPrice(p, req);
+      return {
+        id: p.id,
+        name: p.name,
+        category: p.category,
+        district: p.district,
+        lat: p.lat,
+        lng: p.lng,
+        durationMin: p.durationMin,
+        // Müzekart varsa geçen yerler 0 TL
+        priceTL: { min: t.min, max: t.max, confidence: t.confidence },
+        hours: p.hours,
+        tags: p.tags,
+        mustTry: p.mustTry,
+        source: p.source,
+        popularity: p.popularity?.score,
+        michelin: p.distinction ? `${p.distinction.kind} (${p.distinction.year})` : undefined,
+      };
+    });
 }
 
 async function selectWithClaude(
@@ -97,10 +102,11 @@ async function selectWithClaude(
     `Ulaşım: ${req.transport === "araba" ? "araba" : "toplu taşıma"}`,
     `İlgi alanları: ${req.interests.join(", ")}`,
     req.notes ? `Kullanıcı notu: ${req.notes}` : null,
+    `Müzekart: ${req.hasMuzekart ? "var (Müzekart geçen yerler ücretsiz)" : "yok"}. Fiyatlar T.C. vatandaşı tarifesidir.`,
     feedback?.messages.length
       ? `Önceki planla ilgili sorunlar, bunları düzelt:\n- ${feedback.messages.join("\n- ")}`
       : null,
-    `Aday mekanlar (JSON):\n${JSON.stringify(candidatePayload(city, exclude))}`,
+    `Aday mekanlar (JSON):\n${JSON.stringify(candidatePayload(city, req, exclude))}`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -203,7 +209,10 @@ function selectHeuristic(
   const dailyAllowance = (req.budget * 0.75) / req.days;
   // Seçimde aralığın ortası; üst ucu bütçe ajanı ayrıca kontrol edip uyarır.
   // Üst uçla seçim, ilk öğünden sonra günlük payı tüketiyordu.
-  const cost = (p: Place) => ((p.price.min + p.price.max) / 2) * req.travelers;
+  const cost = (p: Place) => {
+    const t = ticketPrice(p, req);
+    return ((t.min + t.max) / 2) * req.travelers;
+  };
 
   /** Listeden o gün açık, bütçeye sığan (ve koşula uyan) ilk `count` mekanı çıkar */
   const take = (

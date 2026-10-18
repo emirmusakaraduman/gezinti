@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T03:22:40.185Z",
+ "generatedAt": "2026-10-18T14:14:30.322Z",
  "sources": "© OpenStreetMap katkıcıları (ODbL); Wikidata (CC0); Wikimedia Pageviews (CC0)",
  "places": [
   {
@@ -41,10 +41,11 @@
    "durationMin": 120,
    "price": {
     "min": 150,
-    "max": 700,
+    "max": 350,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": null,
    "tags": [
     "museum"
@@ -125,11 +126,12 @@
    "description": "Türkiye cumhurbaşkanlarının resmî konutu ve çalışma yeri (1923–2014).",
    "durationMin": 120,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "ticketNote": "Atatürk Köşkü ziyareti randevuyla, ücretsiz",
    "hours": null,
    "tags": [
     "garden"
@@ -153,11 +155,12 @@
    "description": "Ankara'nın Altındağ ilçesinde müze.",
    "durationMin": 120,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 100,
+    "max": 250,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": {
     "open": "09:00",
     "close": "17:00",
@@ -187,8 +190,8 @@
    "description": "Müze olarak yeniden düzenlenmiş eski bir cezaevi.",
    "durationMin": 120,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 20,
+    "max": 80,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -216,10 +219,11 @@
    "durationMin": 45,
    "price": {
     "min": 0,
-    "max": 300,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "ticketNote": "Dışarıdan görülür",
    "hours": null,
    "tags": [
     "archaeological_site",
@@ -272,11 +276,12 @@
    "description": "Ankara'da bulunan bir sanat müzesi.",
    "durationMin": 120,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 150,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": {
     "open": "09:00",
     "close": "17:00",
@@ -306,8 +311,8 @@
    "description": "Altındağ'da otel.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 150,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -388,11 +393,12 @@
    "description": "Ankara'da bulunan Roma hamamı.",
    "durationMin": 45,
    "price": {
-    "min": 0,
-    "max": 300,
+    "min": 100,
+    "max": 200,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": null,
    "tags": [
     "archaeological_site",
@@ -445,11 +451,12 @@
    "description": "Türkiye'nin ilk parlamento binası (1920–1924).",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 100,
+    "max": 250,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": null,
    "tags": [
     "building",
@@ -474,11 +481,12 @@
    "description": "Türkiye'nin ikinci parlamento binası (1924–1960).",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 100,
+    "max": 250,
     "confidence": "tahmini",
     "lastVerified": null
    },
+   "muzekart": true,
    "hours": null,
    "tags": [
     "building",
@@ -503,8 +511,8 @@
    "description": "Ankara'da müze ev.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -821,8 +829,8 @@
    "description": "Ankara'da müze evi.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 50,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -989,8 +997,8 @@
    "description": "Altındağ'da müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 20,
+    "max": 80,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1045,8 +1053,8 @@
    "description": "Ankara'da müze.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 0,
+    "max": 0,
     "confidence": "tahmini",
     "lastVerified": null
    },
@@ -1080,8 +1088,8 @@
    "description": "Ankara'daki bir satranç müzesi.",
    "durationMin": 90,
    "price": {
-    "min": 150,
-    "max": 700,
+    "min": 50,
+    "max": 200,
     "confidence": "tahmini",
     "lastVerified": null
    },

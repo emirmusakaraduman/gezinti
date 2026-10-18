@@ -18,6 +18,7 @@ import {
   toMinutes,
   weekday,
 } from "@/lib/geo";
+import { ticketPrice } from "@/lib/pricing";
 import { osrmMatch, osrmRoute } from "@/lib/routing/osrm";
 import { getTransitRouter, lineLengthKm, type TransitJourney } from "@/lib/transit/router";
 import type {
@@ -29,6 +30,7 @@ import type {
   Place,
   Stop,
   TransportMode,
+  TripRequest,
 } from "@/lib/types";
 
 /** Kuş uçuşu mesafeyi yol mesafesine çeviren kaba katsayı */
@@ -380,11 +382,10 @@ export async function buildDay(
   dayIndex: number,
   places: Place[],
   city: City,
-  transport: TransportMode,
-  startDate: string,
-  travelers: number,
+  req: Pick<TripRequest, "transport" | "startDate" | "travelers" | "hasMuzekart">,
   notes: Map<string, string>,
 ): Promise<DayPlan> {
+  const { transport, startDate, travelers } = req;
   const roles = assignMeals(places);
   // Sıralama için kaba yol süresi; gerçek süreler aşağıda OSRM/GTFS ile
   const travel: TravelMin = (a, b) => estimateLeg(a, b, transport, city, travelers).durationMin;
@@ -428,7 +429,7 @@ export async function buildDay(
     });
   }
 
-  const placeCosts = ordered.map((p) => scaleRange(p.price, travelers));
+  const placeCosts = ordered.map((p) => scaleRange(ticketPrice(p, req), travelers));
   const legCosts = legs.map((l) => l.cost);
   const parking =
     transport === "araba" && legs.some((l) => l.mode === "araba")

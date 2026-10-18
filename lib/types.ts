@@ -53,6 +53,10 @@ export const PlaceSchema = z.object({
   mustTry: z.string().optional(),
   osmId: z.string().optional(),
   wikidata: z.string().optional(),
+  /** Kültür ve Turizm Bakanlığı Müzekart'ı geçerli (vatandaşa ücretsiz giriş) */
+  muzekart: z.boolean().optional(),
+  /** Bilet hakkında kısa not (ör. "Tekne ücreti ayrıca") */
+  ticketNote: z.string().optional(),
   /**
    * "populer": OSM + Wikipedia popülerliğiyle seçildi;
    * "kurator": elle derlenmiş tavsiye (OSM'de doğrulanmış olabilir)
@@ -110,6 +114,8 @@ export const TripRequestSchema = z.object({
   transport: TransportModeSchema,
   interests: z.array(PlaceCategorySchema).min(1),
   notes: z.string().max(500).optional(),
+  /** Yolcuların Müzekart'ı var: Müzekart geçen yerler ücretsiz sayılır */
+  hasMuzekart: z.boolean().optional(),
 });
 export type TripRequest = z.infer<typeof TripRequestSchema>;
 
@@ -221,6 +227,8 @@ export interface BudgetSummary {
   status: "rahat" | "yaklasiyor" | "asabilir" | "asiyor";
   /** Aşım riski varsa tasarruf önerileri */
   savings: { placeId: string; placeName: string; saves: PriceRange }[];
+  /** Müzekart alınırsa kazanılacak tutar (yolcuların kartı yoksa ve değiyorsa) */
+  muzekart?: { places: string[]; saves: PriceRange };
 }
 
 export interface TripPlan {

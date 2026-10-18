@@ -274,21 +274,80 @@ function categorize(tags) {
 const DURATION = { muze: 90, tarih: 45, doga: 60, manzara: 45, semt: 90, carsi: 60 };
 
 /**
- * OSM'de ücret bilgisi olmayan ama ücretli olduğu bilinen yerler için
- * kişi başı tahmini aralık (TL, 2026; yerli/yabancı tarifesi farklı olabilir)
+ * Bilinen giriş ücretleri: T.C. vatandaşı (yerli) tarifesi, kişi başı TL, 2026.
+ * Yabancılar için fiyatlar çok daha yüksek; uygulama yerli tarifeyi esas alır.
+ *
+ *   price: [min, max]
+ *   sure:  birden çok tutarlı kaynak / işleticinin kendi duyurusu → "net"
+ *   muzekart: Kültür ve Turizm Bakanlığı Müzekart'ı geçerli (vatandaşa ücretsiz)
+ *
+ * Kaynaklar (Ekim 2026): İBB Kültür duyuruları (Yerebatan, Şerefiye 1 TL),
+ * Millî Saraylar yerli tarifesini aktaran rehberler, müze ücretlerini derleyen
+ * haber siteleri. Tek kaynaktan gelenler tahmini sayılır.
  */
-const PRICE_OVERRIDE = {
-  Q216511: [300, 1300], // Yerebatan Sarnıcı
-  Q848397: [300, 1200], // Kız Kulesi (tekne dahil)
-  Q28657490: [200, 600], // Çamlıca Kulesi seyir terası
+const TICKETS = {
+  // İstanbul
+  Q170495: { price: [500, 500], muzekart: true, note: "Kombine bilet (saray, Harem, Aya İrini); Müzekart Harem ve Aya İrini'de geçmez" },
+  Q274141: { price: [250, 250], sure: true, note: "Millî Saraylar: Selamlık, Harem ve Resim Müzesi" },
+  Q91274: { price: [650, 650], muzekart: true },
+  Q216511: { price: [1, 1], sure: true, note: "T.C. vatandaşına 1 TL (İBB, 2026)" },
+  Q3150393: { price: [1, 1], sure: true, note: "T.C. vatandaşına 1 TL (İBB, 2026)" },
+  Q848397: { price: [300, 1000], note: "Tekne ücreti ayrıca" },
+  Q911734: { price: [175, 175], sure: true, note: "Millî Saraylar" },
+  Q794349: { price: [200, 200], sure: true, note: "Millî Saraylar" },
+  Q1755906: { price: [120, 120], sure: true, note: "Millî Saraylar" },
+  Q2330055: { price: [100, 100], sure: true, note: "Millî Saraylar" },
+  Q15961492: { price: [375, 375] },
+  Q636978: { price: [200, 200], muzekart: true },
+  Q1085952: { price: [275, 275] },
+  Q28657490: { price: [200, 600], note: "Seyir terası" },
+  Q1472490: { price: [100, 300] },
+  Q2728644: { price: [150, 400] },
+  // İzmir
+  Q1379299: { price: [100, 300], muzekart: true },
+  Q4803558: { price: [0, 0], note: "Asansöre biniş ücretsiz" },
+  Q2827071: { price: [150, 300], muzekart: true },
+  Q6102069: { price: [150, 300], muzekart: true },
+  Q8053378: { price: [0, 100] },
+  Q4817276: { price: [0, 100] },
+  Q8080136: { price: [0, 100] },
+  Q24883371: { price: [0, 100] },
+  Q5997141: { price: [0, 0], note: "Giriş ücretsiz" },
+  Q6059641: { price: [50, 150] },
+  Q21526565: { price: [0, 0] },
+  Q28222005: { price: [20, 100] },
+  Q20949105: { price: [0, 0], note: "Açık hava" },
+  // Ankara
+  Q754322: { price: [150, 350], muzekart: true },
+  Q8077521: { price: [0, 0], note: "Atatürk Köşkü ziyareti randevuyla, ücretsiz" },
+  Q4533056: { price: [100, 250], muzekart: true },
+  Q190497: { price: [20, 80] },
+  Q1640233: { price: [0, 0], note: "Dışarıdan görülür" },
+  Q4818221: { price: [0, 150], muzekart: true },
+  Q4765980: { price: [0, 150] },
+  Q7361597: { price: [100, 200], muzekart: true },
+  Q7968654: { price: [100, 250], muzekart: true },
+  Q6090164: { price: [100, 250], muzekart: true },
+  Q7161864: { price: [0, 0] },
+  Q6086284: { price: [0, 50] },
+  Q5446180: { price: [20, 80] },
+  Q51526923: { price: [0, 0] },
+  Q28136272: { price: [50, 200] },
 };
+
+/** Fiyatların doğrulandığı tarih (kesin olanlar için) */
+const TICKETS_VERIFIED = "2026-10-18";
 
 /** Ücret etiketi yoksa genellikle ücretsiz gezilen tarihi yapı türleri */
 const FREE_HISTORIC = /^(monument|memorial|citywalls|city_gate|square|aqueduct|bridge|castle|tomb|caravanserai|fountain|column|district|yes)$/;
 
 function price(category, tags, qid) {
   const est = (min, max) => ({ min, max, confidence: "tahmini", lastVerified: null });
-  if (PRICE_OVERRIDE[qid]) return est(...PRICE_OVERRIDE[qid]);
+  const t = TICKETS[qid];
+  if (t) {
+    const [min, max] = t.price;
+    return t.sure ? { min, max, confidence: "net", lastVerified: TICKETS_VERIFIED } : est(min, max);
+  }
   if (tags.fee === "no" || tags.amenity === "place_of_worship") return est(0, 0);
   if (tags.fee !== "yes" && (FREE_HISTORIC.test(tags.historic ?? "") || /Meydanı$/.test(tags.name ?? ""))) {
     return est(0, 0);
@@ -453,6 +512,8 @@ out center tags;`;
             ? 90
             : DURATION[x.category],
       price: price(x.category, x.tags, x.qid),
+      ...(TICKETS[x.qid]?.muzekart ? { muzekart: true } : {}),
+      ...(TICKETS[x.qid]?.note ? { ticketNote: TICKETS[x.qid].note } : {}),
       hours: parseOpeningHours(x.tags.opening_hours),
       tags: [x.tags.historic, x.tags.tourism, x.tags.leisure, x.tags.amenity].filter(Boolean),
       osmId: x.osmId,
