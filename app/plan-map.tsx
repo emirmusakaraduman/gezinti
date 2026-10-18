@@ -57,11 +57,18 @@ function routeGeoJSON(days: DayPlan[]): GeoJSON.FeatureCollection<GeoJSON.LineSt
   };
 }
 
-function markerElement(label: string, color: string): HTMLElement {
-  const el = document.createElement("div");
-  el.textContent = label;
-  el.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(15,42,74,.35);cursor:pointer`;
-  return el;
+/**
+ * MapLibre konumlandırmayı dış öğenin transform'u ile yapar; animasyon bu yüzden iç
+ * öğede. delay, işaretçilerin sırayla düşmesi içindir.
+ */
+function markerElement(label: string, color: string, delayMs: number): HTMLElement {
+  const outer = document.createElement("div");
+  const inner = document.createElement("div");
+  inner.className = "marker-in";
+  inner.textContent = label;
+  inner.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(15,42,74,.35);cursor:pointer;animation-delay:${delayMs}ms`;
+  outer.append(inner);
+  return outer;
 }
 
 function popupElement(title: string, lines: string[]): HTMLElement {
@@ -77,6 +84,25 @@ function popupElement(title: string, lines: string[]): HTMLElement {
     root.append(p);
   }
   return root;
+}
+
+/** Rota çizgileri her güncellemede 0'dan görünür hale gelir (hareket azaltılmışsa anında) */
+function fadeInRoutes(map: MlMap) {
+  const layers: [string, number][] = [
+    ["route-ride", 0.9],
+    ["route-approx", 0.85],
+    ["route-walk", 0.9],
+  ];
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const t0 = performance.now();
+  const tick = (t: number) => {
+    const p = Math.min(1, (t - t0) / 700);
+    for (const [id, target] of layers) {
+      if (map.getLayer(id)) map.setPaintProperty(id, "line-opacity", target * p);
+    }
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 }
 
 export default function PlanMap({ days, center }: { days: DayPlan[]; center: { lat: number; lng: number } }) {
@@ -170,6 +196,7 @@ export default function PlanMap({ days, center }: { days: DayPlan[]; center: { l
     markersRef.current = [];
 
     const bounds = new lib.LngLatBounds();
+    let markerCount = 0;
     for (const day of visible) {
       day.stops.forEach((stop, i) => {
         const lngLat: [number, number] = [stop.place.lng, stop.place.lat];
@@ -180,7 +207,7 @@ export default function PlanMap({ days, center }: { days: DayPlan[]; center: { l
             formatRange(stop.place.price),
           ]),
         );
-        const marker = new lib.Marker({ element: markerElement(String(i + 1), dayColor(day.day)) })
+        const marker = new lib.Marker({ element: markerElement(String(i + 1), dayColor(day.day), markerCount++ * 60) })
           .setLngLat(lngLat)
           .setPopup(popup)
           .addTo(map);
@@ -191,6 +218,7 @@ export default function PlanMap({ days, center }: { days: DayPlan[]; center: { l
     const source = map.getSource(ROUTE_SOURCE);
     if (source && "setData" in source) {
       (source as import("maplibre-gl").GeoJSONSource).setData(routeGeoJSON(visible));
+      fadeInRoutes(map);
     }
 
     if (!bounds.isEmpty()) {

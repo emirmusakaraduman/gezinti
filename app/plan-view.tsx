@@ -17,6 +17,7 @@ import type {
   TripPlan,
   Vehicle,
 } from "@/lib/types";
+import { CountRange, Reveal } from "./motion";
 import {
   AlertIcon,
   CarIcon,
@@ -121,7 +122,9 @@ export default function PlanView({
         </aside>
 
         <div className="space-y-8 lg:order-1">
-          <Warnings warnings={plan.warnings} />
+          <Reveal>
+            <Warnings warnings={plan.warnings} />
+          </Reveal>
           {plan.days.map((day) => (
             <DaySection key={day.day} day={day} plan={plan} onEdit={onEdit} editing={editing} />
           ))}
@@ -162,7 +165,9 @@ function BudgetCard({ budget }: { budget: BudgetSummary }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-muted">Tahmini harcama</p>
-          <p className="font-display tnum text-2xl leading-tight font-bold">{formatRange(budget.total)}</p>
+          <p className="font-display tnum text-2xl leading-tight font-bold">
+            <CountRange min={budget.total.min} max={budget.total.max} />
+          </p>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-medium ${status.tone}`}>{status.label}</span>
       </div>
@@ -259,10 +264,8 @@ function DaySection({
   const weekday = DAY_NAMES[new Date(`${day.date}T12:00:00Z`).getUTCDay()];
   return (
     <article>
-      <header
-        className="sticky top-0 z-10 -mx-2 mb-4 flex items-baseline justify-between gap-3 rounded-2xl bg-bg/90 px-2 py-3 backdrop-blur"
-        style={{ borderBottom: `2px solid ${color}` }}
-      >
+      {/* Reveal'a sarılmaz: sticky başlık kendi kapsayıcısında yapışmaz */}
+      <header className="sticky top-0 z-10 -mx-2 mb-4 flex items-baseline justify-between gap-3 rounded-2xl bg-bg/90 px-2 py-3 backdrop-blur">
         <h3 className="font-display flex items-baseline gap-3 text-2xl font-bold">
           {day.day}. gün
           <span className="text-base font-normal text-muted" title={weekday}>
@@ -270,23 +273,38 @@ function DaySection({
           </span>
         </h3>
         <span className="tnum text-sm text-muted">{formatRange(day.cost)}</span>
+        <span
+          aria-hidden="true"
+          className="underline-grow absolute right-2 -bottom-px left-2 h-0.5 rounded-full"
+          style={{ background: color }}
+        />
       </header>
 
       <ol>
         {day.stops.map((stop, i) => (
           <li key={stop.place.id}>
-            {i > 0 && <LegRow leg={day.legs[i - 1]} color={color} index={i} />}
-            {stop.freeTimeMin ? <FreeTimeRow minutes={stop.freeTimeMin} color={color} index={i} /> : null}
-            <StopRow
-              stop={stop}
-              index={i}
-              last={i === day.stops.length - 1}
-              day={day.day}
-              color={color}
-              muzekart={!!plan.request.hasMuzekart}
-              onEdit={onEdit}
-              editing={editing}
-            />
+            {i > 0 && (
+              <Reveal delay={0}>
+                <LegRow leg={day.legs[i - 1]} color={color} index={i} />
+              </Reveal>
+            )}
+            {stop.freeTimeMin ? (
+              <Reveal>
+                <FreeTimeRow minutes={stop.freeTimeMin} color={color} index={i} />
+              </Reveal>
+            ) : null}
+            <Reveal delay={80}>
+              <StopRow
+                stop={stop}
+                index={i}
+                last={i === day.stops.length - 1}
+                day={day.day}
+                color={color}
+                muzekart={!!plan.request.hasMuzekart}
+                onEdit={onEdit}
+                editing={editing}
+              />
+            </Reveal>
           </li>
         ))}
       </ol>
@@ -348,15 +366,15 @@ function StopRow({
       <span className="relative flex justify-center">
         {!last && <Rail color={color} index={index} from="mid" />}
         <span
-          className="relative z-[1] mt-0.5 flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold text-white ring-4 ring-bg"
-          style={{ background: color }}
+          className="hero-station relative z-[1] mt-0.5 flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold text-white ring-4 ring-bg"
+          style={{ background: color, animationDelay: `${index * 80 + 120}ms` }}
         >
           {index + 1}
         </span>
       </span>
 
       <div className={`${last ? "pb-1" : "pb-4"} min-w-0`}>
-        <div className="rounded-2xl border border-line bg-surface p-4 shadow-card">
+        <div className="lift rounded-2xl border border-line bg-surface p-4 shadow-card">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               {stop.meal && (
@@ -468,7 +486,7 @@ function LegRow({ leg, color, index }: { leg: Leg; color: string; index: number 
 
 function TransitSteps({ steps }: { steps: TransitStep[] }) {
   return (
-    <ul className="mt-1.5 space-y-1.5 rounded-xl bg-surface-2 p-3 text-ink">
+    <ul className="details-body mt-1.5 space-y-1.5 rounded-xl bg-surface-2 p-3 text-ink">
       {steps.map((s, i) => (
         <li key={i} className="flex gap-3">
           <span className="tnum w-11 shrink-0 text-muted">{s.depart}</span>

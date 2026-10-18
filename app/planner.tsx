@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PlaceCategory, PlanEdit, TripPlan, TripRequest } from "@/lib/types";
-import { AlertIcon } from "./icons";
+import { AlertIcon, CheckIcon } from "./icons";
 import PlanView from "./plan-view";
 import TripForm from "./trip-form";
 
@@ -107,9 +107,10 @@ export default function Planner({ cities }: { cities: { id: string; name: string
             </div>
           </div>
         )}
-        {loading && !plan && <PlanSkeleton />}
+        {loading && <LoadingStages />}
+        {loading && !plan && <SkeletonGrid />}
         {plan && (
-          <div className={loading ? "opacity-60 transition-opacity" : "transition-opacity"}>
+          <div className={loading ? "mt-8 opacity-50 transition-opacity" : "transition-opacity"}>
             <PlanView plan={plan} onEdit={editStop} editing={editing} />
           </div>
         )}
@@ -118,14 +119,65 @@ export default function Planner({ cities }: { cities: { id: string; name: string
   );
 }
 
-/** Plan hazırlanırken sonucun şeklini gösterir */
-function PlanSkeleton() {
+/** Ajanların sırasıyla yaptığı işler; yükleme sırasında ilerleme olarak gösterilir */
+const STAGES = [
+  { label: "Mekanlar seçiliyor", detail: "İlgi alanlarına ve bütçene uyan yerler aranıyor." },
+  { label: "Rota çiziliyor", detail: "Duraklar en kısa tura göre sıralanıyor, toplu taşıma seferleri bulunuyor." },
+  { label: "Saatler kontrol ediliyor", detail: "Açılış, kapanış ve öğün saatleri denetleniyor." },
+  { label: "Bütçe hesaplanıyor", detail: "Giriş, yemek ve ulaşım maliyetleri toplanıyor." },
+];
+
+/** Plan hazırlanırken ajanların aşamalarını gösterir */
+function LoadingStages() {
+  const [stage, setStage] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setStage((s) => Math.min(s + 1, STAGES.length - 1)), 2200);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <div className="space-y-6" role="status" aria-label="Plan hazırlanıyor">
-      <div className="space-y-3">
-        <div className="skeleton h-9 w-64 rounded-xl" />
-        <div className="skeleton h-5 w-full max-w-xl rounded-lg" />
+    <div role="status" aria-label="Plan hazırlanıyor">
+      <div className="rounded-3xl border border-line bg-surface p-5 shadow-card sm:p-6">
+        <ol className="flex items-start">
+          {STAGES.map((st, i) => {
+            const done = i < stage;
+            const current = i === stage;
+            return (
+              <li key={st.label} className="relative flex-1">
+                {i > 0 && (
+                  <span className="absolute top-3 right-1/2 left-[-50%] h-0.5 bg-line" aria-hidden="true">
+                    <span
+                      className="block h-full origin-left bg-accent transition-transform duration-700"
+                      style={{ transform: `scaleX(${i <= stage ? 1 : 0})` }}
+                    />
+                  </span>
+                )}
+                <span
+                  className={`relative z-[1] mx-auto flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-500 ${
+                    done || current ? "bg-accent text-white" : "bg-line text-muted"
+                  } ${current ? "pop-soft ring-4 ring-accent-soft" : ""}`}
+                >
+                  {done ? <CheckIcon className="text-sm" /> : i + 1}
+                </span>
+                <span className={`mt-2 block px-1 text-center text-xs sm:text-sm ${current ? "font-medium text-ink" : "text-muted"}`}>
+                  {st.label}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+        <p key={stage} className="rise mt-5 text-center text-sm text-muted">
+          {STAGES[stage].detail}
+        </p>
       </div>
+    </div>
+  );
+}
+
+/** Plan henüz yokken sonucun şeklini gösterir */
+function SkeletonGrid() {
+  return (
+    <div className="mt-8 space-y-8">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_25rem]">
         <div className="space-y-4">
           {[0, 1, 2].map((i) => (
@@ -137,7 +189,6 @@ function PlanSkeleton() {
           <div className="skeleton h-72 rounded-3xl" />
         </div>
       </div>
-      <p className="text-sm text-muted">Mekanlar seçiliyor, rota çiziliyor ve bütçe hesaplanıyor.</p>
     </div>
   );
 }

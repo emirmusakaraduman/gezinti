@@ -53,9 +53,9 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 role="radio"
                 aria-checked={active}
                 onClick={() => update("cityId", c.id)}
-                className={`rounded-2xl border p-4 text-left transition-all ${
+                className={`lift rounded-2xl border p-4 text-left active:scale-[0.985] ${
                   active
-                    ? "border-accent bg-accent-soft shadow-[inset_0_0_0_1px_var(--accent)]"
+                    ? "pop-soft border-accent bg-accent-soft shadow-[inset_0_0_0_1px_var(--accent)]"
                     : "border-line bg-surface-2 hover:border-accent"
                 }`}
               >
@@ -119,8 +119,8 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 type="button"
                 onClick={() => update("budget", b)}
                 aria-pressed={form.budget === b}
-                className={`tnum rounded-full px-2.5 py-0.5 text-xs transition-colors ${
-                  form.budget === b ? "bg-ink text-bg" : "bg-surface-2 text-muted hover:text-ink"
+                className={`tnum rounded-full px-2.5 py-0.5 text-xs transition-colors active:scale-95 ${
+                  form.budget === b ? "pop-soft bg-ink text-bg" : "bg-surface-2 text-muted hover:text-ink"
                 }`}
               >
                 {b.toLocaleString("tr-TR")}
@@ -149,8 +149,8 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 role="radio"
                 aria-checked={active}
                 onClick={() => update("transport", id)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  active ? "bg-surface text-ink shadow-card" : "text-muted hover:text-ink"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors active:scale-95 ${
+                  active ? "pop-soft bg-surface text-ink shadow-card" : "text-muted hover:text-ink"
                 }`}
               >
                 <span className="text-base">{icon}</span>
@@ -173,9 +173,9 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 type="button"
                 onClick={() => toggleInterest(i.id)}
                 aria-pressed={active}
-                className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+                className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors active:scale-95 ${
                   active
-                    ? "border-accent bg-accent text-white"
+                    ? "pop-soft border-accent bg-accent text-white"
                     : "border-line bg-surface-2 text-ink hover:border-accent"
                 }`}
               >
@@ -214,9 +214,20 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
         <button
           type="submit"
           disabled={loading || form.interests.length === 0}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-6 py-3 font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-ink px-6 py-3 font-medium text-bg transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-10px_var(--ink)] active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
-          {loading ? "Planlanıyor" : "Planı oluştur"}
+          {loading ? (
+            <>
+              Planlanıyor
+              <span className="flex gap-1" aria-hidden="true">
+                {[0, 1, 2].map((i) => (
+                  <span key={i} className="dot-blink h-1.5 w-1.5 rounded-full bg-current" style={{ animationDelay: `${i * 0.2}s` }} />
+                ))}
+              </span>
+            </>
+          ) : (
+            "Planı oluştur"
+          )}
         </button>
       </div>
     </form>
@@ -239,7 +250,7 @@ function Stepper({
   onChange: (v: number) => void;
 }) {
   const btn =
-    "flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface-2 text-lg text-ink transition-colors hover:border-accent disabled:opacity-35 disabled:hover:border-line";
+    "flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface-2 text-lg text-ink transition-all hover:border-accent active:scale-90 disabled:opacity-35 disabled:hover:border-line";
   return (
     <div role="group" aria-label={label}>
       <span className={fieldLabel}>{label}</span>
@@ -248,7 +259,9 @@ function Stepper({
           <MinusIcon />
         </button>
         <span className="tnum min-w-16 text-center">
-          <span className="font-display text-xl font-semibold">{value}</span>{" "}
+          <span key={value} className="bump font-display text-xl font-semibold">
+            {value}
+          </span>{" "}
           <span className="text-sm text-muted">{unit}</span>
         </span>
         <button type="button" className={btn} onClick={() => onChange(value + 1)} disabled={value >= max} aria-label={`${label} artır`}>
