@@ -37,7 +37,7 @@ const PlanMap = dynamic(() => import("./plan-map"), {
 });
 
 const STATUS: Record<BudgetSummary["status"], { label: string; tone: string }> = {
-  rahat: { label: "Bütçe rahat", tone: "bg-accent-soft text-accent-strong" },
+  rahat: { label: "Bütçe rahat", tone: "bg-ok-soft text-ok" },
   yaklasiyor: { label: "Bütçe sınırına yaklaşıyor", tone: "bg-amber-soft text-amber" },
   asabilir: { label: "Bütçe aşılabilir", tone: "bg-amber-soft text-amber" },
   asiyor: { label: "Bütçe aşılıyor", tone: "bg-coral-soft text-coral" },
@@ -386,7 +386,7 @@ function StopRow({
             </div>
             <p className="tnum shrink-0 text-right text-sm font-medium">
               {free ? (
-                <span className="text-accent-strong">Müzekart ile ücretsiz</span>
+                <span className="text-ok">Müzekart ile ücretsiz</span>
               ) : (
                 <>
                   {formatRange(place.price)}

@@ -66,7 +66,7 @@ function markerElement(label: string, color: string, delayMs: number): HTMLEleme
   const inner = document.createElement("div");
   inner.className = "marker-in";
   inner.textContent = label;
-  inner.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(15,42,74,.35);cursor:pointer;animation-delay:${delayMs}ms`;
+  inner.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(34,30,74,.4);cursor:pointer;animation-delay:${delayMs}ms`;
   outer.append(inner);
   return outer;
 }
@@ -74,7 +74,7 @@ function markerElement(label: string, color: string, delayMs: number): HTMLEleme
 function popupElement(title: string, lines: string[]): HTMLElement {
   // textContent ile kur; mekan adları HTML olarak yorumlanmasın
   const root = document.createElement("div");
-  root.style.cssText = "font:13px/1.45 var(--font-body),system-ui,sans-serif;color:#0f2a4a";
+  root.style.cssText = "font:13px/1.45 var(--font-body),system-ui,sans-serif;color:#221e4a";
   const h = document.createElement("strong");
   h.textContent = title;
   root.append(h);

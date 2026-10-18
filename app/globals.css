@@ -1,46 +1,54 @@
 @import "tailwindcss";
 
 /*
- * Renkler İznik çinisinden: lacivert mürekkep, turkuaz vurgu, mercan yalnızca
- * dikkat gerektiren yerlerde. Zemin soğuk bir porselen; kâğıt gibi sıcak değil.
+ * "Akşam Boğazı": lavanta tonlu beyaz zemin, derin çivit mürekkep, çivit-mor
+ * vurgu. Kehribar (gün batımı) ikincil vurgu, gül uyarı, yeşil yalnızca
+ * "rahat" gibi olumlu durumlar için. Hepsi aynı mor-mavi aileden türediği için
+ * yan yana uyumlu kalır.
  */
 :root {
-  --bg: #f1f5f8;
+  --bg: #f5f3fb;
   --surface: #ffffff;
-  --surface-2: #f6f9fb;
-  --ink: #0f2a4a;
-  --muted: #5b6f85;
-  --line: #d9e2ea;
-  --accent: #0a8f9c;
-  --accent-strong: #067783;
-  --accent-soft: #dcf2f4;
-  --coral: #e5483a;
-  --coral-soft: #fde8e5;
-  --amber: #b87400;
-  --amber-soft: #fdf0d3;
-  --info: #2a5db0;
-  --info-soft: #e4edfb;
-  --shadow: 0 1px 2px rgb(15 42 74 / 0.06), 0 8px 24px -12px rgb(15 42 74 / 0.18);
+  --surface-2: #f8f6fd;
+  --ink: #221e4a;
+  --muted: #655f8d;
+  --line: #e1dcf0;
+  --accent: #5646d9;
+  --accent-strong: #4332c4;
+  --accent-soft: #ece9fd;
+  --coral: #e1456b;
+  --coral-soft: #fde7ed;
+  --amber: #b86a00;
+  --amber-soft: #fdefd3;
+  --info: #2c78c4;
+  --info-soft: #e3effb;
+  --ok: #17895f;
+  --ok-soft: #ddf4ea;
+  --shadow: 0 1px 2px rgb(34 30 74 / 0.06), 0 8px 24px -12px rgb(34 30 74 / 0.2);
+  --shadow-lift: 0 14px 32px -14px rgb(67 50 196 / 0.45);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #09172a;
-    --surface: #102239;
-    --surface-2: #0c1d32;
-    --ink: #e6eef6;
-    --muted: #8da2b8;
-    --line: #23384f;
-    --accent: #3cc4cf;
-    --accent-strong: #6fd8e0;
-    --accent-soft: #0f3a44;
-    --coral: #ff7a6b;
-    --coral-soft: #3b1d22;
-    --amber: #f0b340;
-    --amber-soft: #382b10;
-    --info: #7fa8f0;
-    --info-soft: #14284a;
+    --bg: #120e2a;
+    --surface: #1c1740;
+    --surface-2: #161236;
+    --ink: #ece9ff;
+    --muted: #a39dcd;
+    --line: #2e2862;
+    --accent: #9b8cff;
+    --accent-strong: #bfb5ff;
+    --accent-soft: #2b2362;
+    --coral: #ff7d9b;
+    --coral-soft: #3d1c34;
+    --amber: #ffc25c;
+    --amber-soft: #3a2b14;
+    --info: #74b8ff;
+    --info-soft: #14284d;
+    --ok: #5fd9a8;
+    --ok-soft: #123a33;
     --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+    --shadow-lift: 0 14px 32px -14px rgb(155 140 255 / 0.5);
   }
 }
 
@@ -60,6 +68,8 @@
   --color-amber-soft: var(--amber-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
   --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --shadow-card: var(--shadow);
@@ -297,7 +307,7 @@ body {
 
 .lift:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 32px -14px rgb(15 42 74 / 0.4);
+  box-shadow: var(--shadow-lift);
   border-color: var(--accent);
 }
 
