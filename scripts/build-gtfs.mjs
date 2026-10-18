@@ -15,6 +15,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { bestFittingLine } from "./lib/osm-lines.mjs";
 import { createRailGraph, railLine } from "./lib/rail-graph.mjs";
 import { decode, fixMojibake, parseCoord, parseTime } from "./lib/text.mjs";
 
@@ -486,6 +487,41 @@ if (existsSync(railwaysPath)) {
     built++;
   });
   console.log(`OSM ray ağından çizgi: ${built}/${tried} raylı kalıp`);
+}
+
+// Şekli olmayan (ya da yalnızca durak noktalarından oluşan) otobüs kalıplarına,
+// OSM otobüs hat ilişkilerinden (aynı hat numarası) durak dizisine en iyi oturan
+// güzergahı ver (scripts/fetch-bus-geometry.mjs ile indirilir)
+const buslinesPath = `${RAW}/${CITY}-osm-buslines.json`;
+if (existsSync(buslinesPath)) {
+  const byRef = new Map();
+  for (const l of JSON.parse(readFileSync(buslinesPath, "utf8"))) {
+    const pts = [];
+    for (let i = 0; i < l.line.length; i += 2) pts.push([l.line[i], l.line[i + 1]]);
+    (byRef.get(l.ref) ?? byRef.set(l.ref, []).get(l.ref)).push(pts);
+  }
+  let tried = 0;
+  let built = 0;
+  const cache = new Map(); // aynı hat + durak dizisi birden çok kalıpta olabilir
+  patterns.forEach((stopSeq, p) => {
+    const route = routes[patternRoute[p]];
+    if (route.type !== 3) return;
+    const candidates = byRef.get(route.name);
+    if (!candidates) return;
+    const sh = patternShape[p];
+    if (sh >= 0 && shapes[sh].length >= 2 * stopSeq.length) return;
+    tried++;
+    const key = `${route.name}|${stopSeq.join(",")}`;
+    if (!cache.has(key)) {
+      cache.set(key, bestFittingLine(stopSeq.map((i) => stops[i]), candidates, 120));
+    }
+    const fit = cache.get(key);
+    if (!fit) return;
+    patternShape[p] = shapes.length;
+    shapes.push(fit.line);
+    built++;
+  });
+  console.log(`OSM otobüs güzergahı: ${built}/${tried} kalıp`);
 }
 
 // Kalıp CSR

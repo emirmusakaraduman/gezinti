@@ -12,6 +12,7 @@
 // Çıktı: data/gtfs/raw/<şehir>-osm-rail|osm-bus/*.txt (git dışında);
 // ardından: node scripts/build-gtfs.mjs <şehir>
 import { mkdirSync, writeFileSync } from "node:fs";
+import { chainWays } from "./lib/osm-lines.mjs";
 
 const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
 
@@ -37,29 +38,6 @@ const CITIES = {
 };
 
 const DWELL_S = 30;
-
-/**
- * İlişkinin raylı yol parçalarını (sıralı way üyeleri) tek çizgide birleştirir.
- * Parça uçları eşleşmiyorsa (boşluk) düz çizgiyle bağlanır. Peron/durak
- * yolları (rolü boş olmayanlar) dahil edilmez. Dönen: [{lat, lon}]
- */
-function chainWays(relation) {
-  const ways = (relation?.members ?? []).filter(
-    (m) => m.type === "way" && m.geometry?.length >= 2 && !/platform|stop/.test(m.role),
-  );
-  const line = [];
-  for (const way of ways) {
-    let pts = way.geometry;
-    if (line.length) {
-      const end = line.at(-1);
-      // Yön: sondaki noktaya yakın uç öne gelsin
-      if (haversineM(end, pts[0]) > haversineM(end, pts.at(-1))) pts = [...pts].reverse();
-    }
-    line.push(...pts);
-  }
-  // Art arda aynı noktaları ve geri dönüşlü tekrarları ayıkla
-  return line.filter((p, i) => i === 0 || p.lat !== line[i - 1].lat || p.lon !== line[i - 1].lon);
-}
 
 /** Çizgi durak sırasının tersine akıyorsa çevirir */
 function orientTo(line, seq) {
@@ -181,7 +159,7 @@ for (const rel of relations) {
     stops.set(nd.id, { name, lat: nd.lat, lon: nd.lon });
     return { stop: nd.id, offset: t };
   });
-  const shape = orientTo(chainWays(geomByRelation.get(rel.id)), seq);
+  const shape = orientTo(chainWays(geomByRelation.get(rel.id)).line, seq);
   trips.push({ id: `osm${rel.id}`, route: routeId, headsign: rel.tags.to ?? "", times, shape });
   if (!BUS) console.log(`  ${line.name}: ${rel.tags.from ?? "?"} → ${rel.tags.to ?? "?"}, ${seq.length} durak, ${Math.round(t / 60)} dk`);
 }

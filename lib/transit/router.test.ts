@@ -112,3 +112,44 @@ describe.skipIf(!hasIstanbul)("İstanbul verisiyle", () => {
     expect(j!.arriveSec - TEN).toBeLessThan(3600);
   });
 });
+
+// İzmir ve Ankara: gerçek/derlenmiş veri varsa (yoksa atlanır)
+const CASES = [
+  {
+    city: "izmir",
+    // Evka 3 → Halkapınar: Metro hattı
+    from: { lat: 38.4554, lng: 27.2224 },
+    to: { lat: 38.4333, lng: 27.17 },
+    ride: /^M1/,
+  },
+  {
+    city: "ankara",
+    // Kızılay → Batıkent civarı: metro
+    from: { lat: 39.9208, lng: 32.8541 },
+    to: { lat: 39.968, lng: 32.731 },
+    ride: /^M1/,
+  },
+] as const;
+
+for (const c of CASES) {
+  describe.skipIf(!existsSync(path.join(BUILD, `${c.city}.bin`)))(`${c.city} verisiyle`, () => {
+    const r = () => new TransitRouter(path.join(BUILD, `${c.city}.bin`), path.join(BUILD, `${c.city}.meta.json`));
+
+    it("raylı hatla tutarlı bir yolculuk bulur; çizgi gerçek ray geometrisinde", () => {
+      const j = r().plan(c.from, c.to, TEN, TUESDAY);
+      expect(j).not.toBeNull();
+      const ride = j!.steps.find((s) => s.kind === "binis" && c.ride.test(s.line ?? ""));
+      expect(ride).toBeDefined();
+      // Durak başına değil, yüzlerce ray noktasından oluşan çizgi
+      expect(ride!.geometryExact).toBe(true);
+      expect(j!.arriveSec - TEN).toBeLessThan(3600);
+    });
+
+    it("adım saatleri tutarlı", () => {
+      const j = r().plan(c.from, c.to, TEN, TUESDAY)!;
+      for (let i = 1; i < j.steps.length; i++) {
+        expect(toMinutes(j.steps[i].depart)).toBeGreaterThanOrEqual(toMinutes(j.steps[i - 1].arrive));
+      }
+    });
+  });
+}
