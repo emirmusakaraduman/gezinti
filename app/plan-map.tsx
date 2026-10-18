@@ -67,7 +67,7 @@ function markerElement(label: string, color: string, delayMs: number): HTMLEleme
   const inner = document.createElement("div");
   inner.className = "marker-in";
   inner.textContent = label;
-  inner.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.5);cursor:pointer;animation-delay:${delayMs}ms`;
+  inner.style.cssText = `width:28px;height:28px;border-radius:9999px;background:${color};color:#fff;font:600 13px/28px var(--font-body),system-ui,sans-serif;text-align:center;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(12,8,102,.5);cursor:pointer;animation-delay:${delayMs}ms`;
   outer.append(inner);
   return outer;
 }
@@ -75,7 +75,7 @@ function markerElement(label: string, color: string, delayMs: number): HTMLEleme
 function popupElement(title: string, lines: string[]): HTMLElement {
   // textContent ile kur; mekan adları HTML olarak yorumlanmasın
   const root = document.createElement("div");
-  root.style.cssText = "font:13px/1.45 var(--font-body),system-ui,sans-serif;color:#000";
+  root.style.cssText = "font:13px/1.45 var(--font-body),system-ui,sans-serif;color:#0c0866";
   const h = document.createElement("strong");
   h.textContent = title;
   root.append(h);
@@ -229,7 +229,7 @@ export default function PlanMap({ days, center }: { days: DayPlan[]; center: { l
 
   const pill = (active: boolean) =>
     `flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium shadow-card transition-colors ${
-      active ? "bg-ink text-bg" : "bg-surface text-ink hover:bg-accent-soft"
+      active ? "bg-accent text-white" : "bg-surface text-ink hover:bg-accent-soft"
     }`;
 
   return (

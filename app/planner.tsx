@@ -154,7 +154,7 @@ function LoadingStages() {
                 )}
                 <span
                   className={`relative z-[1] mx-auto flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-500 ${
-                    done || current ? "bg-ink text-bg" : "bg-line-soft text-muted"
+                    done || current ? "bg-accent text-white" : "bg-line-soft text-muted"
                   } ${current ? "pop-soft ring-4 ring-line-soft" : ""}`}
                 >
                   {done ? <CheckIcon className="text-sm" /> : i + 1}

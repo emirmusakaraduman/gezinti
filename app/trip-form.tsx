@@ -33,13 +33,14 @@ interface Props {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-const fieldLabel = "text-sm font-medium text-ink";
+const fieldLabel = "text-sm font-bold text-ink";
 const control =
   "w-full rounded-xl border-2 border-line bg-surface-2 px-3.5 py-2.5 text-ink transition-colors hover:border-accent focus:border-accent";
 
 export default function TripForm({ cities, form, loading, update, toggleInterest, onSubmit }: Props) {
   return (
-    <form onSubmit={onSubmit} className="space-y-7 rounded-3xl border-2 border-line bg-surface p-5 shadow-card sm:p-7">
+    <form onSubmit={onSubmit} className="relative space-y-7 rounded-3xl border-2 border-line bg-surface p-5 pt-9 shadow-card sm:p-7 sm:pt-10">
+      <span className="font-display absolute -top-4 left-5 -rotate-2 bg-accent px-4 py-1 text-lg text-white uppercase sm:left-7">Planını kur</span>
       {/* Şehir */}
       <fieldset>
         <legend className={fieldLabel}>Şehir</legend>
@@ -55,7 +56,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 onClick={() => update("cityId", c.id)}
                 className={`lift rounded-2xl border-2 p-4 text-left active:scale-[0.985] ${
                   active
-                    ? "pop-soft border-line bg-ink text-bg shadow-card"
+                    ? "pop-soft border-line bg-accent text-white shadow-[4px_4px_0_0_var(--magenta)]"
                     : "border-line bg-surface-2"
                 }`}
               >
@@ -120,7 +121,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 onClick={() => update("budget", b)}
                 aria-pressed={form.budget === b}
                 className={`tnum rounded-full border-2 border-line px-2.5 py-0.5 text-xs font-bold transition-colors active:scale-95 ${
-                  form.budget === b ? "pop-soft bg-ink text-bg" : "bg-surface-2 text-ink hover:bg-accent-soft"
+                  form.budget === b ? "pop-soft bg-accent text-white" : "bg-surface-2 text-ink hover:bg-accent-soft"
                 }`}
               >
                 {b.toLocaleString("tr-TR")}
@@ -150,7 +151,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 aria-checked={active}
                 onClick={() => update("transport", id)}
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-colors active:scale-95 ${
-                  active ? "pop-soft bg-ink text-bg" : "text-muted hover:text-ink"
+                  active ? "pop-soft bg-accent text-white" : "text-muted hover:text-ink"
                 }`}
               >
                 <span className="text-base">{icon}</span>
@@ -175,7 +176,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
                 aria-pressed={active}
                 className={`rounded-full border-2 px-3.5 py-1.5 text-sm font-bold transition-colors active:scale-95 ${
                   active
-                    ? "pop-soft border-line bg-ink text-bg"
+                    ? "pop-soft border-line bg-accent text-white"
                     : "border-line bg-surface-2 text-ink hover:bg-accent-soft"
                 }`}
               >
@@ -214,7 +215,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
         <button
           type="submit"
           disabled={loading || form.interests.length === 0}
-          className="inline-flex items-center justify-center gap-2.5 rounded-xl border-2 border-line bg-ink px-7 py-3 text-base font-extrabold text-bg transition-all hover:-translate-y-0.5 hover:shadow-card active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+          className="inline-flex items-center justify-center gap-2.5 font-display rounded-xl border-2 border-line bg-magenta px-8 py-3.5 text-lg text-white uppercase transition-all hover:-translate-y-0.5 hover:shadow-card active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
           {loading ? (
             <>

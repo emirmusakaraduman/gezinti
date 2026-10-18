@@ -1,62 +1,37 @@
 @import "tailwindcss";
 
 /*
- * Siyah-beyaz: saf siyah mürekkep, beyaz zemin, kalın çerçeveler ve sert gölgeler.
- * Renk yalnızca anlam taşıdığı yerde küçük dozda: gün çizgileri/haritası, bütçe
- * durumu ve uyarılar. --warm tek "parlak" vurgu (sarı işaretleyici).
+ * Elektrik paleti: kobalt mavi, gök mavisi ve magenta; aralarda beyaz boşluklar rengi
+ * dinlendirir. Tek tema (karanlık mod yok): renkler beyaz zeminde ve kobalt bantlarda
+ * birlikte tasarlandı. Çerçeve ve sert gölgeler kobalt; üzerine gelince gölge magentaya döner.
  */
 :root {
   --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f3f3f3;
-  --ink: #000000;
-  --muted: #5a5a5a;
-  --line: #000000;
-  --line-soft: #d6d6d6;
-  --accent: #000000;
-  --accent-strong: #000000;
-  --accent-soft: #ececec;
-  --warm: #ffd60a;
-  --coral: #d10000;
-  --coral-soft: #ffe3e3;
+  --surface-2: #f4f2ff;
+  --ink: #0c0866;
+  --muted: #5a56a0;
+  --line: #1c13ff;
+  --line-soft: #dcd8ff;
+  --accent: #1c13ff;
+  --accent-strong: #1409d6;
+  --accent-soft: #e9e7ff;
+  --magenta: #ff1fa9;
+  --sky: #2de2e6;
+  --warm: #ffe14a;
+  --coral: #d9145f;
+  --coral-soft: #ffe2ef;
   --amber: #8a5200;
-  --amber-soft: #ffefc2;
-  --info: #000000;
-  --info-soft: #ececec;
-  --ok: #0a7a3c;
-  --ok-soft: #dcf3e5;
-  --g1: #000000;
-  --g2: #6b6b6b;
-  --g3: #b9b9b9;
-  --shadow: 3px 3px 0 0 var(--ink);
-  --shadow-lift: 6px 6px 0 0 var(--ink);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --surface: #0d0d0d;
-    --surface-2: #181818;
-    --ink: #ffffff;
-    --muted: #a9a9a9;
-    --line: #ffffff;
-    --line-soft: #333333;
-    --accent: #ffffff;
-    --accent-strong: #ffffff;
-    --accent-soft: #232323;
-    --warm: #ffd60a;
-    --coral: #ff6b6b;
-    --coral-soft: #3a1414;
-    --amber: #ffc857;
-    --amber-soft: #382a0c;
-    --info: #ffffff;
-    --info-soft: #232323;
-    --ok: #5fdc93;
-    --ok-soft: #10331f;
-    --g1: #ffffff;
-    --g2: #9a9a9a;
-    --g3: #555555;
-  }
+  --amber-soft: #fff0c4;
+  --info: #1c13ff;
+  --info-soft: #e9e7ff;
+  --ok: #08855d;
+  --ok-soft: #d8f6ea;
+  --g1: #1c13ff;
+  --g2: #ff1fa9;
+  --g3: #2de2e6;
+  --shadow: 4px 4px 0 0 var(--accent);
+  --shadow-lift: 7px 7px 0 0 var(--magenta);
 }
 
 @theme inline {
@@ -72,6 +47,8 @@
   --color-accent-soft: var(--accent-soft);
   --color-coral: var(--coral);
   --color-coral-soft: var(--coral-soft);
+  --color-magenta: var(--magenta);
+  --color-sky: var(--sky);
   --color-warm: var(--warm);
   --color-amber: var(--amber);
   --color-amber-soft: var(--amber-soft);
@@ -81,6 +58,7 @@
   --color-ok-soft: var(--ok-soft);
   --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-hand: var(--font-hand), cursive;
   --shadow-card: var(--shadow);
 }
 
@@ -97,10 +75,16 @@ body {
   font-weight: 500;
 }
 
-/* Başlıklar ağır ve sıkı; etiketler ve vurgular kalın */
+/* Başlıklar kalın ve eğik (Poppins 800 italik); el yazısı kenar notları için */
 .font-display {
   font-weight: 800;
-  letter-spacing: -0.03em;
+  font-style: italic;
+  letter-spacing: -0.02em;
+}
+
+.font-hand {
+  font-family: var(--font-hand), cursive;
+  font-weight: 600;
 }
 
 .font-medium {
@@ -362,6 +346,8 @@ details[open] > .details-body {
   .hero-station,
   .marker-in,
   .dot-blink,
+  .float-slow,
+  .sticker:hover,
   details[open] > .details-body {
     animation: none;
   }
@@ -384,6 +370,64 @@ details[open] > .details-body {
   .underline-grow {
     animation: none;
   }
+}
+
+/* Hero zemini: kobalt üzerinde ince ızgara */
+.grid-bg {
+  background-color: var(--accent);
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.13) 1px, transparent 1px);
+  background-size: 88px 88px;
+}
+
+/* Sürüklenebilir çıkartmalar */
+@keyframes wobble {
+  0%,
+  100% {
+    rotate: var(--tilt, 0deg);
+  }
+  25% {
+    rotate: calc(var(--tilt, 0deg) + 6deg);
+  }
+  75% {
+    rotate: calc(var(--tilt, 0deg) - 6deg);
+  }
+}
+
+.sticker {
+  rotate: var(--tilt, 0deg);
+  filter: drop-shadow(0 4px 0 rgb(12 8 102 / 0.45));
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  transition: scale 0.15s;
+}
+
+.sticker:hover {
+  animation: wobble 0.5s ease-in-out;
+  scale: 1.06;
+}
+
+.sticker.dragging {
+  cursor: grabbing;
+  scale: 1.12;
+  z-index: 20;
+  animation: none;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+.float-slow {
+  animation: float-slow 4.5s ease-in-out infinite;
 }
 
 /* MapLibre: kontroller ve atıf temaya uysun */
