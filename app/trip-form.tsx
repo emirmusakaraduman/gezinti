@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import type { PlaceCategory, TransportMode, TripRequest } from "@/lib/types";
 import { BusIcon, CarIcon, MinusIcon, PlusIcon } from "./icons";
+import { Note } from "./note";
 
 const INTERESTS: { id: PlaceCategory; label: string }[] = [
   { id: "tarih", label: "Tarih" },
@@ -42,8 +43,11 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
     <form onSubmit={onSubmit} className="relative space-y-7 rounded-3xl border-2 border-line bg-surface p-5 pt-9 shadow-card sm:p-7 sm:pt-10">
       <span className="font-display absolute -top-4 left-5 -rotate-2 bg-accent px-4 py-1 text-lg text-white uppercase sm:left-7">Planını kur</span>
       {/* Şehir */}
-      <fieldset>
+      <fieldset className="relative">
         <legend className={fieldLabel}>Şehir</legend>
+        <Note tone="magenta" tilt={2} className="mt-1 sm:absolute sm:-top-5 sm:right-0 sm:mt-0">
+          önce şehri seç!
+        </Note>
         <div role="radiogroup" aria-label="Şehir" className="mt-2.5 grid gap-3 sm:grid-cols-3">
           {cities.map((c) => {
             const active = form.cityId === c.id;
@@ -133,8 +137,11 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
       </div>
 
       {/* Ulaşım */}
-      <fieldset>
+      <fieldset className="relative">
         <legend className={fieldLabel}>Ulaşım</legend>
+        <Note tone="accent" tilt={-2} className="mt-1 sm:absolute sm:top-5 sm:left-72 sm:mt-0">
+          arabayla da olur
+        </Note>
         <div role="radiogroup" aria-label="Ulaşım" className="mt-2.5 inline-flex rounded-xl border-2 border-line bg-surface-2 p-1">
           {(
             [
@@ -163,8 +170,11 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
       </fieldset>
 
       {/* İlgi alanları */}
-      <fieldset>
+      <fieldset className="relative">
         <legend className={fieldLabel}>İlgi alanları</legend>
+        <Note tone="magenta" tilt={2} className="mt-1 sm:absolute sm:-top-5 sm:right-0 sm:mt-0">
+          birden fazla seçebilirsin
+        </Note>
         <div className="mt-2.5 flex flex-wrap gap-2">
           {INTERESTS.map((i) => {
             const active = form.interests.includes(i.id);
@@ -212,6 +222,9 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
 
       <div className="flex flex-col items-start gap-3 border-t-2 border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted">Giriş ücretleri T.C. vatandaşı tarifesidir.</p>
+        <Note tone="magenta" tilt={-3} arrow={0} className="sm:ml-auto">
+          hazırsan bas!
+        </Note>
         <button
           type="submit"
           disabled={loading || form.interests.length === 0}

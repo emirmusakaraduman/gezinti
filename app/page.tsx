@@ -1,4 +1,5 @@
 import { listCities } from "@/lib/data/cities";
+import { Note } from "./note";
 import Planner from "./planner";
 import { BusSticker, CompassSticker, PinSticker, SimitSticker, Sticker, TicketSticker } from "./stickers";
 
@@ -30,6 +31,9 @@ export default function Home() {
           <p className="rise mt-7 max-w-lg text-lg leading-snug font-semibold text-white/90" style={{ animationDelay: "250ms" }}>
             Mekanları, yemekleri ve toplu taşıma rotasını gerçek sefer saatleriyle saat saat planlayalım.
           </p>
+          <Note tone="sky" tilt={-3} underline className="mt-3">
+            gerçek sefer saatleri!
+          </Note>
 
           <p className="rise mt-5 flex items-center gap-2 text-sm font-bold" style={{ animationDelay: "350ms" }}>
             <FlagIcon /> İstanbul, İzmir ve Ankara için hazır
@@ -47,6 +51,12 @@ export default function Home() {
         <Sticker className="top-20 right-[8%] float-slow hidden sm:block" tilt={-10}>
           <BusSticker className="size-36" />
         </Sticker>
+        <Note tone="sky" tilt={4} arrow={-100} className="absolute top-[40%] right-[5%] hidden sm:inline-flex">
+          sürükle beni!
+        </Note>
+        <Note tone="white" tilt={-5} arrow={95} className="absolute right-[20%] bottom-[34%] hidden lg:inline-flex">
+          yolunu bulalım
+        </Note>
         <Sticker className="top-[48%] right-[24%] hidden sm:block" tilt={8}>
           <TicketSticker className="size-32" />
         </Sticker>
@@ -68,7 +78,10 @@ export default function Home() {
 
       <footer className="bg-accent text-white">
         <div className="mx-auto w-full max-w-6xl px-4 py-8 text-sm font-semibold sm:px-6">
-          <p className="font-display text-2xl uppercase">Gezinti</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <p className="font-display text-2xl uppercase">Gezinti</p>
+            <Note tone="sky" tilt={-3}>iyi gezintiler!</Note>
+          </div>
           <p className="mt-2 max-w-2xl text-white/80">
             Harita ve yer verileri © OpenStreetMap katkıcıları. Sefer saatleri belediyelerin ve işletmelerin yayımladığı
             verilerden gelir; yola çıkmadan kontrol et.

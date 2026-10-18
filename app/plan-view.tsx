@@ -18,6 +18,7 @@ import type {
   Vehicle,
 } from "@/lib/types";
 import { CountRange, Reveal } from "./motion";
+import { Note } from "./note";
 import {
   AlertIcon,
   CarIcon,
@@ -98,7 +99,12 @@ export default function PlanView({
   return (
     <section className="space-y-8">
       <header>
-        <h2 className="font-display text-4xl text-accent uppercase sm:text-5xl">{plan.cityName} planın</h2>
+        <div className="flex flex-wrap items-end gap-x-5 gap-y-1">
+          <h2 className="font-display text-4xl text-accent uppercase sm:text-5xl">{plan.cityName} planın</h2>
+          <Note tone="magenta" tilt={-4} arrowFirst arrow={195} flip className="mb-1">
+            işte planın!
+          </Note>
+        </div>
         <p className="mt-2 max-w-2xl text-muted">{plan.summary}</p>
         <ul className="mt-4 flex flex-wrap gap-2 text-sm">
           <Chip>{plan.days.length} gün</Chip>
@@ -118,6 +124,9 @@ export default function PlanView({
         {/* Harita ve bütçe: geniş ekranda gezinirken sabit kalır */}
         <aside className="space-y-5 lg:sticky lg:top-4 lg:order-2">
           <BudgetCard budget={plan.budget} />
+          <Note tone="accent" tilt={2} arrow={90} className="ml-3">
+            günlere dokun, harita değişsin
+          </Note>
           <PlanMap days={plan.days} center={plan.cityCenter} />
         </aside>
 
@@ -128,6 +137,9 @@ export default function PlanView({
           {plan.days.map((day) => (
             <DaySection key={day.day} day={day} plan={plan} onEdit={onEdit} editing={editing} />
           ))}
+          <Note tone="magenta" tilt={-3} big underline className="mt-2">
+            iyi yolculuklar!
+          </Note>
         </div>
       </div>
     </section>
@@ -262,6 +274,11 @@ function DaySection({
   const weekday = DAY_NAMES[new Date(`${day.date}T12:00:00Z`).getUTCDay()];
   return (
     <article>
+      {day.day === 1 && (
+        <Note tone="magenta" tilt={-2} arrow={90} className="mb-2 ml-2">
+          güne buradan başlıyoruz
+        </Note>
+      )}
       {/* Reveal'a sarılmaz: sticky başlık kendi kapsayıcısında yapışmaz */}
       <header className="sticky top-2 z-10 mb-5 flex items-baseline justify-between gap-3 rounded-2xl border-2 border-line bg-accent px-4 py-3 text-white shadow-[4px_4px_0_0_var(--magenta)]">
         <h3 className="font-display flex items-baseline gap-3 text-3xl">

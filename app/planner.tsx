@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { PlaceCategory, PlanEdit, TripPlan, TripRequest } from "@/lib/types";
 import { AlertIcon, CheckIcon } from "./icons";
+import { Note } from "./note";
 import PlanView from "./plan-view";
 import TripForm from "./trip-form";
 
@@ -107,6 +108,13 @@ export default function Planner({ cities }: { cities: { id: string; name: string
             </div>
           </div>
         )}
+        {!plan && !loading && !error && (
+          <div className="flex justify-center pt-2">
+            <Note tone="accent" tilt={-2} arrow={90} big>
+              planın burada belirecek
+            </Note>
+          </div>
+        )}
         {loading && <LoadingStages />}
         {loading && !plan && <SkeletonGrid />}
         {plan && (
@@ -169,6 +177,11 @@ function LoadingStages() {
         <p key={stage} className="rise mt-5 text-center text-sm text-muted">
           {STAGES[stage].detail}
         </p>
+        <div className="mt-3 flex justify-center">
+          <Note tone="magenta" tilt={-2}>
+            bir saniye, hesaplıyoruz…
+          </Note>
+        </div>
       </div>
     </div>
   );
