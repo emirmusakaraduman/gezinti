@@ -275,14 +275,17 @@ function selectHeuristic(
   };
 }
 
+/** AI ajanları için kimlik bilgisi tanımlı mı (yoksa uygulama demo modunda çalışır) */
+export function aiConfigured(): boolean {
+  return !!process.env.ANTHROPIC_API_KEY || !!process.env.ANTHROPIC_AUTH_TOKEN;
+}
+
 export async function selectPlaces(
   city: City,
   req: TripRequest,
   feedback?: Feedback,
 ): Promise<Selection> {
-  const hasCredentials =
-    !!process.env.ANTHROPIC_API_KEY || !!process.env.ANTHROPIC_AUTH_TOKEN;
-  if (!hasCredentials) return selectHeuristic(city, req, feedback);
+  if (!aiConfigured()) return selectHeuristic(city, req, feedback);
 
   try {
     return await selectWithClaude(city, req, feedback);

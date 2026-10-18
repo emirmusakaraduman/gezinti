@@ -242,7 +242,8 @@ function PlanView({
         <h2 className="text-2xl font-semibold">{plan.cityName} planın</h2>
         <p className="mt-1 text-zinc-700 dark:text-zinc-300">{plan.summary}</p>
         <p className="mt-1 text-xs text-zinc-500">
-          Planlayan: {plan.plannedBy === "claude" ? "Claude" : "sezgisel yöntem"}
+          Planlayan:{" "}
+          {plan.plannedBy === "claude" ? "Claude" : plan.demo ? "demo modu (AI ajanları kapalı)" : "sezgisel yöntem"}
           {plan.revisions > 0 && ` · ${plan.revisions} kez revize edildi`}
           {" · Giriş ücretleri T.C. vatandaşı tarifesidir"}
         </p>

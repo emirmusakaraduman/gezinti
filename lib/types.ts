@@ -246,6 +246,8 @@ export interface TripPlan {
   summary: string;
   /** Plan Claude ile mi yoksa yedek sezgisel yöntemle mi seçildi */
   plannedBy: "claude" | "sezgisel";
+  /** AI ajanları yapılandırılmamış: uygulama demo modunda, plan yerel kurallarla hazırlandı */
+  demo?: boolean;
   /** Bütçe için kaç tur revizyon yapıldı */
   revisions: number;
   /** Plan bir düzenlemeyle güncellendiyse ne yapıldığı */

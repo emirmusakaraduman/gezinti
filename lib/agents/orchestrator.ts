@@ -11,7 +11,7 @@
 import { getCity } from "@/lib/data/cities";
 import type { City, DayPlan, PlanEdit, PlanWarning, TripPlan, TripRequest } from "@/lib/types";
 import { budgetWarnings, summarizeBudget } from "./budget";
-import { selectPlaces, type Feedback, type Selection } from "./discovery";
+import { aiConfigured, selectPlaces, type Feedback, type Selection } from "./discovery";
 import { applyEdit } from "./editor";
 import { buildDay } from "./route";
 import { validateDays, type ValidationIssue } from "./validator";
@@ -131,10 +131,14 @@ function finalize(
       message: `${city.name} için bazı toplu taşıma süreleri tahminidir (sefer verisi yok veya güzergah bulunamadı).`,
     });
   }
+  // Anahtar tanımlı değilse bu bir hata değil, demo sürümünün normal çalışma biçimi
+  const demo = !aiConfigured();
   if (meta.plannedBy === "sezgisel") {
     warnings.push({
       level: "bilgi",
-      message: "Plan AI yerine yedek sezgisel yöntemle hazırlandı (API anahtarı yok veya AI çağrısı başarısız).",
+      message: demo
+        ? "Demo sürümü: AI ajanları şu an kapalı, plan yerel kurallarla hazırlandı. Demodan çıkıldığında ajanlar aktif olacak ve mekanları seçip planı açıklayacak."
+        : "Plan AI yerine yedek sezgisel yöntemle hazırlandı (AI çağrısı başarısız oldu).",
     });
   }
 
@@ -145,6 +149,7 @@ function finalize(
     days,
     budget,
     warnings,
+    demo,
     ...meta,
   };
 }
