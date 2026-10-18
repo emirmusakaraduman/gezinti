@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { buildEgoGtfs, decodeEntities, parseLineOptions, parseLinePage, stationKey } from "./ego.mjs";
+import { buildEgoGtfs, decodeEntities, nameLocator, parseLineOptions, parseLinePage, stationKey } from "./ego.mjs";
 
 const page = readFileSync(new URL("../../test/ego-line.fixture.html", import.meta.url), "utf8");
 
@@ -116,5 +116,25 @@ describe("stationKey", () => {
     expect(stationKey("ŞEHİTLER İSTASYONU 1")).toBe("sehitler");
     expect(stationKey("ÜMİTKÖY METRO İSTASYONU")).toBe("umitkoy");
     expect(stationKey("Ümitköy")).toBe("umitkoy");
+  });
+});
+
+describe("nameLocator", () => {
+  const named = [
+    { name: "Yunus Emre Camii", lat: 39.77, lng: 32.81 },
+    { name: "Yunus Emre Camii", lat: 39.95, lng: 32.85 }, // aynı ad, uzak başka durak
+    { name: "Tekil Durak", lat: 39.9, lng: 32.8 },
+  ];
+  const find = nameLocator(named);
+
+  it("aynı adlı adaylardan bir önceki durağa en yakınını seçer", () => {
+    expect(find({ name: "YUNUS EMRE CAMİİ" }, { lat: 39.9501, lng: 32.85 })).toEqual(named[1]);
+    expect(find({ name: "YUNUS EMRE CAMİİ" }, { lat: 39.7701, lng: 32.81 })).toEqual(named[0]);
+  });
+
+  it("önceki durak yoksa yalnızca tek adayı kabul eder; uzak adayı reddeder", () => {
+    expect(find({ name: "Yunus Emre Camii" }, undefined)).toBeUndefined();
+    expect(find({ name: "TEKİL DURAK" }, undefined)).toEqual(named[2]);
+    expect(find({ name: "Tekil Durak" }, { lat: 40.5, lng: 33.5 })).toBeUndefined();
   });
 });

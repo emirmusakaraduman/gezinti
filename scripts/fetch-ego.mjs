@@ -21,7 +21,7 @@
 // Çıktı: data/gtfs/raw/ankara-ego/*.txt (otobüs), ankara-ego-rail/*.txt (git dışında);
 // ardından: node scripts/build-gtfs.mjs ankara
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { buildEgoGtfs, parseLinePage, parseLineOptions, stationKey } from "./lib/ego.mjs";
+import { buildEgoGtfs, nameLocator, parseLinePage, parseLineOptions, stationKey } from "./lib/ego.mjs";
 
 const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
 const BASE = "https://www.ego.gov.tr";
@@ -96,10 +96,10 @@ for (const job of jobs) {
 }
 console.log(`${lines.length} otobüs + ${railLines.length} raylı hat ayrıştırıldı (${fetched} yeni istek)`);
 // OSM'deki EGO durakları: ref → konum
-const osmPath = `${CACHE}/_osm-stops.json`;
+const osmPath = `${CACHE}/_osm-stops2.json`;
 if (!existsSync(osmPath)) {
   const [s, w, n, e] = BBOX;
-  const q = `[out:json][timeout:180];node["highway"="bus_stop"]["ref"](${s},${w},${n},${e});out;`;
+  const q = `[out:json][timeout:180];node["highway"="bus_stop"](${s},${w},${n},${e});out;`;
   let data;
   for (let tries = 1; ; tries++) {
     const res = await fetch("https://overpass-api.de/api/interpreter", {
@@ -116,16 +116,22 @@ if (!existsSync(osmPath)) {
   }
   writeFileSync(osmPath, JSON.stringify(data.elements.map((x) => [x.tags.ref, x.lat, x.lon, x.tags.name ?? ""])));
 }
-const osmStops = new Map();
-for (const [ref, lat, lon] of JSON.parse(readFileSync(osmPath, "utf8"))) osmStops.set(String(ref).trim(), { lat, lng: lon });
-console.log(`OSM'de ${osmStops.size} numaralı durak`);
+const osmStops = new Map(); // EGO durak no (ref) → konum
+const named = []; // ref'i olmayan ya da eşleşmeyenler için ad + konum
+for (const [ref, lat, lon, name] of JSON.parse(readFileSync(osmPath, "utf8"))) {
+  if (ref) osmStops.set(String(ref).trim(), { lat, lng: lon });
+  if (name) named.push({ name, lat, lng: lon });
+}
+console.log(`OSM'de ${osmStops.size} numaralı, ${named.length} adlı durak`);
+const byName = nameLocator(named);
+const locateBus = (stop, prev) => osmStops.get(stop.no) ?? byName(stop, prev);
 
 function write(dir, built) {
   mkdirSync(dir, { recursive: true });
   for (const [name, content] of Object.entries(built.files)) writeFileSync(`${dir}/${name}`, content);
   console.log(built.report);
 }
-write(OUT, buildEgoGtfs(lines, osmStops));
+write(OUT, buildEgoGtfs(lines, locateBus));
 
 // Raylı istasyonlar: OSM'de çoğunun ref'i EGO kodu (M32, A14…); yoksa ada göre
 const stationPath = `${CACHE}/_osm-stations.json`;

@@ -94,6 +94,36 @@ export function stationKey(name) {
     .join(" ");
 }
 
+/**
+ * Adla durak bulucu: ref'siz OSM duraklarını, adı eşleşen aday arasından hattın bir
+ * önceki durağına en yakın olanı seçerek bulur (ardışık duraklar yakındır).
+ * @param named [{ name, lat, lng }]
+ * @returns (durak, önceki) => {lat, lng} | undefined
+ */
+export function nameLocator(named, { maxStepM = 2500 } = {}) {
+  const byKey = new Map();
+  for (const n of named) {
+    const key = stationKey(n.name);
+    if (key.length < 3) continue;
+    (byKey.get(key) ?? byKey.set(key, []).get(key)).push(n);
+  }
+  return (stop, prev) => {
+    const cands = byKey.get(stationKey(stop.name));
+    if (!cands) return undefined;
+    if (!prev) return cands.length === 1 ? cands[0] : undefined;
+    let best;
+    let bestD = maxStepM;
+    for (const c of cands) {
+      const d = haversineM(prev, c);
+      if (d <= bestD) {
+        bestD = d;
+        best = c;
+      }
+    }
+    return best;
+  };
+}
+
 /** Hat yoksa/bilinmiyorsa kullanılan ortalama otobüs hızı (km/s) */
 const FALLBACK_KMH = 20;
 
@@ -105,7 +135,7 @@ const SERVICES = [
 
 /**
  * @param lines parseLinePage çıktıları
- * @param locate Map<EGO durak no, {lat, lng}> ya da (durak) => {lat, lng} | undefined
+ * @param locate Map<EGO durak no, {lat, lng}> ya da (durak, önceki konum) => {lat, lng} | undefined
  * @returns {{ files: Record<string, string>, report: string }}
  */
 export function buildEgoGtfs(lines, locate) {
@@ -123,7 +153,7 @@ export function buildEgoGtfs(lines, locate) {
     const seq = [];
     for (const s of line.stops) {
       stopsTotal++;
-      const pos = find(s);
+      const pos = find(s, seq.at(-1));
       if (!pos) continue;
       stopsMatched++;
       if (seq.at(-1)?.no === s.no) continue;
