@@ -16,7 +16,11 @@ npm run dev
 Tarayıcıda http://localhost:3000 adresini aç.
 
 Claude ile planlama için `.env.local` dosyasına `ANTHROPIC_API_KEY=...` ekle. Anahtar yoksa
-uygulama yedek sezgisel yöntemle çalışır ve bunu planda belirtir.
+uygulama demo modunda çalışır (AI ajanları kapalı, plan yerel kurallarla hazırlanır) ve bunu
+planda belirtir.
+
+Toplu taşıma verisi git'te yoktur; başka bir bilgisayarda çalıştırırken [KURULUM.md](KURULUM.md)
+dosyasındaki adımları izle.
 
 ## Mimari
 
