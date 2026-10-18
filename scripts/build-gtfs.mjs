@@ -15,6 +15,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { decode, fixMojibake, parseCoord, parseTime } from "./lib/text.mjs";
 
 const RAW = "data/gtfs/raw";
 const OUT = "data/gtfs/build";
@@ -76,34 +77,6 @@ const EXCLUDED_ROUTE_TYPES = new Set([9, 10]);
 
 // ---------- Okuma ve kod çözme ----------
 
-// Windows-1252'de 0x80-0x9F aralığı Latin-1'den farklıdır
-const CP1252_HIGH = "€\u0081‚ƒ„…†‡ˆ‰Š‹Œ\u008DŽ\u008F\u0090‘’“”•–—˜™š›œ\u009DžŸ";
-
-/** "KADIKÃ–Y" gibi çift kodlanmış metni düzeltir */
-function fixMojibake(s) {
-  if (!/[ÃÄÅ][\u0080-ÿ€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ]/.test(s)) return s;
-  const bytes = [];
-  for (const ch of s) {
-    const code = ch.codePointAt(0);
-    const hi = CP1252_HIGH.indexOf(ch);
-    if (hi >= 0) bytes.push(0x80 + hi);
-    else if (code <= 0xff) bytes.push(code);
-    else return s; // 1252'ye geri çevrilemiyor, olduğu gibi bırak
-  }
-  try {
-    return new TextDecoder("utf-8", { fatal: true }).decode(Uint8Array.from(bytes));
-  } catch {
-    return s;
-  }
-}
-
-function decode(buf) {
-  try {
-    return new TextDecoder("utf-8", { fatal: true }).decode(buf);
-  } catch {
-    return new TextDecoder("windows-1254").decode(buf);
-  }
-}
 
 function detectDelimiter(text) {
   const firstLine = text.slice(0, text.indexOf("\n"));
@@ -179,23 +152,6 @@ function readCsv(path, { required = true } = {}) {
 }
 
 // ---------- Ayrıştırma yardımcıları ----------
-
-/** "41.0191" veya bozuk "410.191.700.005.564" → 41.0191700005564 */
-function parseCoord(raw) {
-  if (!raw) return NaN;
-  const s = raw.replace(",", ".");
-  if ((s.match(/\./g) ?? []).length <= 1) return Number(s);
-  // İstanbul'da hem enlem hem boylam iki basamaklı tam kısım taşır
-  const digits = s.replace(/\./g, "");
-  return Number(`${digits.slice(0, 2)}.${digits.slice(2)}`);
-}
-
-function parseTime(raw) {
-  if (!raw) return null;
-  const [h, m, s = "0"] = raw.split(":");
-  const t = Number(h) * 3600 + Number(m) * 60 + Number(s);
-  return Number.isFinite(t) ? t : null;
-}
 
 const DAY_FIELDS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 

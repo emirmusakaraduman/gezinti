@@ -16,6 +16,7 @@
 // Lisans: OSM verisi ODbL (atıf gerekir), Wikidata ve Pageviews CC0.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { foldTurkish, parseOpeningHours, slug } from "./lib/text.mjs";
 
 const USER_AGENT = "gezinti/0.1 (kisisel proje; https://github.com/emirmusakaraduman/gezinti)";
 const CACHE = ".cache/places";
@@ -251,89 +252,7 @@ function haversineM(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-const slug = (s) =>
-  s
-    .toLocaleLowerCase("tr")
-    .replace(/[çğıöşü]/g, (c) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u" })[c])
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 40);
-
-/**
- * Arama ifadesini Türkçe karakter farklarına duyarsız yapar: OSM'de adlar
- * sıkça ASCII yazılıyor ("Haci Abdullah", "Cukuraga"). Overpass'ın büyük/
- * küçük harf duyarsızlığı Türkçe harfleri kapsamadığı için iki hal de eklenir.
- */
-const TR_FOLD = { ı: "ıiIİ", i: "ıiIİ", ş: "şsŞS", s: "şsŞS", ç: "çcÇC", c: "çcÇC", ğ: "ğgĞG", g: "ğgĞG", ö: "öoÖO", o: "öoÖO", ü: "üuÜU", u: "üuÜU" };
-function foldTurkish(pattern) {
-  let out = "";
-  let inClass = false;
-  for (const ch of pattern) {
-    if (ch === "[") inClass = true;
-    if (ch === "]") inClass = false;
-    const lower = ch.toLocaleLowerCase("tr");
-    out += !inClass && TR_FOLD[lower] ? `[${TR_FOLD[lower]}]` : ch;
-  }
-  return out;
-}
-
 const center = (el) => (el.type === "node" ? [el.lat, el.lon] : el.center ? [el.center.lat, el.center.lon] : null);
-
-// ---------- Açılış saatleri ----------
-
-const DAY = { Su: 0, Mo: 1, Tu: 2, We: 3, Th: 4, Fr: 5, Sa: 6 };
-const ORDER = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-
-function expandDays(spec) {
-  const days = new Set();
-  for (const part of spec.split(",")) {
-    const [a, b] = part.trim().split("-");
-    if (!(a in DAY)) return null;
-    if (!b) {
-      days.add(DAY[a]);
-      continue;
-    }
-    if (!(b in DAY)) return null;
-    let i = ORDER.indexOf(a);
-    for (let guard = 0; guard < 7; guard++) {
-      days.add(DAY[ORDER[i]]);
-      if (ORDER[i] === b) break;
-      i = (i + 1) % 7;
-    }
-  }
-  return days;
-}
-
-/**
- * OSM opening_hours'ın sık görülen basit biçimlerini çevirir
- * ("Mo-Su 09:00-19:00", "Tu-Su 09:00-17:00; Mo off"). Karmaşıksa null.
- */
-function parseOpeningHours(raw) {
-  if (!raw) return null;
-  if (raw.trim() === "24/7") return null;
-  const open = new Set();
-  let start = Infinity;
-  let end = -Infinity;
-  for (const rule of raw.split(";").map((r) => r.trim()).filter(Boolean)) {
-    if (/^PH\b/.test(rule) || /\boff$/.test(rule)) continue;
-    const m = rule.match(/^([A-Za-z,\- ]+)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/) ?? rule.match(/^()(\d{2}:\d{2})-(\d{2}:\d{2})$/);
-    if (!m) return null;
-    const days = m[1] ? expandDays(m[1].replace(/\s/g, "")) : new Set([0, 1, 2, 3, 4, 5, 6]);
-    if (!days) return null;
-    days.forEach((d) => open.add(d));
-    const [s, e] = [m[2], m[3]].map((t) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3)));
-    start = Math.min(start, s);
-    end = Math.max(end, e === 0 ? 24 * 60 - 1 : e);
-  }
-  if (!open.size) return null;
-  const hhmm = (t) => `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
-  return {
-    open: hhmm(start),
-    close: hhmm(Math.min(end, 23 * 60 + 59)),
-    closedDays: [0, 1, 2, 3, 4, 5, 6].filter((d) => !open.has(d)),
-  };
-}
 
 // ---------- Kategori, süre, fiyat ----------
 

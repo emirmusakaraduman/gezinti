@@ -29,6 +29,7 @@ export function applyEdit(city: City, req: TripRequest, edit: PlanEdit): EditRes
     throw new EditError("Düzenlenecek mekan planda bulunamadı");
   }
 
+  const position = days[dayIdx].indexOf(edit.placeId);
   days[dayIdx] = days[dayIdx].filter((id) => id !== edit.placeId);
   if (edit.action === "cikar") {
     return { days, message: `${target.name} plandan çıkarıldı.` };
@@ -38,7 +39,9 @@ export function applyEdit(city: City, req: TripRequest, edit: PlanEdit): EditRes
   if (!replacement) {
     return { days, message: `${target.name} için uygun bir alternatif bulunamadı; plandan çıkarıldı.` };
   }
-  days[dayIdx].push(replacement.id);
+  // Aynı yere koy: öğün türleri listedeki sıraya göre atanır (ilk yemek
+  // öğle, ikinci akşam); sona eklenirse öğle ile akşam yer değiştirirdi
+  days[dayIdx].splice(position, 0, replacement.id);
   return { days, message: `${target.name} yerine ${replacement.name} eklendi.` };
 }
 

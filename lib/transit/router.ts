@@ -71,7 +71,7 @@ const ROUTE_TYPE: Record<number, Vehicle> = {
 const TYPED = { Int32Array, Uint16Array, Uint8Array } as const;
 type Typed = Int32Array | Uint16Array | Uint8Array;
 
-class TransitRouter {
+export class TransitRouter {
   private readonly meta: Meta;
   private readonly a: Record<string, Typed>;
   private readonly nStops: number;
@@ -433,5 +433,3 @@ export function getTransitRouter(cityId: string): TransitRouter | null {
   routers.set(cityId, router);
   return router;
 }
-
-export type { TransitRouter };
