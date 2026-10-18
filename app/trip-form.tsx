@@ -45,7 +45,7 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
       {/* Şehir */}
       <fieldset className="relative">
         <legend className={fieldLabel}>Şehir</legend>
-        <Note tone="magenta" tilt={2} className="mt-1 sm:absolute sm:-top-5 sm:right-0 sm:mt-0">
+        <Note tone="magenta" tilt={3} big underline arrow={105} className="mt-2 sm:absolute sm:-top-8 sm:right-2 sm:mt-0">
           önce şehri seç!
         </Note>
         <div role="radiogroup" aria-label="Şehir" className="mt-2.5 grid gap-3 sm:grid-cols-3">
@@ -139,8 +139,8 @@ export default function TripForm({ cities, form, loading, update, toggleInterest
       {/* Ulaşım */}
       <fieldset className="relative">
         <legend className={fieldLabel}>Ulaşım</legend>
-        <Note tone="accent" tilt={-2} className="mt-1 sm:absolute sm:top-5 sm:left-72 sm:mt-0">
-          arabayla da olur
+        <Note key={form.transport} tone="accent" tilt={-2} className="pop-soft mt-1 sm:absolute sm:top-5 sm:left-72 sm:mt-0">
+          {form.transport === "araba" ? "toplu taşımayla da olur" : "arabayla da olur"}
         </Note>
         <div role="radiogroup" aria-label="Ulaşım" className="mt-2.5 inline-flex rounded-xl border-2 border-line bg-surface-2 p-1">
           {(
