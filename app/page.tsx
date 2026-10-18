@@ -21,9 +21,7 @@ export default function Home() {
           </p>
 
           <h1 className="rise font-display max-w-3xl text-[2.05rem] leading-[1.1] sm:text-6xl lg:text-7xl" style={{ animationDelay: "100ms" }}>
-            <span className="mb-2 inline-block -rotate-1 bg-sky px-4 py-1 text-ink uppercase">Gezinti bir</span>
-            <br />
-            <span className="mb-2 inline-block bg-white px-4 py-1 text-accent uppercase">bütçene uygun</span>
+            <span className="mb-2 inline-block -rotate-1 bg-sky px-4 py-1 text-ink uppercase">bütçene uygun</span>
             <br />
             <span className="inline-block rotate-1 bg-white px-4 py-1 text-accent uppercase">şehir gezisi</span>
           </h1>
