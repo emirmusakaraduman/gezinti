@@ -13,6 +13,7 @@ AI ajanlarıyla **bütçeye uygun şehir gezisi planlayıcı.** Gezilecek yerler
 ![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)
 ![MapLibre](https://img.shields.io/badge/MapLibre-GL-396CB2?logo=maplibre&logoColor=white)
 ![Claude](https://img.shields.io/badge/Claude-AI%20ajanlar%C4%B1-D97757?logo=anthropic&logoColor=white)
+![Lisans](https://img.shields.io/badge/Lisans-MIT-green)
 ![Durum](https://img.shields.io/badge/durum-ki%C5%9Fisel%20proje-orange)
 
 [🚀 Hızlı başlangıç](#-hızlı-başlangıç) · [🔄 Nasıl çalışır](#-nasıl-çalışır) · [🧩 Mimari](#-mimari) · [🚇 Toplu taşıma](#-toplu-taşıma-motoru) · [📚 Belgeler](#-ayrıntılı-belgeler) · [🚩 Yol haritası](#-yol-haritası)
@@ -369,4 +370,6 @@ Bu README özettir; ayrıntılar aşağıdadır.
 
 ## 📄 Lisans
 
-Henüz bir lisans dosyası eklenmedi. Kullanılan veriler kendi lisanslarına tabidir: OpenStreetMap © katkıda bulunanlar (ODbL), Wikidata ve Wikimedia Pageviews (CC0); toplu taşıma verileri İBB Açık Veri, EGO, ESHOT, İzmir Metro, Tram İzmir ve İZBAN kaynaklarından alınır.
+[MIT](LICENSE) © 2026 Emir Musa Karaduman
+
+Kullanılan veriler kendi lisanslarına tabidir: OpenStreetMap © katkıda bulunanlar (ODbL), Wikidata ve Wikimedia Pageviews (CC0); toplu taşıma verileri İBB Açık Veri, EGO, ESHOT, İzmir Metro, Tram İzmir ve İZBAN kaynaklarından alınır.
